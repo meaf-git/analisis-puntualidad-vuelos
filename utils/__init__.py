@@ -1,0 +1,1 @@
+"""Funciones auxiliares del proyecto."""
