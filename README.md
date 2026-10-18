@@ -39,3 +39,13 @@ Evaluar el cumplimiento de los horarios programados de salida y llegada de los v
 - Comparar la frecuencia y magnitud de los retrasos según el tipo de aeronave asignada a los vuelos, con el propósito de identificar diferencias en el cumplimiento de los horarios programados.
 
 - Examinar la variación de los retrasos según el día de la semana, con el propósito de identificar patrones temporales en el cumplimiento de los horarios programados.
+
+## Limitaciones
+
+- Limitación temporal: El análisis se restringe al período comprendido entre el xx de julio y el xx de agosto de 2017. Por lo tanto, los patrones y conclusiones obtenidos no son aplicables a otras épocas del año.
+
+- ​Limitación espacial: El estudio se enfoca únicamente en los aeropuertos rusos contenidos en la base de datos, por lo que los resultados no pueden usarse para el comportamiento de la aviación en otras regiones.
+
+- ​Limitación de datos: La muestra se reduce de manera exclusiva a los vuelos que completaron su itinerario con éxito (estado "Arrived", con un total de 16.707 registros). Esto implica que los vuelos que sufrieron cancelaciones definitivas o desvíos quedan excluidos del análisis comparativo.
+
+- ​Variables no contempladas: El estudio se limita al procesamiento de las variables temporales y operacionales disponibles en la estructura de los datos (horarios programados y reales, aeropuertos, tipo de aeronave y días de la semana). Factores externos que explican a fondo la causa raíz de una demora, como condiciones meteorológicas severas, congestión temporal del espacio aéreo, huelgas o problemas de mantenimiento específicos, quedan fuera del alcance al no estar contemplados en los registros analizados.  
