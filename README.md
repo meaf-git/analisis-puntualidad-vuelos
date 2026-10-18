@@ -31,9 +31,15 @@ Desde una perspectiva académica, resulta significativo analizar cómo diversos 
 
 ## Objetivo general
 
+Evaluar el cumplimiento de los horarios programados de salida y llegada de los vuelos registrados en los aeropuertos rusos durante el período comprendido entre el 16 de julio y el 15 de agosto de 2017, mediante el análisis de los retrasos y su comportamiento según variables temporales y operacionales.
+
 ## Objetivos específicos
-- **
-- **
-- **
-- **
-- **
+- ** Cuantificar la frecuencia y magnitud de los retrasos registrados en las salidas y llegadas de los vuelos, mediante la comparación entre los horarios programados y los horarios reales.
+
+- ** .Analizar la incidencia de los retrasos según el horario programado de salida, con el propósito de identificar las franjas horarias que presentan mayor frecuencia y magnitud de retrasos.
+
+- ** Comparar el comportamiento de los retrasos entre los diferentes aeropuertos de origen y destino, a fin de identificar diferencias en el cumplimiento de los horarios programados.
+
+- ** Comparar la frecuencia y magnitud de los retrasos según el tipo de aeronave asignada a los vuelos, con el propósito de identificar diferencias en el cumplimiento de los horarios programados.
+
+- **  Examinar la variación de los retrasos según el día de la semana, con el propósito de identificar patrones temporales en el cumplimiento de los horarios programados.
