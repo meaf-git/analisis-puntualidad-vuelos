@@ -1,0 +1,115 @@
+-- NORMALIZACIÓN (3FN): RETRASO DE VUELOS
+
+BEGIN TRANSACTION;
+
+-- 1. CREACIÓN DE TABLAS (DDL)
+
+--- 1. Ciudades
+CREATE TABLE ciudades (
+    ciudad_id     INTEGER PRIMARY KEY,
+    nombre        TEXT NOT NULL UNIQUE,
+    nombre_ru     TEXT NOT NULL,
+    zona_horaria  TEXT NOT NULL
+);
+
+--- 2. Aeropuertos (ubicación geográfica con validación de coordenadas y código IATA)
+CREATE TABLE aeropuertos (
+    codigo     TEXT    PRIMARY KEY,          
+    nombre     TEXT    NOT NULL,
+    nombre_ru  TEXT    NOT NULL,
+    ciudad_id  INTEGER NOT NULL REFERENCES ciudades (ciudad_id),
+    longitud   REAL    NOT NULL CHECK (longitud BETWEEN -180 AND 180),
+    latitud    REAL    NOT NULL CHECK (latitud  BETWEEN  -90 AND  90),
+    CHECK (length(codigo) = 3)
+);
+
+--- 3. Aeronaves (modelos de avión y alcance)
+CREATE TABLE aeronaves (
+    codigo        TEXT PRIMARY KEY,
+    modelo        TEXT    NOT NULL,
+    modelo_ru     TEXT    NOT NULL,
+    autonomia_km  INTEGER NOT NULL CHECK (autonomia_km > 0)
+);
+
+--- 4. Clases tarifarias (tipo cabina/asiento)
+CREATE TABLE clases_tarifarias (
+    clase_id  INTEGER PRIMARY KEY,
+    codigo    TEXT    NOT NULL UNIQUE,
+    nombre    TEXT    NOT NULL,
+    orden     INTEGER NOT NULL UNIQUE
+);
+
+--- 5. Estados de vuelo
+CREATE TABLE estados_vuelo (
+    estado_id    INTEGER PRIMARY KEY,
+    codigo       TEXT NOT NULL UNIQUE,
+    descripcion  TEXT NOT NULL
+);
+
+--- 6. Asientos (distribución por aeronave)
+CREATE TABLE asientos (
+    aeronave_codigo  TEXT    NOT NULL REFERENCES aeronaves (codigo),
+    numero           TEXT    NOT NULL,
+    clase_id         INTEGER NOT NULL REFERENCES clases_tarifarias (clase_id),
+    PRIMARY KEY (aeronave_codigo, numero)
+);
+
+--- 7. Rutas (trayectos y su duración)
+CREATE TABLE rutas (
+    numero_vuelo     TEXT    PRIMARY KEY,
+    origen           TEXT    NOT NULL REFERENCES aeropuertos (codigo),
+    destino          TEXT    NOT NULL REFERENCES aeropuertos (codigo),
+    aeronave_codigo  TEXT    NOT NULL REFERENCES aeronaves   (codigo),
+    duracion_min     INTEGER NOT NULL CHECK (duracion_min > 0),
+    CHECK (origen <> destino) -- garantizando que el origen y el destino no sean el mismo
+);
+
+--- 8. Vuelos (registro de trayectos programados y ejecutados)
+CREATE TABLE vuelos (
+    vuelo_id           INTEGER PRIMARY KEY,
+    numero_vuelo       TEXT    NOT NULL REFERENCES rutas (numero_vuelo),
+    estado_id          INTEGER NOT NULL REFERENCES estados_vuelo (estado_id),
+    salida_programada  TEXT    NOT NULL,
+    llegada_programada TEXT    NOT NULL,
+    salida_real        TEXT,
+    llegada_real       TEXT,
+    CHECK (llegada_real IS NULL OR salida_real IS NULL OR llegada_real > salida_real)
+);
+
+--- 9. Reservas
+CREATE TABLE reservas (
+    localizador     TEXT PRIMARY KEY,
+    fecha_reserva   TEXT NOT NULL,          
+    CHECK (length(localizador) = 6) -- código de reserva de 6 caracteres
+);
+
+--- 10. Pasajes (se permiten múltiples compras por cliente al quitar UNIQUE de pasajero_id)
+CREATE TABLE pasajes (
+    numero_pasaje  TEXT NOT NULL PRIMARY KEY,
+    localizador    TEXT NOT NULL REFERENCES reservas (localizador),
+    pasajero_id    TEXT NOT NULL
+);
+
+--- 11. Cupones de vuelo
+CREATE TABLE cupones (
+    numero_pasaje  TEXT    NOT NULL REFERENCES pasajes           (numero_pasaje),
+    vuelo_id       INTEGER NOT NULL REFERENCES vuelos            (vuelo_id),
+    clase_id       INTEGER NOT NULL REFERENCES clases_tarifarias (clase_id),
+    monto          REAL    NOT NULL CHECK (monto > 0),
+    PRIMARY KEY (numero_pasaje, vuelo_id)
+);
+
+--- 12. Tarjetas de embarque
+CREATE TABLE tarjetas_embarque (
+    numero_pasaje     TEXT    NOT NULL,
+    vuelo_id          INTEGER NOT NULL,
+    numero_embarque   INTEGER NOT NULL CHECK (numero_embarque > 0),
+    asiento           TEXT    NOT NULL,
+    PRIMARY KEY (numero_pasaje, vuelo_id),
+    FOREIGN KEY (numero_pasaje, vuelo_id)
+        REFERENCES cupones (numero_pasaje, vuelo_id),
+    UNIQUE (vuelo_id, numero_embarque),
+    UNIQUE (vuelo_id, asiento) -- garantiza que no hayan asientos por vuelo o números de embarque duplicados
+);
+
+COMMIT;
