@@ -3,7 +3,7 @@ import sqlite3
 
 import streamlit as st
 
-from utils.base_datos import cargar_configuracion, comprobar_base, resumen_base, muestra_vuelos
+from Base_de_datos.base_datos import cargar_configuracion, comprobar_base, resumen_base, muestra_vuelos
 
 
 st.set_page_config(page_title="Análisis de vuelos", page_icon="✈️", layout="wide")
