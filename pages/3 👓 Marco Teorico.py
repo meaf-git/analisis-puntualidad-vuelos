@@ -134,7 +134,6 @@ with col_der:
     """, unsafe_allow_html=True)
 ##########################################################################################
 st.markdown("#### **• Puntualidad de salida vs. llegada:**")
-
 col_salida, col_llegada = st.columns(2)
 #######################################################################################################################################
 #### SALIDA ####    
@@ -144,7 +143,8 @@ with col_salida:
             <h5 style="color: #FFFFFF; margin-top: 0; font-family: sans-serif;"> Puntualidad de Salida </h5>
             <p style="font-size: 14px; color: #FFFFFF; font-family: sans-serif;
             ">
-            ### info aqui###
+            ### Se refiere al cumplimiento del horario en el aeropuerto de origen. Operativamente, se mide comparando el momento real en que la aeronave se retira de los calzos (inicio del movimiento), frente al horario planificado para dicha acción.
+###
             </p>
             </div>
             """, unsafe_allow_html=True)
@@ -156,7 +156,8 @@ with col_llegada:
             <h5 style="color: #FFFFFF; margin-top: 0; font-family: sans-serif;"> Puntualidad de Llegada </h5>
             <p style="font-size: 14px; color: #FFFFFF; font-family: sans-serif;
             ">
-            ### info aqui###
+            ### Se define como el grado de cumplimiento del horario programado en el aeropuerto de destino. Constituye el indicador que 
+            mide la desviación temporal entre el momento en que un vuelo arriba efectivamente a su destino y el momento en que estaba planificado que lo hiciera. ###
             </p>
             </div>
             """, unsafe_allow_html=True)
@@ -263,9 +264,10 @@ with col_papa:
     st.subheader("• Factores de gestión del tráfico aéreo (ATM/ATFM):")
     
     st.markdown(""" 
-    desde aqui
-    informacion
-    hasta aqui 
+    la Air Traffic Management (ATM) y la Air Traffic Flow Management (ATFM) son los sistemas encargados de regular el flujo de aeronaves 
+    en el espacio aéreo y en los aeropuertos para mantener la seguridad. Cuando la demanda de vuelos supera la capacidad de un aeropuerto 
+    o de un sector aéreo, los controladores aplican restricciones. Esto obliga a las aerolíneas a retener los aviones en tierra (generando 
+    retrasos en la salida) o a hacer esperas en el aire (generando retrasos en la llegada).
     """, unsafe_allow_html=True)
 
 #########################################################################################################################################
@@ -274,17 +276,18 @@ with col_mama:
     st.subheader("• Factores de aerolínea y tierra:")
         
     st.markdown(""" 
-    desde aqui
-    informacion
-    hasta aqui 
+     corresponden a las ineficiencias en la operación terrestre. Incluyen problemas en el manejo de equipaje (handling), demoras en el embarque de 
+     pasajeros, fallas técnicas no programadas de la aeronave, o la falta de disponibilidad de tripulaciones. 
+
     """, unsafe_allow_html=True)
 
     st.subheader("• Factores meteorológicos:")
             
     st.markdown(""" 
-    desde aqui
-    informacion
-    hasta aqui 
+   las condiciones meteorológicas son las variables atmosféricas medibles, como temperatura, presión, viento, humedad, nubosidad y precipitación, 
+   presentes en un lugar y momento específicos.  El clima puede obligar a reducir la tasa de aterrizajes (disminuyendo la capacidad de la pista), 
+   retrasar las operaciones de carga y descarga, o impedir el despegue.  
+ 
     """, unsafe_allow_html=True)
 #########################################################################################
 
