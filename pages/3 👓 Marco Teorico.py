@@ -5,9 +5,25 @@ st.title("Marco Teorico")
 #######################################################################################
 #### LA INFO #####
 st.markdown(""" 
-desde aqui
-informacion
-hasta aqui 
+El análisis de la puntualidad aérea en Rusia requiere comprender un contexto geopolítico y 
+operativo particular. Históricamente, el espacio aéreo ruso ha estado marcado por tensiones
+ geopolíticas y divisiones regionales. Las aerolíneas internacionales se han visto 
+ históricamente condicionadas por restricciones de sobrevuelo, derivadas de sanciones de 
+ países occidentales, restricciones en el suministro de combustible y riesgos de seguridad 
+ asociados a zonas de conflicto militar. Esta dinámica ha generado una división operativa: 
+ por un lado, las aerolíneas de países con prohibiciones de acceso o que evitan el espacio 
+ aéreo por motivos de seguridad, y por el otro, las aerolíneas de países aliados que se 
+ benefician de las rutas transiberianas.
+
+ Por otra parte, dada la vasta extensión territorial de Rusia, los vuelos internos no son 
+ un lujo, sino una necesidad crítica para la conectividad del país. Esta dependencia del 
+ transporte aéreo interno obliga a los aeropuertos rusos a manejar normas de seguridad y 
+ operativas sumamente rigurosas. A pesar de la compleja situación geopolítica y del 
+ aislamiento parcial con Occidente, Rusia mantiene su compromiso de cumplir con los 
+ estándares globales de aviación civil, como los establecidos por la Organización de 
+ Aviación Civil Internacional, con el fin de evitar una desconexión total del transporte 
+ de pasajeros y mantener la operatividad de sus vuelos con países aliados.
+
 """, unsafe_allow_html=True)
 ########################################################################################
 
@@ -23,22 +39,28 @@ col_izq, col_centro, col_der = st.columns(3)
 with col_izq:
     st.markdown("#### **• Puntualidad:**")
     st.markdown("""
-    INFO AQUI PLIS
+    En la aviación se refiere a que los vuelos y las operaciones se ejecutan de acuerdo con los tiempos programados. 
     """, unsafe_allow_html=True)
 
     st.markdown("#### **• Cumplimiento de Horarios:**")
     st.markdown("""
-    INFO AQUI PLIS
+    Mide qué tan de cerca todos los elementos de las operaciones de una aerolínea o aeropuerto siguen el horario publicado, 
+    incluyendo no solo salidas y llegadas sino también el manejo en tierra, mantenimiento y cambios de tripulación. 
+    A menudo se mide usando el porcentaje de vuelos dentro de una ventana establecida (±5 o ±15 minutos) del horario, 
+    permitiendo a los operadores identificar y corregir desviaciones de procesos.
+
     """, unsafe_allow_html=True)
 
     st.markdown("#### **• Block Time:**")
     st.markdown("""
-    INFO AQUI PLIS
+    Es el intervalo desde que una aeronave sale de la puerta (off-block) hasta que se estaciona en la puerta de 
+    destino (in-block). 
     """, unsafe_allow_html=True)
 
     st.markdown("#### **• Tiempo de Escala (Turnaround Time):**")
     st.markdown("""
-    INFO AQUI PLIS
+    Se define como el período de tiempo que transcurre entre el momento en que una aeronave se detiene por completo en 
+    la puerta de embarque al finalizar un vuelo y el momento en que inicia su movimiento para emprender el siguiente vuelo. 
     """, unsafe_allow_html=True)
 
     st.markdown("#### **• Puntualidad Operacional (OTP):**")
