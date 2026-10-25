@@ -264,7 +264,7 @@ with col_papa:
     st.subheader("• Factores de gestión del tráfico aéreo (ATM/ATFM):")
     
     st.markdown(""" 
-    la Air Traffic Management (ATM) y la Air Traffic Flow Management (ATFM) son los sistemas encargados de regular el flujo de aeronaves 
+    La Air Traffic Management (ATM) y la Air Traffic Flow Management (ATFM) son los sistemas encargados de regular el flujo de aeronaves 
     en el espacio aéreo y en los aeropuertos para mantener la seguridad. Cuando la demanda de vuelos supera la capacidad de un aeropuerto 
     o de un sector aéreo, los controladores aplican restricciones. Esto obliga a las aerolíneas a retener los aviones en tierra (generando 
     retrasos en la salida) o a hacer esperas en el aire (generando retrasos en la llegada).
@@ -276,7 +276,7 @@ with col_mama:
     st.subheader("• Factores de aerolínea y tierra:")
         
     st.markdown(""" 
-     corresponden a las ineficiencias en la operación terrestre. Incluyen problemas en el manejo de equipaje (handling), demoras en el embarque de 
+     Corresponden a las ineficiencias en la operación terrestre. Incluyen problemas en el manejo de equipaje (handling), demoras en el embarque de 
      pasajeros, fallas técnicas no programadas de la aeronave, o la falta de disponibilidad de tripulaciones. 
 
     """, unsafe_allow_html=True)
@@ -284,10 +284,9 @@ with col_mama:
     st.subheader("• Factores meteorológicos:")
             
     st.markdown(""" 
-   las condiciones meteorológicas son las variables atmosféricas medibles, como temperatura, presión, viento, humedad, nubosidad y precipitación, 
+   Las condiciones meteorológicas son las variables atmosféricas medibles, como temperatura, presión, viento, humedad, nubosidad y precipitación, 
    presentes en un lugar y momento específicos.  El clima puede obligar a reducir la tasa de aterrizajes (disminuyendo la capacidad de la pista), 
    retrasar las operaciones de carga y descarga, o impedir el despegue.  
- 
     """, unsafe_allow_html=True)
 #########################################################################################
 
@@ -298,9 +297,8 @@ st.divider()
 st.header("Estadıstica descriptiva")
 
 st.markdown(""" 
-desde aqui
-informacion
-hasta aqui 
+Para el procesamiento de los datos, se emplearon diversas medidas descriptivas que permiten caracterizar 
+el comportamiento de la muestra en estudio. 
 """, unsafe_allow_html=True)
 
 ##########################################################################################
@@ -313,17 +311,17 @@ with col_messi:
     
     st.markdown("#### **• Medidas de tendencia central:**")
     st.markdown("""
-    INFO AQUI PLIS
+    Indicadores que permiten resumir un conjunto de datos (en este caso, la muestra en estudio), en un solo valor representativo. 
     """, unsafe_allow_html=True)
 
     st.markdown("#### **• Media aritmética:**")
     st.markdown("""
-    INFO AQUI PLIS
+    Representa el promedio aritmético de los puntajes y/o valores del dataset. Es sensible a datos atípicos. 
     """, unsafe_allow_html=True)
 
     st.markdown("#### **• Mediana:**")
     st.markdown("""
-    INFO AQUI PLIS
+    Es el valor central de la distribución (es decir, el que deja un 50% de los datos por arriba, y el otro 50% por debajo) cuando los datos se encuentran ordenados. 
     """, unsafe_allow_html=True)
 #########################################################################################
 ######## COLUMNA DERECHA COMO CR7 ###########
@@ -331,43 +329,44 @@ with col_cr7:
 
     st.markdown("#### **• Moda:**")
     st.markdown("""
-    INFO AQUI PLIS
+    Es el valor que ocurre con mayor frecuencia. 
     """, unsafe_allow_html=True)
 
     st.markdown("#### **• Medidas de dispersión y variabilidad:**")
     st.markdown("""
-    INFO AQUI PLIS
+    Indican que tan dispersos están los datos con respecto a una medida de tendencia central; en este caso, la media aritmética.
     """, unsafe_allow_html=True)
 
     st.markdown("#### **• Varianza:**")
     st.markdown("""
-    INFO AQUI PLIS
+    Promedio de los cuadrados de las desviaciones respecto a la media. 
     """, unsafe_allow_html=True)
 #######################################################################################
 ##### COLUMNA MEDIO CAMPO COMO KROS ###########
 with col_kros:
     st.markdown("#### **• Desviación estándar:**")
     st.markdown("""
-    INFO AQUI PLIS
+    Raíz cuadrada de la varianza.
     """, unsafe_allow_html=True)
 
     st.markdown("#### **• Medidas de posición (cuartiles):**")
     st.markdown("""
-    INFO AQUI PLIS
+    Dividen la muestra en cuatro partes iguales para identificar la distribución. 
     """, unsafe_allow_html=True)
 
     with st.expander("Mas detalles", expanded=False):
         st.markdown("""
-        •
+        •Primer cuartil (Q1): el valor por debajo del cual se encuentra el 25 % de la muestra. 
+ 
+        •Tercer cuartil (Q3): el valor que supera al 75 % de los datos.
 
-        •
+        •Rango intercuartilılico (RIC): es la diferencia entre Q3 y Q1. Representa la dispersión del 50 % central de los datos.
 
-        •
         """, unsafe_allow_html=True)    
 
     st.markdown("#### **• Coeficiente de correlacion de Pearson:**")
     st.markdown("""
-    INFO AQUI PLIS
+     Se utiliza para medir la fuerza y dirección de la relación lineal entre dos variables cuantitativas. 
     """, unsafe_allow_html=True)
 #############################################################################
 
