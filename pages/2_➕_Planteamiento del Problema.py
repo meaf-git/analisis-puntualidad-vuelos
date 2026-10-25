@@ -93,18 +93,19 @@ st.markdown(
             PERIODO DE REFERENCIA 
         </h6>
         <p style="color: #1565c0; font-style: italic; font-size: 1.05rem; line-height: 1.6; margin: 0;">
-            #######info aqui#######
-        </p>
+        La población objetivo del estudio está conformada por todos los vuelos comerciales registrados en la base de datos travel.sqlite, la cual contiene un total de 33.121 registros en la tabla principal Flights. El periodo de referencia de este análisis se encuentra entre 16 de julio al 15 de agosto del 2017. 
+        La muestra utilizada se centrará únicamente en los vuelos que completaron su itinerario, es decir, aquellos cuyo campo status sea Arrived. Conservando un total de 16.707 registros que contienen información detallada sobre:
+        </p> 
         <ul style="color: #1565c0; font-style: italic; font-size: 1.05rem; line-height: 1.6; margin-bottom: 12px; padding-left: 20px;">
             <li style="margin-bottom: 8px;"><b>Variables temporales:</b> 
-            #######info aqui#######
+            extraídas de los campos scheduled_departure, actual_departure, scheduled_arrival y actual_arrival.
             </li>
             <li><b>Variables operacionales:</b> 
-            #######info aqui#######
+            obtenidas mediante la relación de la tabla flights con airports_data (para origen y destino: departure_airport, arrival_airport, airport_name, city) y con aircrafts_data (para el tipo de aeronave: aircraft_code, model).
             </li>
         </ul>
         <p style="color: #1565c0; font-style: italic; font-size: 1.05rem; line-height: 1.6; margin: 0;">
-            #######terminas tu info aqui (ultimo parrafo)#######
+            De este estudio se excluyen los 8 vuelos que no registraron su llegada, es decir que se encuentran en el estatus de Cancelled, ya que estos vuelos no presentan tiempos reales de operación y su inclusión causaria sesgo en el cálculo de los retrasos.
         </p>
     </div>
     """,
