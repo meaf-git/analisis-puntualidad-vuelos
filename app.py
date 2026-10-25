@@ -1,18 +1,85 @@
 from pathlib import Path
 import sqlite3
-
 import streamlit as st
 
 from Base_de_datos.base_datos import cargar_configuracion, comprobar_base, resumen_base, muestra_vuelos
 
-
 st.set_page_config(page_title="Análisis de vuelos", page_icon="✈️", layout="wide")
 
+# ==============================================================================
+# CSS DEFINITIVO: NATIVO SIN DUPLICAR, ICONOS VISIBLES Y HOVER SUAVE
+# ==============================================================================
+st.markdown("""
+<style>
+    /* 1. Eliminar botón superior nativo */
+    [data-testid="collapsedControl"], button[kind="header"] {
+        display: none !important;
+    }
+    header[data-testid="stHeader"] {
+        background: transparent !important;
+    }
+
+    /* 2. Barra lateral contraída por defecto (ancho justo para los iconos) */
+    section[data-testid="stSidebar"] {
+        width: 75px !important;
+        min-width: 75px !important;
+        max-width: 75px !important;
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        overflow-x: hidden !important;
+    }
+    
+    /* 3. Expandir suavemente al hacer hover */
+    section[data-testid="stSidebar"]:hover {
+        width: 290px !important;
+        min-width: 290px !important;
+        max-width: 290px !important;
+    }
+
+    /* 4. Menú de páginas (arriba): ocultar solo el texto al contraer, manteniendo el icono visible */
+    section[data-testid="stSidebar"]:not(:hover) [data-testid="stSidebarNav"] span {
+        display: none !important;
+    }
+    section[data-testid="stSidebar"]:hover [data-testid="stSidebarNav"] span {
+        display: inline !important;
+    }
+
+    /* 5. Contenido de usuario (abajo - Proyecto de computación): ocultar completo al no hacer hover */
+    section[data-testid="stSidebar"]:not(:hover) [data-testid="stSidebarUserContent"] {
+        opacity: 0 !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        overflow: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    section[data-testid="stSidebar"]:hover [data-testid="stSidebarUserContent"] {
+        opacity: 1 !important;
+        visibility: visible !important;
+        height: auto !important;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    /* 6. Espaciado del menú de navegación */
+    [data-testid="stSidebarNav"] ul li a {
+        font-size: 15px !important;
+        padding: 8px 12px !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 raiz = Path(__file__).resolve().parent
+
+# ==============================================================================
+# BARRA LATERAL (ELEMENTOS INFERIORES: PROYECTO DE COMPUTACIÓN)
+# ==============================================================================
+st.sidebar.divider()
 st.sidebar.title("Proyecto de computación")
 seccion = st.sidebar.radio("Sección", ["Inicio", "Explorar vuelos"])
 st.sidebar.caption("Análisis de horarios y retrasos")
 
+# ==============================================================================
+# CONTENIDO PRINCIPAL
+# ==============================================================================
 st.title("Análisis de vuelos y retrasos")
 st.caption("Estudio del cumplimiento de horarios en aeropuertos de Rusia")
 
@@ -24,14 +91,13 @@ except (OSError, ValueError, sqlite3.Error) as error:
     st.error(str(error))
     st.info(
         "Descomprime Limpieza_retrasos.sqlite.zip y coloca "
-        "Eduardo_limpieza_retrasos.sqlite dentro de la carpeta data. "
-        "Si tu archivo tiene otro nombre, ajusta .config/settings.json."
+        "Eduardo_limpieza_retrasos.sqlite dentro de la carpeta data."
     )
     st.stop()
 
 try:
     resumen = resumen_base(ruta_base)
-    st.sidebar.success("Base de datos conectada")
+    st.success("Base de datos conectada correctamente")
 
     if seccion == "Inicio":
         st.subheader("Objetivo del panel")
@@ -52,21 +118,11 @@ try:
             "apto_analisis = 1. Los vuelos excluidos no entran en el análisis "
             "de retrasos; siguen conservados en la base."
         )
-        st.subheader("Contenido que agregaremos")
-        st.markdown(
-            "- Filtros por fecha, aeropuerto y aeronave.\n"
-            "- Indicadores de retrasos de salida y llegada.\n"
-            "- Gráficos por aeropuerto, día de la semana y hora local.\n"
-            "- Explicación de la preparación y de los límites de los datos."
-        )
     else:
         st.subheader("Muestra de vuelos aptos")
         st.caption(
-            "Primeros 100 vuelos ordenados por salida programada y número de identificación. "
-            "Esta muestra sirve para comprobar la lectura de la base. "
-            "Los retrasos están expresados en minutos."
+            "Primeros 100 vuelos ordenados por salida programada y número de identificación."
         )
         st.dataframe(muestra_vuelos(ruta_base), hide_index=True, width="stretch")
 except sqlite3.Error as error:
     st.error(f"No se pudo consultar la base de datos: {error}")
-
