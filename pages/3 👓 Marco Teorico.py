@@ -15,7 +15,7 @@ operativo particular. Históricamente, el espacio aéreo ruso ha estado marcado 
  aéreo por motivos de seguridad, y por el otro, las aerolíneas de países aliados que se 
  benefician de las rutas transiberianas.
 
- Por otra parte, dada la vasta extensión territorial de Rusia, los vuelos internos no son 
+Por otra parte, dada la vasta extensión territorial de Rusia, los vuelos internos no son 
  un lujo, sino una necesidad crítica para la conectividad del país. Esta dependencia del 
  transporte aéreo interno obliga a los aeropuertos rusos a manejar normas de seguridad y 
  operativas sumamente rigurosas. A pesar de la compleja situación geopolítica y del 
@@ -65,7 +65,17 @@ with col_izq:
 
     st.markdown("#### **• Puntualidad Operacional (OTP):**")
     st.markdown("""
-    INFO AQUI PLIS
+    La Puntualidad Operacional (OTP) es una métrica fundamental en la industria de la aviación, utilizada por aerolíneas, 
+    aeropuertos y reguladores de todo el mundo para medir la puntualidad de las operaciones de vuelo. 
+
+    • Salida a Tiempo (En Hora): vuelo que sale entre 0 y 14 minutos después de la hora programada.
+
+    • Umbral de Tolerancia Operativa (+15min): un vuelo que despega o se retira de la puerta hasta 14 minutos y 59 segundos 
+    tarde se sigue considerando "puntual" a nivel estadístico para la IATA (Asociación Internacional de Transporte Aéreo) y 
+    los organismos reguladores.
+
+    • Retraso (Delay): a partir del minuto 15:00, el vuelo se clasifica formalmente como retrasado.
+
     """, unsafe_allow_html=True)
 
 ###########################################################################################
@@ -74,48 +84,53 @@ with col_centro:
 
     st.markdown("#### **• Hora Real de Entrada en Bloque:**")
     st.markdown("""
-    EL PARRAFO AQUI
-    
-    • Salida a Tiempo (En Hora):
-    
-    • Umbral de Tolerancia Operativa (+15min):
-    
-    • Retraso (Delay):
+    Se refiere a la hora real en la que la aeronave entra en el bloque (posición de estacionamiento) y se detiene por completo. 
+    Marca el final oficial del vuelo y es el punto de partida para calcular el tiempo de escala.
     """, unsafe_allow_html=True)
 
     st.markdown("#### **• Hora Programada de Salida del Bloque:**")
     st.markdown("""
-    INFO AQUI PLIS
+    Es la hora planificada y publicada en la que una aeronave está programada para dejar su puesto, 
+    establecida durante el proceso de programación de la aerolínea con mucha antelación.
     """, unsafe_allow_html=True)
     
     st.markdown("#### **• Hora Real de Salida del Bloque:**")
     st.markdown("""
-    INFO AQUI PLIS
+    Es el momento exacto en que una aeronave abandona físicamente su posición de estacionamiento, 
+    registrado por sistemas de tierra o reportado por la tripulación. 
+
     """, unsafe_allow_html=True)
 ###########################################################################################
 #### COLUMNA DERECHA ####
 with col_der:
     st.markdown("#### **• Horario programado vs. horario real (scheduled vs. actual):**")
     st.markdown("""
-    INFO AQUI PLIS
+    Esta distinción es relevante porque la salida y la llegada no son simétricas. La diferencia matemática entre ambos constituye la magnitud del retraso. El retraso se define como la desviación matemática entre ambos horarios. Un valor positivo 
+    indica que el vuelo se ejecutó después de lo programado (retraso); un valor negativo indica que se ejecutó antes (adelanto). 
 
-    •
+    •Retraso_salida=Hora_real_salida-Hora_programada_salida
+   
+    •Retraso_llegada=Hora_real_llegada-Hora_programada_llegada
 
-    •
     """, unsafe_allow_html=True)   
 
     st.markdown("#### **• Estado del vuelo (Arrived):**")
     st.markdown("""
-    INFO AQUI PLIS
+    Un vuelo clasificado como "arrived" es aquel que completó su ciclo operativo, es decir, que despegó de su aeropuerto de 
+    origen y aterrizó efectivamente en su aeropuerto de destino, registrando un horario real de llegada. 
     """, unsafe_allow_html=True)
 
     st.markdown("#### **• Frecuencia vs. magnitud:**")
     st.markdown("""
-    INFO AQUI PLIS
+    Un vuelo puede tener una baja frecuencia de retrasos, pero cuando se retrasa, la magnitud puede ser tan alta que genere un 
+    impacto severo en la red  y en la experiencia del pasajero. Para evaluar correctamente el cumplimiento de los horarios, es 
+    necesario distinguir entre:
 
-    •
+    • Frecuencia (conteo y porcentaje): se refiere a la cantidad de veces que ocurre un retraso. Estadísticamente, se mide como el conteo absoluto de vuelos afectados 
+    o como la proporción (porcentaje) de vuelos que superan su horario programado respecto al total de vuelos analizados..
 
-    •
+    • Magnitud (minutos de desviación): se refiere a la intensidad o gravedad del retraso. 
+
     """, unsafe_allow_html=True)
 ##########################################################################################
 st.markdown("#### **• Puntualidad de salida vs. llegada:**")
