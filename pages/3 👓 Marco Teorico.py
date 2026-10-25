@@ -175,9 +175,7 @@ st.header("Factores de dinámica temporal y propagación del retraso")
 st.subheader("• Efecto dominó / efecto red (ripple effect)")
 
 st.markdown(""" 
-desde aqui
-informacion
-hasta aqui 
+Es un fenómeno operativo en el transporte aéreo donde un retraso inicial en un vuelo (derivado de las condiciones meteorológicas, problemas técnicos o congestión local) se propaga a través de la red. Esto provoca un efecto dominó que retrasa los siguientes vuelos de ese avión y su tripulación. Además, perjudica las conexiones de los pasajeros y multiplica los problemas en el resto de los aeropuestos.
 """, unsafe_allow_html=True)
 
 ##################################################################################
@@ -185,9 +183,7 @@ hasta aqui
 st.subheader("• Franjas horarias y slots")
 
 st.markdown(""" 
-desde aqui
-informacion
-hasta aqui 
+Se refiere a intervalos de tiempo específicos asignados a una aerolínea para llevar a cabo el aterrizaje o despegue de una aeronave en un aeropuerto congestionado o coordinado. El cumplimiento estricto de los slots (permiso de la aerolínea para que un avión pueda aterrizar y despegar en un aeropuerto en una hora y fecha en específico) es vital para que el aeropuerto siga en movimiento y evitar que todo se atasque, se ahorran sanciones y se evita que las terminales se llenen de gente. 
 """, unsafe_allow_html=True)
 
 #########################################################################################
@@ -195,9 +191,7 @@ hasta aqui
 st.subheader("• Patrones temporales semanales (estacionalidad operativa)")
 
 st.markdown(""" 
-desde aqui
-informacion
-hasta aqui 
+Son variaciones recurrentes en el volumen de tráfico aéreo, la demanda de pasajeros y los imprevistos retrasos que se repiten de forma sistemática en función de los días de la semana (por ejemplo, las horas pico cuando todos viajan por trabajo o en las salidas de fin de semana) o ciclos operativos regulares.
 """, unsafe_allow_html=True)
 
 #########################################################################################
@@ -221,7 +215,7 @@ with col_sol:
     <h5 style="color: #022157; margin-top: 0; font-family: sans-serif;"> Nodos de la red aérea (aeropuertos) </h5>
     <p style="font-size: 14px; color: #022157; font-family: sans-serif;
     ">
-    ### info aqui###
+    Estos son los centros de operaciones de la red. Incluyen tanto a los aeropuertos principales como a los secundarios, que es donde se concentran y distribuyen los aviones, la gente y la carga. Al final, lo que ocurra en estos lugares determina si todo el sistema funciona de manera correcta o se atasca.
     </p>
     </div>
     """, unsafe_allow_html=True)
@@ -232,7 +226,7 @@ with col_luna:
     <h5 style="color: #022157; margin-top: 0; font-family: sans-serif;"> Tipología de aeronaves </h5>
     <p style="font-size: 14px; color: #022157; font-family: sans-serif;
     ">
-    ### info aqui###
+    Es una clasificación para los diferentes tipos de aviones según su categoría, tamaño, capacidad de pasajeros, alcance y requerimientos técnicos. La tipología influye en los tiempos de servicio en tierra, la asignación de puertas de embarque y la compatibilidad con la infraestructura de los aeropuertos.
     </p>
     </div>
     """, unsafe_allow_html=True)
@@ -243,7 +237,7 @@ with col_malte:
     <h5 style="color: #022157; margin-top: 0; font-family: sans-serif;"> Tiempo de rotación (turnaround time) </h5>
     <p style="font-size: 14px; color: #022157; font-family: sans-serif;
     ">
-    ### info aqui###
+    Es el intervalo de tiempo necesario para que una aeronave llegue a la puerta de estacionamiento, complete el desembarque, la limpieza, el servicio de catering, el reabastecimiento de combustible, la carga de equipaje y el nuevo embarque de pasajeros, quedando lista para iniciar su siguiente vuelo. Cualquier demora en este proceso influye directamente en la puntualidad de la rotación.
     </p>
     </div>
     """, unsafe_allow_html=True)
