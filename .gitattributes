@@ -1,0 +1,2 @@
+Base_de_datos/vuelos_trabajo.duckdb filter=lfs diff=lfs merge=lfs -text
+Base_de_datos/vuelos_final.duckdb filter=lfs diff=lfs merge=lfs -text
