@@ -128,18 +128,24 @@ st.markdown(
             PERIODO DE REFERENCIA 
         </h6>
         <p style="color: #1565c0; font-style: italic; font-size: 1.05rem; line-height: 1.6; margin: 0;">
-            #######info aqui#######
+        La población objetivo del estudio está conformada por todos los vuelos comerciales registrados en la base de datos travel.sqlite, 
+        la cual contiene un total de 33.121 registros en la tabla principal Flights. El periodo de referencia de este análisis se encuentra 
+        entre 16 de julio al 15 de agosto del 2017. 
+        La muestra utilizada se centrará únicamente en los vuelos que completaron su itinerario, es decir, aquellos cuyo campo status sea 
+        Arrived. Conservando un total de 16.707 registros que contienen información detallada sobre:
         </p>
         <ul style="color: #1565c0; font-style: italic; font-size: 1.05rem; line-height: 1.6; margin-bottom: 12px; padding-left: 20px;">
             <li style="margin-bottom: 8px;"><b>Variables temporales:</b> 
-            #######info aqui#######
+            Extraídas de los campos scheduled_departure, actual_departure, scheduled_arrival y actual_arrival.
             </li>
             <li><b>Variables operacionales:</b> 
-            #######info aqui#######
+            Obtenidas mediante la relación de la tabla flights con airports_data (para origen y destino: departure_airport, arrival_airport, 
+            airport_name, city) y con aircrafts_data (para el tipo de aeronave: aircraft_code, model).
             </li>
         </ul>
         <p style="color: #1565c0; font-style: italic; font-size: 1.05rem; line-height: 1.6; margin: 0;">
-            #######terminas tu info aqui (ultimo parrafo)#######
+            De este estudio se excluyen los 8 vuelos que no registraron su llegada, es decir que se encuentran en el estatus de Cancelled, 
+            ya que estos vuelos no presentan tiempos reales de operación y su inclusión sesgar el cálculo de los retrasos. 
         </p>
     </div>
     """,
@@ -160,12 +166,14 @@ col_kobe, col_lebron = st.columns(2)
 with col_kobe:
     st.markdown("#### **• Universo de programación:**")
     st.markdown("""
-    #######info aqui#######
+Está conformado por todos los vuelos comerciales registrados en la base de datos Travel.sqlite, 
+la cual está constituida por un total de 33.121 registros de vuelos.
     """, unsafe_allow_html=True)
 
     st.markdown("#### **• Universo de operación:**")
     st.markdown("""
-    #######info aqui#######
+    El estudio se focaliza en la muestra de 16.707 vuelos que se iniciaron y finalizaron su ruta filtrados por el estado de Arrived. Y que cuentan con datos reales de despegue y aterrizaje (actual_departure y actual_arrival). Se excluyeron 8 registros cuyo estatus es "Cancelled", dado que no cuentan con horas reales de operación.
+    El periodo de referencia de este análisis se encuentra entre el 16 de julio y el 15 de agosto de 2017. 
     """, unsafe_allow_html=True)
 ############################################################################################
 #### LADO DERECHO ####
@@ -174,12 +182,17 @@ with col_lebron:
     
     st.markdown("#### **• Unidad de análisis:**")
     st.markdown("""
-    #######info aqui#######
+    La unidad mínima de observación es cada vuelo en particular. Cada uno de estos registros es único e irrepetible, 
+    y puede ser rastreado de manera inequívoca a través de su identificador primario (flight_id) dentro de la base de datos. 
     """, unsafe_allow_html=True)
     
     st.markdown("#### **• Técnicas:**")
     st.markdown("""
-    #######info aqui#######
+    Para el procesamiento de los datos, se emplearon diversas medidas descriptivas que permiten caracterizar el comportamiento 
+    de la muestra en estudio. Se utilizarán tablas de frecuencias absolutas y relativas para estudiar variables categóricas 
+    (como el día de la semana o los aeropuertos); medidas de resumen (media, mediana, desviación estándar) para cuantificar 
+    en minutos la magnitud de los retrasos; y segmentaciones agrupadas para contrastar el rendimiento operativo entre los 
+    distintos modelos de aeronaves y nodos de la red. 
     """, unsafe_allow_html=True)
 ##############################################################################################
 
