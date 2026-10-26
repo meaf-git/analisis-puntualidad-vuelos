@@ -78,7 +78,24 @@ st.markdown( ### CUADRO BONITO (CON FRASE BONITA) ###
 )
 ########################################################################################################
 st.markdown(""" 
-######## info aqui ##############
+La puntualidad es la capacidad, el hábito y el valor de cumplir con las obligaciones, citas, tareas o horarios en el momento 
+exacto que se ha acordado. Por su parte la Real Academia Española, lo define como “el cuidado y la diligencia en llegar a una
+ hora convenida o en realizar una acción a su debido tiempo”. En las aerolíneas, la puntualidad impacta directamente en la 
+ eficiencia logística, la reducción de costos y la fluidez general del tránsito aéreo. La misma también define la credibilidad 
+ ante el pasajero, siendo este un punto clave para obtener su confianza y convertirlo en un viajero frecuente. 
+
+La puntualidad, además, es un indicador de algo más profundo: confiabilidad. Cuando un pasajero reserva un vuelo, deposita 
+su confianza en llegar a tiempo a su destino. Un retraso puede ser entendible; pero la reiteración de retrasos no lo es. 
+Por ello, las compañías aéreas intentan mantener altos niveles de puntualidad para lograr construir una reputación sólida 
+y generar lealtad entre sus pasajeros.
+
+Bajo estos precedentes, el presente trabajo se propone evaluar el cumplimiento de los horarios programados de salida y llegada 
+de los vuelos registrados en los aeropuertos rusos durante el período comprendido entre el 16 de julio y el 15 de agosto de 2017,
+ mediante el análisis de los retrasos y su comportamiento según variables temporales y operacionales. El objetivo central es 
+ investigar, mediante técnicas de estadística descriptiva, cómo variables específicas, tales como la franja horaria de salida 
+ (scheduled_departure), el día de la semana, el aeropuerto de origen/destino y el tipo de aeronave (aircraft_code, model), 
+ influyen en la frecuencia y magnitud de los retrasos, medidos a partir de la desviación entre los horarios reales y programados.
+
 """, unsafe_allow_html=True)
 ########################################################################################################
 ### ESTRUCTURA DEL INFORME ###

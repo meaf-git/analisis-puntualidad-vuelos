@@ -55,9 +55,22 @@ st.divider ()
 ### JUSTIFICACION ###
 st.title("Justificación")
 st.markdown("""
-El estudio de la puntualidad en el transporte aéreo es relevante debido a que es indicador clave que afecta al tránsito aéreo, la rentabilidad de las aerolíneas y la eficiencia en todo el sistema de aviación. En la actualidad, los pasajeros están dispuestos a pagar más por volar con aerolíneas que tienen un mejor historial de puntualidad. Dichas aerolíneas suelen tener márgenes de ganancias operativas superiores. Cada punto de mejora se traduce en millones de dólares de ahorro, ya que se reducen los costos asociados a los retrasos (como compensaciones a pasajeros, combustible extra y horas de tripulación) y se optimiza el uso de los aviones.
+El estudio de la puntualidad en el transporte aéreo es relevante debido a que es un indicador clave que afecta al tránsito aéreo, 
+la rentabilidad de las aerolíneas y la eficiencia en todo el sistema de aviación. En la actualidad, los estudios demuestran que 
+los pasajeros están dispuestos a pagar más por volar con aerolíneas que tienen un mejor historial de puntualidad.  
+Por ejemplo, Zhang (2012) encontró que un pasajero promedio está dispuesto a pagar hasta 1.56 dólares por cada minuto de retraso 
+evitado. Las aerolíneas más puntuales suelen tener márgenes de ganancias operativas superiores. Cada punto de mejora se traduce 
+en millones de dólares de ahorro, ya que se reducen los costos asociados a los retrasos (como compensaciones a pasajeros, 
+combustible extra y horas de tripulación) y se optimiza el uso de los aviones.
 
-Desde una perspectiva académica, resulta significativo analizar cómo diversos factores influyen en las salidas y llegadas de los vuelos, mediante el uso de herramientas de análisis estadístico y modelado de datos que permitan identificar patrones, tendencias y correlaciones entre variables asociadas. Al cruzar variables temporales (día, hora) y operacionales (tipo de aeronave, aeropuertos de origen/destino), la investigación no solo describe el fenómeno, sino que generará información accionable. Este tipo de análisis puede contribuir a identificar áreas de alta incidencia geográfica y franjas horarias críticas, así como a generar conclusiones sobre futuras estrategias de optimización de la puntualidad, reducción de costos y mejora de la experiencia del pasajero en el sector aeronáutico.
+Desde una perspectiva académica, resulta significativo analizar cómo diversos factores influyen en las salidas y llegadas de los 
+vuelos, mediante el uso de herramientas de análisis estadístico y modelado de datos que permitan identificar patrones, tendencias
+ y correlaciones entre variables asociadas. Al cruzar variables temporales (día, hora) y operacionales (tipo de aeronave, 
+ aeropuertos de origen/destino), la investigación no solo describe el fenómeno, sino que generará información accionable. 
+ Este tipo de análisis puede contribuir a identificar áreas de alta incidencia geográfica y franjas horarias críticas, así como 
+ a generar conclusiones sobre futuras estrategias de optimización de la puntualidad, reducción de costos y mejora de la 
+ experiencia del pasajero en el sector aeronáutico.
+
 """, unsafe_allow_html=True)
 ##############################################################################################
 
