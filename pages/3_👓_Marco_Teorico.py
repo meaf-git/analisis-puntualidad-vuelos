@@ -78,6 +78,7 @@ with col_izq:
     st.markdown("""
     Mide qué tan de cerca todos los elementos de las operaciones de una aerolínea o aeropuerto siguen el horario publicado, 
     incluyendo no solo salidas y llegadas sino también el manejo en tierra, mantenimiento y cambios de tripulación. 
+    
     A menudo se mide usando el porcentaje de vuelos dentro de una ventana establecida (±5 o ±15 minutos) del horario, 
     permitiendo a los operadores identificar y corregir desviaciones de procesos.
     """, unsafe_allow_html=True)
@@ -111,19 +112,19 @@ with col_centro:
 
     st.markdown("#### **• Hora Real de Entrada en Bloque:**")
     st.markdown("""
-    se refiere a la hora real en la que la aeronave entra en el bloque (posición de estacionamiento) y 
+    Se refiere a la hora real en la que la aeronave entra en el bloque (posición de estacionamiento) y 
     se detiene por completo. Marca el final oficial del vuelo y es el punto de partida para calcular el tiempo de escala. 
     """, unsafe_allow_html=True)
 
     st.markdown("#### **• Hora Programada de Salida del Bloque:**")
     st.markdown("""
-    es la hora planificada y publicada en la que una aeronave está programada para dejar su puesto, establecida durante el 
+    Es la hora planificada y publicada en la que una aeronave está programada para dejar su puesto, establecida durante el 
     proceso de programación de la aerolínea con mucha antelación.
     """, unsafe_allow_html=True)
     
     st.markdown("#### **• Hora Real de Salida del Bloque:**")
     st.markdown("""
-    es el momento exacto en que una aeronave abandona físicamente su posición de estacionamiento, registrado por sistemas de tierra o reportado por la tripulación. 
+    Es el momento exacto en que una aeronave abandona físicamente su posición de estacionamiento, registrado por sistemas de tierra o reportado por la tripulación. 
     """, unsafe_allow_html=True)
 
 ###########################################################################################
@@ -131,14 +132,13 @@ with col_centro:
 with col_der:
     st.markdown("#### **• Horario programado vs. horario real (scheduled vs. actual):**")
     st.markdown("""
-    esta distinción es relevante porque la salida y la llegada no son simétricas. La diferencia matemática entre ambos
+    Esta distinción es relevante porque la salida y la llegada no son simétricas. La diferencia matemática entre ambos
       constituye la magnitud del retraso. El retraso se define como la desviación matemática entre ambos horarios. 
-      Un valor positivo indica que el vuelo se ejecutó después de lo programado (retraso); un valor negativo indica que 
+      Un valor positivo indica que el vuelo se ejecutó después de lo programado (retraso), un valor negativo indica que 
       se ejecutó antes (adelanto).  
-
+      
     •Retraso_salida=Hora_real_salida–Hora_programada_salida
     •Retraso_llegada=Hora_real_llegada–Hora_programada_llegada
-
     """, unsafe_allow_html=True)   
 
     st.markdown("#### **• Estado del vuelo (Arrived):**")
@@ -288,9 +288,11 @@ with col_papa:
     st.subheader("• Factores de gestión del tráfico aéreo (ATM/ATFM):")
     
     st.markdown(""" 
-    desde aqui
-    informacion
-    hasta aqui 
+    La Air Traffic Management (ATM) y la Air Traffic Flow Management (ATFM) son los sistemas encargados de regular el 
+    flujo de aeronaves en el espacio aéreo y en los aeropuertos para mantener la seguridad. Cuando la demanda de vuelos 
+    supera la capacidad de un aeropuerto o de un sector aéreo, los controladores aplican restricciones. Esto obliga a las 
+    aerolíneas a retener los aviones en tierra (generando retrasos en la salida) o a hacer esperas en el aire (generando 
+    retrasos en la llegada).
     """, unsafe_allow_html=True)
     
 #########################################################################################################################################
@@ -299,16 +301,16 @@ with col_mama:
     st.subheader("• Factores de aerolínea y tierra:")
         
     st.markdown(""" 
-    desde aqui
-    informacion
-    hasta aqui 
+    Corresponden a las ineficiencias en la operación terrestre. Incluyen problemas en el manejo de equipaje (handling), 
+    demoras en el embarque de pasajeros, fallas técnicas no programadas de la aeronave, o la falta de disponibilidad de 
+    tripulaciones. 
     """, unsafe_allow_html=True)
 
     st.subheader("• Factores meteorológicos:")
             
     st.markdown(""" 
-    desde aqui
-    informacion
-    hasta aqui 
+    Las condiciones meteorológicas son las variables atmosféricas medibles, como temperatura, presión, viento, humedad, 
+    nubosidad y precipitación, presentes en un lugar y momento específicos.  El clima puede obligar a reducir la tasa de 
+    aterrizajes (disminuyendo la capacidad de la pista), retrasar las operaciones de carga y descarga, o impedir el despegue.  
     """, unsafe_allow_html=True)
 #########################################################################################
