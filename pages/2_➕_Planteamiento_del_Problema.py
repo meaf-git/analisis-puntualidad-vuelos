@@ -49,6 +49,8 @@ A pesar de la planificación de los itinerarios, se observan desviaciones consta
 """, unsafe_allow_html=True)
 ##############################################################################################
 
+st.divider ()
+
 ##############################################################################################
 ### JUSTIFICACION ###
 st.title("Justificación")
@@ -58,6 +60,8 @@ El estudio de la puntualidad en el transporte aéreo es relevante debido a que e
 Desde una perspectiva académica, resulta significativo analizar cómo diversos factores influyen en las salidas y llegadas de los vuelos, mediante el uso de herramientas de análisis estadístico y modelado de datos que permitan identificar patrones, tendencias y correlaciones entre variables asociadas. Al cruzar variables temporales (día, hora) y operacionales (tipo de aeronave, aeropuertos de origen/destino), la investigación no solo describe el fenómeno, sino que generará información accionable. Este tipo de análisis puede contribuir a identificar áreas de alta incidencia geográfica y franjas horarias críticas, así como a generar conclusiones sobre futuras estrategias de optimización de la puntualidad, reducción de costos y mejora de la experiencia del pasajero en el sector aeronáutico.
 """, unsafe_allow_html=True)
 ##############################################################################################
+
+st.divider ()
 
 ##############################################################################################
 ### OBJETIVOS ###
@@ -82,10 +86,17 @@ st.markdown("""
     """, unsafe_allow_html=True)
 ##############################################################################################
 
+st.divider ()
+
 ##############################################################################################
 ### VARIABLES ###
 st.title("Variables de estudio")
+st.markdown("""
+info aqui
+""")
 ##############################################################################################
+
+st.divider ()
 
 ###########################################################################################
 ########## PERIODO DE REFERENCIA (CON CUADRO BONITO) ##########
@@ -122,6 +133,10 @@ st.markdown(
     unsafe_allow_html=True
 )
 ###########################################################################################
+
+st.divider ()
+
+###########################################################################################
 #### UNIVERSO #####
 st.title(" Universo y Unidad de Análisis")
 
@@ -153,6 +168,9 @@ with col_lebron:
     st.markdown("""
     #######info aqui#######
     """, unsafe_allow_html=True)
+##############################################################################################
+
+st.divider ()
 
 ##############################################################################################
 #### LIMITACIONES #####
@@ -197,6 +215,10 @@ with col_verstappen:
         </p>
         </div>
         """, unsafe_allow_html=True)    
+#################################################################################################
+
+st.divider ()
+
 #################################################################################################
 
 st.title(""" ​**Variables no contempladas**""")
