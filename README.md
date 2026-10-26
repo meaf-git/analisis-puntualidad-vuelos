@@ -45,6 +45,15 @@ Evaluar el cumplimiento de los horarios programados de salida y llegada de los v
 - Examinar la variación de los retrasos según el día de la semana, con el propósito de identificar patrones temporales en el cumplimiento de los horarios programados.
 
 ---
+## Universo y Unidad de Análisis
+- Universo de programación: está conformado por todos los vuelos comerciales registrados en la base de datos Travel.sqlite, la cual está constituida por un total de 33.121 registros de vuelos.
+  
+- Universo de operación: el estudio se focaliza en la muestra de 16.707 vuelos que se iniciaron y finalizaron su ruta filtrados por el estado de Arrived. Y que cuentan con datos reales de despegue y aterrizaje (actual_departure y actual_arrival). Se excluyeron 8 registros cuyo estatus es "Cancelled", dado que no cuentan con horas reales de operación.  El periodo de referencia de este análisis se encuentra entre el 16 de julio y el 15 de agosto de 2017.
+   
+- Unidad de análisis: la unidad mínima de observación es cada vuelo en particular. Cada uno de estos registros es único e irrepetible, y puede ser rastreado de manera inequívoca a través de su identificador primario (flight_id) dentro de la base de datos.
+  
+- Técnicas: para el procesamiento de los datos, se emplearon diversas medidas descriptivas que permiten caracterizar el comportamiento de la muestra en estudio. Se utilizarán tablas de frecuencias absolutas y relativas para estudiar variables categóricas (como el día de la semana o los aeropuertos); medidas de resumen (media, mediana, desviación estándar) para cuantificar en minutos la magnitud de los retrasos; y segmentaciones agrupadas para contrastar el rendimiento operativo entre los distintos modelos de aeronaves y nodos de la red. 
+---
 
 ## Limitaciones
 
