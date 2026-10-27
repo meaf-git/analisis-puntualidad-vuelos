@@ -74,6 +74,8 @@ La normalización de la base de datos de aerolíneas se estructuró en torno a l
 
 Con respecto a los aspectos operativos y comerciales, el diseño aplicó una descomposición semántica, separando la plantilla fija del trayecto (rutas) de su ejecución física (vuelos). Asimismo, la integridad de compra y abordaje se estructuró vinculando reservas, pasajes, cupones y tarjetas de embarque a través de claves compuestas y relaciones de muchos a muchos, asegurando que cada pase de embarque corresponda a un cupón previamente adquirido y blindando el sistema con validaciones de restricciones (CHECK y UNIQUE) contra incoherencias y duplicidad de asientos.
 
+<img width="2419" height="3294" alt="mermaid-diagram-2026-10-25-142500" src="https://github.com/user-attachments/assets/ddf677d8-55ea-4ef0-829a-0f6d20ef44f2" />
+
 ---
 
 ## Estructura del repositorio
