@@ -1,0 +1,31 @@
+model Model
+	culture: es-ES
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: es-VE
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["main dim_aeronave","main dim_aeropuerto","main dim_franja","main dim_tiempo","main vuelos_denormalizados"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table 'main dim_aeronave'
+ref table 'main dim_aeropuerto'
+ref table 'main dim_franja'
+ref table 'main dim_tiempo'
+ref table DateTableTemplate_29830d93-aa9b-4188-b2e0-7178d4028404
+ref table LocalDateTable_f6577e24-988b-451b-8539-1d8f8145b9df
+ref table 'main vuelos_denormalizados'
+ref table LocalDateTable_0cc69f2f-0535-4878-9c84-765f37963404
+ref table LocalDateTable_77b339d6-37a0-4992-8540-999ca29d2b7e
+ref table LocalDateTable_142d9c37-61cf-437f-833c-094d3e6e977a
+ref table LocalDateTable_51e106e2-2e09-411d-9aaf-975fc6a9c691
+ref table LocalDateTable_77fdaf29-0818-4390-b389-369a728ec0d0
+ref table LocalDateTable_75c8336e-0ead-42dc-a71c-fa5fdad4988b
+
+ref cultureInfo es-ES
+
