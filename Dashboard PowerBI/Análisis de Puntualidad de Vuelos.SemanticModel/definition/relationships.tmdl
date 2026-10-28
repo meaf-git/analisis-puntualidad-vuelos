@@ -1,0 +1,47 @@
+relationship 0f412b1c-1997-47fe-ab9e-441e615c16a6
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'main dim_tiempo'.fecha
+	toColumn: LocalDateTable_f6577e24-988b-451b-8539-1d8f8145b9df.Date
+
+relationship de2b6a2a-0778-4186-be48-a6d52cab0dcc
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'main vuelos_denormalizados'.salida_programada
+	toColumn: LocalDateTable_0cc69f2f-0535-4878-9c84-765f37963404.Date
+
+relationship 912a0f50-0ec7-4f83-89d2-edbe0dfeccfc
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'main vuelos_denormalizados'.salida_real
+	toColumn: LocalDateTable_77b339d6-37a0-4992-8540-999ca29d2b7e.Date
+
+relationship 53cb0e67-09d0-4a72-9e68-ad7f2f8fee7f
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'main vuelos_denormalizados'.llegada_programada
+	toColumn: LocalDateTable_142d9c37-61cf-437f-833c-094d3e6e977a.Date
+
+relationship 73421368-6109-472f-9cf8-4e338bde89f2
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'main vuelos_denormalizados'.llegada_real
+	toColumn: LocalDateTable_51e106e2-2e09-411d-9aaf-975fc6a9c691.Date
+
+relationship 49c35051-b5ff-4bcd-bba5-a40ee97669d5
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'main vuelos_denormalizados'.salida_prog_local
+	toColumn: LocalDateTable_77fdaf29-0818-4390-b389-369a728ec0d0.Date
+
+relationship 1d6e3e6d-df15-4eb4-8089-ea00a919a811
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'main vuelos_denormalizados'.fecha_salida_local
+	toColumn: LocalDateTable_75c8336e-0ead-42dc-a71c-fa5fdad4988b.Date
+
+relationship AutoDetected_7d5eeaeb-2a01-4ac0-8e7c-5ae6b207437f
+	fromColumn: 'main vuelos_denormalizados'.aeronave_id
+	toColumn: 'main dim_aeronave'.aeronave_id
+
+relationship AutoDetected_92550adf-51ba-4a2d-9a1e-4af0afda3bf1
+	fromColumn: 'main vuelos_denormalizados'.franja_id
+	toColumn: 'main dim_franja'.franja_id
+
+relationship AutoDetected_20623879-bc5c-4804-ad38-ee50ba9ce0f5
+	fromColumn: 'main vuelos_denormalizados'.fecha_id
+	toColumn: 'main dim_tiempo'.fecha_id
+
