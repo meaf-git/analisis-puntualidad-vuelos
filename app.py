@@ -1,8 +1,7 @@
 from pathlib import Path
-import sqlite3
+import duckdb
 import streamlit as st
 
-from Base_de_datos.base_datos import cargar_configuracion, comprobar_base, resumen_base, muestra_vuelos
 
 st.set_page_config(page_title="Análisis de vuelos", page_icon="✈️", layout="wide")
 
