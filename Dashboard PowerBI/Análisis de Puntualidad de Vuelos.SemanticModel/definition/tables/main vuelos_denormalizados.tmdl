@@ -1,0 +1,426 @@
+table 'main vuelos_denormalizados'
+	lineageTag: 6245f576-8986-49ad-b0aa-81b982ee37e8
+
+	column vuelo_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 5e63f4a0-d533-4963-b66e-cb06e977bc0b
+		summarizeBy: sum
+		sourceColumn: vuelo_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column numero_vuelo
+		dataType: string
+		lineageTag: 29667b15-e32f-41d7-a4ab-b159e5a9a57d
+		summarizeBy: none
+		sourceColumn: numero_vuelo
+
+		annotation SummarizationSetBy = Automatic
+
+	column origen
+		dataType: string
+		lineageTag: 555d5617-26ec-451f-8a81-989b4699c5f5
+		summarizeBy: none
+		sourceColumn: origen
+
+		annotation SummarizationSetBy = Automatic
+
+	column destino
+		dataType: string
+		lineageTag: 3d6ee29b-a9de-4334-bcb7-880b28efad6a
+		summarizeBy: none
+		sourceColumn: destino
+
+		annotation SummarizationSetBy = Automatic
+
+	column aeronave_codigo
+		dataType: string
+		lineageTag: bfe0b7b0-448d-4ca3-8523-38d86c1308bf
+		summarizeBy: none
+		sourceColumn: aeronave_codigo
+
+		annotation SummarizationSetBy = Automatic
+
+	column salida_programada
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: a6bd96dc-ea1c-4be6-939c-2351ee0190c2
+		summarizeBy: none
+		sourceColumn: salida_programada
+
+		variation Variation
+			isDefault
+			relationship: 63329a0a-d7b5-4335-a9d8-9cff786ace90
+			defaultHierarchy: LocalDateTable_7fb06059-d0b3-48ee-b9e2-bb22dc925625.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column salida_real
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 98fc64ed-5708-4957-810c-05f1b44d2ea5
+		summarizeBy: none
+		sourceColumn: salida_real
+
+		variation Variation
+			isDefault
+			relationship: 31b70552-882a-4c7b-81fc-4a5854b3a01a
+			defaultHierarchy: LocalDateTable_be81997b-5da5-46fc-946d-1779a68f0b96.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column llegada_programada
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: f0943e86-23fc-4ad4-a2e9-2a67cd77778b
+		summarizeBy: none
+		sourceColumn: llegada_programada
+
+		variation Variation
+			isDefault
+			relationship: d21d84e9-4dd9-450d-9215-4e56bcf8e147
+			defaultHierarchy: LocalDateTable_7b0e46e5-8669-4a94-aa5b-e701eca5283d.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column llegada_real
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 53a75768-f4b8-4492-aa56-04132d53d073
+		summarizeBy: none
+		sourceColumn: llegada_real
+
+		variation Variation
+			isDefault
+			relationship: 4d8dee28-1ace-41e4-a8b0-c30803e0fab7
+			defaultHierarchy: LocalDateTable_7630d93f-12f7-402f-9a29-1485279f60e1.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column retraso_salida_min
+		dataType: int64
+		formatString: 0
+		lineageTag: 45fef347-6673-4a0f-a64a-02cf038ba43b
+		summarizeBy: sum
+		sourceColumn: retraso_salida_min
+
+		annotation SummarizationSetBy = Automatic
+
+	column retraso_llegada_min
+		dataType: int64
+		formatString: 0
+		lineageTag: 0e458631-1f4e-4bb6-822b-64808836a009
+		summarizeBy: sum
+		sourceColumn: retraso_llegada_min
+
+		annotation SummarizationSetBy = Automatic
+
+	column salida_prog_local
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 1517beb0-dab0-411c-8b06-c2f33f67ffc7
+		summarizeBy: none
+		sourceColumn: salida_prog_local
+
+		variation Variation
+			isDefault
+			relationship: 0804144b-62f6-4aef-9726-39c25752bf0f
+			defaultHierarchy: LocalDateTable_13f21c6e-421c-4789-8e93-726912ec65df.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column hora_salida_local
+		dataType: int64
+		formatString: 0
+		lineageTag: 768156f3-9714-4a77-8880-3f8d31d33349
+		summarizeBy: sum
+		sourceColumn: hora_salida_local
+
+		annotation SummarizationSetBy = Automatic
+
+	column franja_horaria
+		dataType: string
+		lineageTag: c066901b-f377-4a72-ac95-4c32655b7d4c
+		summarizeBy: none
+		sourceColumn: franja_horaria
+
+		annotation SummarizationSetBy = Automatic
+
+	column dia_semana_num
+		dataType: int64
+		formatString: 0
+		lineageTag: afdc2b05-1687-4c26-a335-c306bb8c8d24
+		summarizeBy: sum
+		sourceColumn: dia_semana_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column dia_semana
+		dataType: string
+		lineageTag: 80906959-f8c7-495e-9d33-04ff788109a0
+		summarizeBy: none
+		sourceColumn: dia_semana
+
+		annotation SummarizationSetBy = Automatic
+
+	column salio_a_tiempo
+		dataType: int64
+		formatString: 0
+		lineageTag: ac28fe02-e47d-45c6-998b-58eff7ff04d9
+		summarizeBy: sum
+		sourceColumn: salio_a_tiempo
+
+		annotation SummarizationSetBy = Automatic
+
+	column llego_a_tiempo
+		dataType: int64
+		formatString: 0
+		lineageTag: 731d91df-571d-4828-b076-b03a8d855270
+		summarizeBy: sum
+		sourceColumn: llego_a_tiempo
+
+		annotation SummarizationSetBy = Automatic
+
+	column salio_a_tiempo_llego_tarde
+		dataType: int64
+		formatString: 0
+		lineageTag: c36bab4b-94b2-4dcc-9983-b35438a72ce3
+		summarizeBy: sum
+		sourceColumn: salio_a_tiempo_llego_tarde
+
+		annotation SummarizationSetBy = Automatic
+
+	column demora_salida_15
+		dataType: int64
+		formatString: 0
+		lineageTag: 5c3efea9-7f9e-4c44-abe6-80764ae8b80f
+		summarizeBy: sum
+		sourceColumn: demora_salida_15
+
+		annotation SummarizationSetBy = Automatic
+
+	column demora_llegada_15
+		dataType: int64
+		formatString: 0
+		lineageTag: daeb448e-4690-446b-b74b-2a3fda580b8d
+		summarizeBy: sum
+		sourceColumn: demora_llegada_15
+
+		annotation SummarizationSetBy = Automatic
+
+	column fecha_salida_local
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 84570427-d0c5-49c4-816c-ac4319a592db
+		summarizeBy: none
+		sourceColumn: fecha_salida_local
+
+		variation Variation
+			isDefault
+			relationship: e3bbe007-93a0-4915-8a04-e1abbc4d214c
+			defaultHierarchy: LocalDateTable_79962802-0065-4a1a-b02a-1cbd6de7496b.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column fecha_id
+		dataType: int64
+		formatString: 0
+		lineageTag: a610f605-0fb7-424b-8cfe-3dc39a0ecb2b
+		summarizeBy: none
+		sourceColumn: fecha_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column franja_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 72aa839c-ad40-42f8-9ebf-1799dcdf1d42
+		summarizeBy: sum
+		sourceColumn: franja_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column origen_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 8583cf6b-840e-47a7-90ee-005c18b2ddba
+		summarizeBy: sum
+		sourceColumn: origen_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column destino_id
+		dataType: int64
+		formatString: 0
+		lineageTag: f7939048-3369-422d-8502-8a9dbcc57a25
+		summarizeBy: sum
+		sourceColumn: destino_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column ruta_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 47cd828b-6c47-45f9-9b42-0bb89a61c614
+		summarizeBy: sum
+		sourceColumn: ruta_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column aeronave_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 1b7a86d8-89f5-40d7-9e06-57946392ad9e
+		summarizeBy: none
+		sourceColumn: aeronave_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column estado_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 3d17ad21-77de-4250-b62c-3d8f011a8623
+		summarizeBy: sum
+		sourceColumn: estado_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column aeropuerto_origen
+		dataType: string
+		lineageTag: f257a1ae-ed2e-47e1-9047-a314c8ef98f7
+		summarizeBy: none
+		sourceColumn: aeropuerto_origen
+
+		annotation SummarizationSetBy = Automatic
+
+	column ciudad_origen
+		dataType: string
+		lineageTag: adbca75e-0186-4002-a0f2-556d57c38f48
+		summarizeBy: none
+		sourceColumn: ciudad_origen
+
+		annotation SummarizationSetBy = Automatic
+
+	column zona_horaria_origen
+		dataType: string
+		lineageTag: efa5611c-5530-455d-af4c-0cf5ccd1544e
+		summarizeBy: none
+		sourceColumn: zona_horaria_origen
+
+		annotation SummarizationSetBy = Automatic
+
+	column aeropuerto_destino
+		dataType: string
+		lineageTag: 4a366a8a-9838-4e40-ba42-b7901c081cd8
+		summarizeBy: none
+		sourceColumn: aeropuerto_destino
+
+		annotation SummarizationSetBy = Automatic
+
+	column ciudad_destino
+		dataType: string
+		lineageTag: d2230eca-8d35-4cbc-868e-a30f614a840a
+		summarizeBy: none
+		sourceColumn: ciudad_destino
+
+		annotation SummarizationSetBy = Automatic
+
+	column zona_horaria_destino
+		dataType: string
+		lineageTag: 94ff4dd3-1cfa-4834-a1c1-ef665f06a135
+		summarizeBy: none
+		sourceColumn: zona_horaria_destino
+
+		annotation SummarizationSetBy = Automatic
+
+	column modelo_aeronave
+		dataType: string
+		lineageTag: ef5ce1ad-e553-427a-9510-242618a77dd0
+		summarizeBy: none
+		sourceColumn: modelo_aeronave
+
+		annotation SummarizationSetBy = Automatic
+
+	column asientos_total
+		dataType: int64
+		formatString: 0
+		lineageTag: 594cd20e-aab6-45ea-b0b8-36e18b7aaf64
+		summarizeBy: sum
+		sourceColumn: asientos_total
+
+		annotation SummarizationSetBy = Automatic
+
+	column ruta
+		dataType: string
+		lineageTag: 54d1b7b6-11c7-4a0a-a39f-3507a1bff6bc
+		summarizeBy: none
+		sourceColumn: ruta
+
+		annotation SummarizationSetBy = Automatic
+
+	column duracion_programada_min
+		dataType: int64
+		formatString: 0
+		lineageTag: acb60722-5092-4da5-a5b1-8ed904224e6c
+		summarizeBy: sum
+		sourceColumn: duracion_programada_min
+
+		annotation SummarizationSetBy = Automatic
+
+	column estado
+		dataType: string
+		lineageTag: da0bab6e-df4e-4459-8374-ff2dbb3b3485
+		summarizeBy: none
+		sourceColumn: estado
+
+		annotation SummarizationSetBy = Automatic
+
+	column regimen_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 0752f4a5-44ab-4692-9821-56ea65216f90
+		summarizeBy: sum
+		sourceColumn: regimen_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column regimen_salida
+		dataType: string
+		lineageTag: c86d4cb1-7ec1-4898-9c5d-b845f846c55c
+		summarizeBy: none
+		sourceColumn: regimen_salida
+
+		annotation SummarizationSetBy = Automatic
+
+	column minutos_recuperados
+		dataType: int64
+		formatString: 0
+		lineageTag: b611b85a-c595-4b09-81fa-69a5358ffb53
+		summarizeBy: sum
+		sourceColumn: minutos_recuperados
+
+		annotation SummarizationSetBy = Automatic
+
+	column duracion_real_min
+		dataType: int64
+		formatString: 0
+		lineageTag: c557746e-7d09-459c-96e3-19a7735fd4e9
+		summarizeBy: sum
+		sourceColumn: duracion_real_min
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'main vuelos_denormalizados' = m
+		mode: import
+		source =
+				let
+				  Origen = PostgreSQL.Database("pg.us-east-1-aws.motherduck.com", "vuelos_motherduck"),
+				  #"Navegación 1" = Origen{[Schema = "main", Item = "vuelos_denormalizados"]}[Data]
+				in
+				  #"Navegación 1"
+
+	annotation PBI_ResultType = Table
+

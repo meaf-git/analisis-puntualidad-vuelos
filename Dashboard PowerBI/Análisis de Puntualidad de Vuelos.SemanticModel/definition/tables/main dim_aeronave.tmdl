@@ -1,0 +1,57 @@
+table 'main dim_aeronave'
+	lineageTag: f66a5ae4-8953-4a5e-b10d-c2d525e46a11
+
+	column aeronave_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 94c14b94-a406-41d8-92de-ddba3c41ee50
+		summarizeBy: none
+		sourceColumn: aeronave_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column codigo
+		dataType: string
+		lineageTag: 117fb410-b72a-44b7-a355-b90fcff20f74
+		summarizeBy: none
+		sourceColumn: codigo
+
+		annotation SummarizationSetBy = Automatic
+
+	column modelo
+		dataType: string
+		lineageTag: 17c57dec-95ae-4791-930c-fe3e3f9f2484
+		summarizeBy: none
+		sourceColumn: modelo
+
+		annotation SummarizationSetBy = Automatic
+
+	column autonomia_km
+		dataType: int64
+		formatString: 0
+		lineageTag: 3705712a-3410-4877-8053-38193f17a492
+		summarizeBy: none
+		sourceColumn: autonomia_km
+
+		annotation SummarizationSetBy = Automatic
+
+	column asientos_total
+		dataType: int64
+		formatString: 0
+		lineageTag: ae34ad1a-62a1-4eb0-b6b9-fe2f8149a537
+		summarizeBy: none
+		sourceColumn: asientos_total
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'main dim_aeronave' = m
+		mode: import
+		source =
+				let
+				  Origen = PostgreSQL.Database("pg.us-east-1-aws.motherduck.com", "vuelos_motherduck"),
+				  #"Navegación 1" = Origen{[Schema = "main", Item = "dim_aeronave"]}[Data]
+				in
+				  #"Navegación 1"
+
+	annotation PBI_ResultType = Table
+
