@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Análisis de Puntualidad de Vuelos"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "97faaac1-82ec-42ef-b193-885546963598"
+  }
+}
