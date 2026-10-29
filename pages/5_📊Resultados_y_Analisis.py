@@ -53,7 +53,7 @@ def presentar_objetivo(titulo, objetivo, pregunta):
     st.write(pregunta)
 
     st.info(
-        ""Estructura creada. resultados, graficas y filtros aqui""
+        "Estructura creada. resultados, graficas y filtros aqui"
     )
 
 
