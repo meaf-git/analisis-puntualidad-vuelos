@@ -53,12 +53,8 @@ st.caption(
     f"Muestra limpia: {int(control.loc[0, 'vuelos']):,} vuelos"
 )
 
-umbral = st.radio(
-    "Considerar retraso cuando supera",
-    [0, 15],
-    format_func=lambda valor: f"{valor} minutos",
-    horizontal=True
-)
+umbral = 0
+
 
 with st.expander("Criterios del análisis", expanded=True):
     st.markdown(
@@ -66,10 +62,7 @@ with st.expander("Criterios del análisis", expanded=True):
         - Se analizan los vuelos que completaron su recorrido:
           estado **Arrived**.
         - Se comparan los horarios programados con los reales.
-        - Se consideran ambos criterios: retraso **mayor de 0 minutos**
-          y retraso **mayor de 15 minutos**.
-        - Se utiliza la llegada programada reconstruida,
-          aprobada por el equipo.
+        - Se considera retraso toda demora **mayor de 0 minutos** respecto al horario programado.
         - Las comparaciones por horario y día utilizan
           la salida programada local del aeropuerto de origen.
         """
@@ -153,51 +146,6 @@ with pestanas[0]:
         "sus retrasos de salida y llegada?"
     )
   
-    resumen = consultar("""
-        SELECT
-            'Salida' AS etapa,
-            COUNT(*) AS vuelos,
-            SUM(CASE WHEN retraso_salida_min > ?
-                THEN 1 ELSE 0 END) AS retrasados,
-            AVG(CASE WHEN retraso_salida_min > ?
-                THEN retraso_salida_min END) AS media_min
-        FROM v_analisis_vuelos_limpios
-        UNION ALL
-        SELECT
-            'Llegada' AS etapa,
-            COUNT(*) AS vuelos,
-            SUM(CASE WHEN retraso_llegada_min > ?
-                THEN 1 ELSE 0 END) AS retrasados,
-            AVG(CASE WHEN retraso_llegada_min > ?
-                THEN retraso_llegada_min END) AS media_min
-        FROM v_analisis_vuelos_limpios
-    """, [umbral, umbral, umbral, umbral])
-
-    resumen["porcentaje"] = (
-        100 * resumen["retrasados"] / resumen["vuelos"]
-    )
-    st.dataframe(resumen.round(2), hide_index=True)
-    st.caption("Frecuencia del retraso en porcentaje")
-    st.bar_chart(resumen.set_index("etapa")[["porcentaje"]])
-    st.write(
-        "**Porcentaje de vuelos con retraso:** muestra cuántos "
-        "de cada 100 vuelos salieron o llegaron tarde. "
-        "Las salidas y las llegadas se calculan por separado."
-    )
-
-    st.write(
-        "**Criterio de retraso:** al seleccionar 0 minutos, "
-        "contamos cualquier demora. Al seleccionar 15 minutos, "
-        "contamos únicamente las demoras mayores de 15 minutos."
-    )
-
-    st.write(
-        "**Demora media:** indica cuántos minutos se retrasaron, "
-        "en promedio, los vuelos que superaron el límite elegido. "
-        "Los vuelos que no superaron ese límite quedan fuera "
-        "del promedio."
-    )
-
 
 with pestanas[1]:
     presentar_objetivo(
@@ -211,45 +159,6 @@ with pestanas[1]:
         "¿Qué franjas de salida programada presentan mayor "
         "proporción de vuelos retrasados y demoras más largas?"
     )
-    por_franja = resumir_por("franja_horaria")
-    st.subheader("Retrasos de salida")
-    mostrar_grupo(por_franja, "salida")
-    st.subheader("Retrasos de llegada")
-    mostrar_grupo(por_franja, "llegada")
-    st.write(
-        "**Agrupación por horario:** los vuelos se clasifican "
-        "según su hora de salida programada, utilizando la hora "
-        "local del aeropuerto de origen. Esta misma clasificación "
-        "se mantiene al analizar los retrasos de llegada."
-    )
-
-    st.write(
-        "**Frecuencia de los retrasos:** el porcentaje permite "
-        "comparar qué franjas presentan una mayor proporción "
-        "de vuelos retrasados. Una franja puede acumular más "
-        "retrasos simplemente porque concentra más vuelos; "
-        "por eso, la cantidad de casos no basta para determinar "
-        "cuál presenta menor puntualidad."
-    )
-
-    st.write(
-        "**Duración de los retrasos:** la demora media muestra "
-        "cuántos minutos se retrasaron, en promedio, los vuelos "
-        "que superaron el límite seleccionado. La franja con "
-        "mayor porcentaje de retrasos no necesariamente tiene "
-        "las demoras más prolongadas."
-    )
-
-    st.write(
-        "**Interpretación de los resultados:** comparar el "
-        "porcentaje y la demora media permite identificar "
-        "los horarios en los que los retrasos son más frecuentes "
-        "o más prolongados. Si una franja no registra vuelos, "
-        "no hay información suficiente para evaluar su puntualidad; "
-        "esto no significa que tenga un 0% de retrasos"
-
-    )
-
 
 
 with pestanas[2]:
