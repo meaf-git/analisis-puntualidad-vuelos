@@ -89,15 +89,11 @@ try:
     comprobar_base(ruta_base)
 except (OSError, ValueError, sqlite3.Error) as error:
     st.error(str(error))
-    st.info(
-        "Descomprime Limpieza_retrasos.sqlite.zip y coloca "
-        "Eduardo_limpieza_retrasos.sqlite dentro de la carpeta data."
-    )
+
     st.stop()
 
 try:
     resumen = resumen_base(ruta_base)
-    st.success("Base de datos conectada correctamente")
 
     if seccion == "Inicio":
         st.subheader("Objetivo del panel")
@@ -114,10 +110,14 @@ try:
             f"{resumen['fecha_min']} a {resumen['fecha_max']}"
         )
         st.info(
-            "La muestra utiliza la vista vw_muestra_retrasos, que selecciona "
-            "apto_analisis = 1. Los vuelos excluidos no entran en el análisis "
-            "de retrasos; siguen conservados en la base."
-        )
+        "Los vuelos excluidos se conservan en la base, pero "
+        "no cumplen los requisitos de información del análisis "
+        "de retrasos, como disponer de las horas necesarias "
+        "para calcular la demora. "
+        "Los vuelos puntuales sí forman parte del análisis "
+        "y se incluyen en el total utilizado para calcular "
+        "el porcentaje de vuelos con retraso."
+    )
     else:
         st.subheader("Muestra de vuelos aptos")
         st.caption(
