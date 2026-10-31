@@ -1,5 +1,6 @@
 import streamlit as st
-
+from pathlib import Path
+import duckdb
 st.set_page_config(
     page_title="Resultados y análisis",
     page_icon="📊",
@@ -18,6 +19,42 @@ st.caption(
 )
 
 st.divider()
+raiz = Path(__file__).resolve().parents[1]
+ruta_base = raiz / "Base_de_datos" / "vuelos_final.duckdb"
+
+if not ruta_base.is_file():
+    st.error("No se encontró la base DuckDB.")
+    st.stop()
+
+
+def consultar(sql, parametros=None):
+    with duckdb.connect(
+        str(ruta_base),
+        read_only=True
+    ) as conexion:
+        return conexion.execute(
+            sql,
+            parametros or []
+        ).fetchdf()
+
+control = consultar("""
+    SELECT
+        COUNT(*) AS vuelos,
+        MIN(CAST(salida_prog_local AS DATE)) AS desde,
+        MAX(CAST(salida_prog_local AS DATE)) AS hasta
+    FROM v_analisis_vuelos_limpios
+""")
+
+if int(control.loc[0, "vuelos"]) == 0:
+    st.warning("No hay vuelos en la muestra limpia.")
+    st.stop()
+
+st.caption(
+    f"Muestra limpia: {int(control.loc[0, 'vuelos']):,} vuelos"
+)
+
+umbral = 0
+
 
 with st.expander("Criterios del análisis", expanded=True):
     st.markdown(
@@ -25,13 +62,56 @@ with st.expander("Criterios del análisis", expanded=True):
         - Se analizan los vuelos que completaron su recorrido:
           estado **Arrived**.
         - Se comparan los horarios programados con los reales.
-        - Se consideran ambos criterios: retraso **mayor de 0 minutos**
-          y retraso **mayor de 15 minutos**.
-        - Se utiliza la llegada programada reconstruida,
-          aprobada por el equipo.
+        - Se considera retraso toda demora **mayor de 0 minutos** respecto al horario programado.
         - Las comparaciones por horario y día utilizan
           la salida programada local del aeropuerto de origen.
         """
+    )
+
+def resumir_por(campo):
+    permitidos = {
+        "franja_horaria",
+        "origen",
+        "destino",
+        "modelo_aeronave",
+        "dia_semana"
+    }
+    if campo not in permitidos:
+        raise ValueError("Agrupación no permitida")
+
+    return consultar(f"""
+        SELECT
+            {campo} AS grupo,
+            COUNT(*) AS vuelos,
+            SUM(CASE WHEN retraso_salida_min > ?
+                THEN 1 ELSE 0 END) AS salida_retrasada,
+            SUM(CASE WHEN retraso_llegada_min > ?
+                THEN 1 ELSE 0 END) AS llegada_retrasada,
+            AVG(CASE WHEN retraso_salida_min > ?
+                THEN retraso_salida_min END) AS media_salida,
+            AVG(CASE WHEN retraso_llegada_min > ?
+                THEN retraso_llegada_min END) AS media_llegada
+        FROM v_analisis_vuelos_limpios
+        GROUP BY {campo}
+        ORDER BY {campo}
+    """, [umbral, umbral, umbral, umbral])
+
+def mostrar_grupo(tabla, fase):
+    tabla = tabla.copy()
+    casos = fase + "_retrasada"
+    media = "media_" + fase
+    tabla["porcentaje"] = (
+        100 * tabla[casos] / tabla["vuelos"]
+    )
+
+    st.dataframe(tabla.round(2), hide_index=True)
+    st.caption("Frecuencia del retraso en porcentaje")
+    st.bar_chart(
+        tabla.set_index("grupo")[["porcentaje"]]
+    )
+    st.caption("Demora media entre retrasados en minutos")
+    st.bar_chart(
+        tabla.set_index("grupo")[[media]]
     )
 
 pestanas = st.tabs(
@@ -49,12 +129,8 @@ def presentar_objetivo(titulo, objetivo, pregunta):
     st.header(titulo)
     st.write(objetivo)
 
-    st.subheader("Pregunta que responde")
+    st.subheader("Pregunta de analisis")
     st.write(pregunta)
-
-    st.info(
-        "Estructura creada. resultados, graficas y filtros aqui"
-    )
 
 
 with pestanas[0]:
@@ -69,7 +145,7 @@ with pestanas[0]:
         "¿Cuántos vuelos se retrasaron y de cuántos minutos fueron "
         "sus retrasos de salida y llegada?"
     )
-
+  
 
 with pestanas[1]:
     presentar_objetivo(
