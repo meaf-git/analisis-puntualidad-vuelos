@@ -1,0 +1,74 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 27.469160457820294
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 412.12681513251727,
+            "y": 103.44997233001402
+          },
+          "nodeIndex": "main dim_aeronave",
+          "nodeLineageTag": "f66a5ae4-8953-4a5e-b10d-c2d525e46a11",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 827.2804430693684,
+            "y": 239.06340756625866
+          },
+          "nodeIndex": "main dim_aeropuerto",
+          "nodeLineageTag": "9dcba348-41c7-4d87-8f52-0674942b9bd0",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 0,
+            "y": 0
+          },
+          "nodeIndex": "main dim_tiempo",
+          "nodeLineageTag": "23d7b820-69bc-4930-b5ed-c504584602d9",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 84.362463010198567,
+            "y": 478.12681513251732
+          },
+          "nodeIndex": "main vuelos_denormalizados",
+          "nodeLineageTag": "6245f576-8986-49ad-b0aa-81b982ee37e8",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 3
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 63.287087723234279,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

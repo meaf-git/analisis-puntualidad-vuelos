@@ -1,0 +1,66 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "5887eb0422baba6ed184",
+  "position": {
+    "x": 673.33333333333337,
+    "y": 213.33333333333334,
+    "z": 4000,
+    "height": 151.47540983606558,
+    "width": 247.86885245901641,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "main vuelos_denormalizados"
+                        }
+                      },
+                      "Property": "Promedio de retraso en llegadas"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(main vuelos_denormalizados.Promedio Demora Llegada)",
+              "nativeQueryRef": "Sum of Promedio de retraso en llegadas"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Aggregation": {
+                "Expression": {
+                  "Column": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "main vuelos_denormalizados"
+                      }
+                    },
+                    "Property": "Promedio de retraso en llegadas"
+                  }
+                },
+                "Function": 0
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

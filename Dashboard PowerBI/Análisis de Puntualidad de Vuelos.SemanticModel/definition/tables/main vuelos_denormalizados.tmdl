@@ -1,6 +1,17 @@
 table 'main vuelos_denormalizados'
 	lineageTag: 6245f576-8986-49ad-b0aa-81b982ee37e8
 
+	measure 'Vuelos Totales' = COUNTROWS('main vuelos_denormalizados')
+		formatString: 0
+		lineageTag: 782b1fe1-6b75-4115-b0bb-ddd0196a7517
+
+		changedProperty = IsHidden
+
+	measure 'Promedio Demora Salida' = AVERAGE('main vuelos_denormalizados'[demora_salida_15])
+		lineageTag: fdb90c9e-a683-46eb-a00c-6f83c5b3fd9a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
 	column vuelo_id
 		dataType: int64
 		formatString: 0
@@ -410,6 +421,65 @@ table 'main vuelos_denormalizados'
 		lineageTag: c557746e-7d09-459c-96e3-19a7735fd4e9
 		summarizeBy: sum
 		sourceColumn: duracion_real_min
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Promedio de retraso en llegadas' = AVERAGE('main vuelos_denormalizados'[demora_llegada_15])
+		lineageTag: e1d1e55c-eeff-4454-8e41-4f0b5576c0ee
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Max Retraso Salida' = MAX('main vuelos_denormalizados'[demora_salida_15])
+		lineageTag: bc4e9f54-e8ae-4037-8242-6a483326f4a6
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Puntualidad salida'
+		type: calculated
+		lineageTag: c5c808dd-843d-4e8b-b02a-2850284503d4
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Estado vuelo' = IF('main vuelos_denormalizados'[retraso_llegada_min] <= 15, "Puntual", "Retrasado")
+		lineageTag: 485bda69-cfa1-4bb7-9b43-7cbd1e022ec6
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Estado de Puntualidad' = ```
+			IF(
+			    ISBLANK('main vuelos_denormalizados'[retraso_llegada_min]),
+			    "Sin Registro",
+			    IF(
+			        'main vuelos_denormalizados'[retraso_llegada_min] <= 15, 
+			        "Puntual", 
+			        "Retrasado"
+			    )
+			)
+			```
+		lineageTag: e284c818-1adb-4255-bb70-21e795fed240
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Rangos de Retraso' =
+			
+			SWITCH(
+			    TRUE(),
+			    [retraso_salida_min] <= 0, "A tiempo",
+			    [retraso_salida_min] <= 30, "Retraso Leve [1-30 min]",
+			    [retraso_salida_min] <= 60, "Retraso Moderado [31-60 min]",
+			    "Retraso Severo [>60 min]"
+			)
+		lineageTag: 85fac1f6-3674-402d-87a7-096a81bc7e47
+		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
 

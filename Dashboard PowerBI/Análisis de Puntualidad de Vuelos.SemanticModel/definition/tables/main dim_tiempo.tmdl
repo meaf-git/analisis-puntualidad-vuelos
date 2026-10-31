@@ -8,6 +8,8 @@ table 'main dim_tiempo'
 		summarizeBy: none
 		sourceColumn: fecha_id
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column fecha
@@ -22,6 +24,8 @@ table 'main dim_tiempo'
 			relationship: b0c30c54-f8b9-475f-af78-4a56c27b7715
 			defaultHierarchy: LocalDateTable_bac38988-1ceb-4b6d-a69a-a6dba418e10d.'Jerarquía de fechas'
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -33,6 +37,8 @@ table 'main dim_tiempo'
 		summarizeBy: sum
 		sourceColumn: anio
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column mes
@@ -42,6 +48,8 @@ table 'main dim_tiempo'
 		summarizeBy: sum
 		sourceColumn: mes
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column nombre_mes
@@ -49,6 +57,8 @@ table 'main dim_tiempo'
 		lineageTag: 2d432823-71bd-4ae9-a4b2-ceeb7efb3bbe
 		summarizeBy: none
 		sourceColumn: nombre_mes
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -59,6 +69,8 @@ table 'main dim_tiempo'
 		summarizeBy: sum
 		sourceColumn: dia
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column dia_semana
@@ -68,6 +80,8 @@ table 'main dim_tiempo'
 		summarizeBy: sum
 		sourceColumn: dia_semana
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column nombre_dia
@@ -75,6 +89,8 @@ table 'main dim_tiempo'
 		lineageTag: 890350d3-721d-4e2d-9ab7-9a920dfd7ae6
 		summarizeBy: none
 		sourceColumn: nombre_dia
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -85,6 +101,8 @@ table 'main dim_tiempo'
 		summarizeBy: sum
 		sourceColumn: semana_iso
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column es_fin_de_semana
@@ -94,6 +112,8 @@ table 'main dim_tiempo'
 		summarizeBy: sum
 		sourceColumn: es_fin_de_semana
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column hay_operados
@@ -102,6 +122,8 @@ table 'main dim_tiempo'
 		lineageTag: 4847dd35-34d3-4364-ad62-390649cc1348
 		summarizeBy: sum
 		sourceColumn: hay_operados
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -113,6 +135,8 @@ table 'main dim_tiempo'
 				  #"Navegación 1" = Origen{[Schema = "main", Item = "dim_tiempo"]}[Data]
 				in
 				  #"Navegación 1"
+
+	changedProperty = IsHidden
 
 	annotation PBI_ResultType = Table
 

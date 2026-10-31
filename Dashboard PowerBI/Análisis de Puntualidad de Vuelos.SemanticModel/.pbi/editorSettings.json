@@ -1,9 +1,8 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/semanticModel/editorSettings/1.0.0/schema.json",
+  "version": "1.0",
   "autodetectRelationships": true,
   "parallelQueryLoading": true,
   "typeDetectionEnabled": true,
   "relationshipImportEnabled": true,
-  "runBackgroundAnalysis": true,
   "shouldNotifyUserOfNameConflictResolution": true
 }
