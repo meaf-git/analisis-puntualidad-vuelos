@@ -1,6 +1,10 @@
 from pathlib import Path
 import duckdb
+import pandas as pd
 import streamlit as st
+from utils.db import get_supabase_client
+
+
 
 
 st.set_page_config(page_title="Análisis de vuelos", page_icon="✈️", layout="wide")
@@ -163,3 +167,39 @@ else:
     st.subheader("Muestra de vuelos aptos")
     st.caption("Muestra de hasta 100 registros de la vista de análisis limpia.")
     st.dataframe(muestra, hide_index=True, width="stretch")
+
+#==============================================================================
+# conexion con supabase
+#==============================================================================
+try:
+        # Inicializamos en supabase
+        supabase = get_supabase_client()
+
+        # Tablas de la base de datos origial
+        tablas_disponibles = [
+            "flights",
+            "bookings",
+            "tickets",
+            "ticket_flights",
+            "boarding_passes",
+            "aircrafts_data",
+            "airports_data",
+            "seats"
+        ]
+
+        # Menú desplegable para elegir qué tabla ver en la app
+        tabla_seleccionada = st.selectbox("Selecciona la tabla a consultar:", tablas_disponibles)
+
+        # Consultar los datos de la tabla elegida (limitado a 500 registros para rendimiento)
+        response = supabase.table(tabla_seleccionada).select("*").range(0,99999).execute()
+        data = response.data
+
+        if data:
+            df_supabase = pd.DataFrame(data)
+            st.success(f"¡Conectado a Supabase! Mostrando registros de **{tabla_seleccionada}**.")
+            st.dataframe(df_supabase, hide_index=True, use_container_width=True)
+        else:
+            st.warning(f"La tabla '{tabla_seleccionada}' está vacía o no se encontraron datos.")
+
+except Exception as e:
+        st.error(f"Error al conectar o consultar Supabase: {e}")
