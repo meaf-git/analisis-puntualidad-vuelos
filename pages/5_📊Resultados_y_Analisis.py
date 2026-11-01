@@ -3,6 +3,7 @@ from pathlib import Path
 import duckdb
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 
 st.set_page_config(
     page_title="Resultados y análisis",
@@ -407,6 +408,8 @@ with pestanas[0]:
         )
 
   
+from plotly.subplots import make_subplots
+
 with pestanas[1]:
     presentar_objetivo(
         "Retrasos según el horario programado",
@@ -419,6 +422,231 @@ with pestanas[1]:
         "¿Qué franjas de salida programada presentan mayor "
         "proporción de vuelos retrasados y demoras más largas?"
     )
+
+    st.caption(
+        "En este objetivo, una salida retrasada supera los 15 minutos. "
+        "El promedio incluye todos los vuelos de cada grupo. "
+        "Se utiliza la salida programada local del aeropuerto de origen."
+    )
+
+    # Los totales se calculan sobre los vuelos, no promediando promedios.
+    datos_objetivo2 = consultar("""
+        SELECT
+            COALESCE(franja_horaria, 'Total') AS franja,
+            COALESCE(dia_semana, 'Total') AS dia,
+            COUNT(*) AS vuelos,
+            SUM(
+                CASE WHEN retraso_salida_min > 15
+                THEN 1 ELSE 0 END
+            ) AS retrasados,
+            AVG(retraso_salida_min) AS promedio
+        FROM v_analisis_vuelos_limpios
+        GROUP BY GROUPING SETS (
+            (franja_horaria, dia_semana),
+            (franja_horaria),
+            (dia_semana),
+            ()
+        )
+    """)
+
+    datos_objetivo2["porcentaje"] = (
+        100 * datos_objetivo2["retrasados"]
+        / datos_objetivo2["vuelos"]
+    )
+
+    resumen_objetivo2 = datos_objetivo2[
+        (datos_objetivo2["franja"] == "Total")
+        & (datos_objetivo2["dia"] == "Total")
+    ].iloc[0]
+
+    por_franja = datos_objetivo2[
+        (datos_objetivo2["franja"] != "Total")
+        & (datos_objetivo2["dia"] == "Total")
+    ].sort_values("franja")
+
+    indicadores_objetivo2 = st.columns(4)
+    valores_objetivo2 = [
+        ("Vuelos con salida registrada", f'{int(resumen_objetivo2["vuelos"]):,}'),
+        ("Vuelos retrasados salida", f'{int(resumen_objetivo2["retrasados"]):,}'),
+        ("Promedio retraso salida (min)", f'{resumen_objetivo2["promedio"]:.2f}'),
+        ("Vuelos retrasados (%)", f'{resumen_objetivo2["porcentaje"]:.2f} %')
+    ]
+    for columna, (etiqueta, valor) in zip(
+        indicadores_objetivo2, valores_objetivo2
+    ):
+        with columna:
+            st.metric(
+                etiqueta,
+                valor.replace(",", "_").replace(".", ",").replace("_", "."),
+                border=True
+            )
+
+    izquierda, derecha = st.columns(2)
+    orden_franjas = por_franja["franja"].tolist()
+    orden_dias = [
+        "Domingo", "Jueves", "Lunes", "Martes",
+        "Miercoles", "Sabado", "Viernes"
+    ]
+    etiquetas_objetivo2 = {
+        "franja": "Franja horaria",
+        "promedio": "Promedio retraso salida (min)",
+        "porcentaje": "Vuelos retrasados (%)",
+        "vuelos": "Total vuelos salidos",
+        "retrasados": "Vuelos retrasados salida"
+    }
+
+    with izquierda:
+        st.subheader("Promedio de retraso por día y franja horaria")
+        matriz_objetivo2 = datos_objetivo2.pivot(
+            index="franja", columns="dia", values="promedio"
+        ).reindex(
+            index=orden_franjas + ["Total"],
+            columns=orden_dias + ["Total"]
+        )
+
+        celdas = matriz_objetivo2.loc[orden_franjas, orden_dias]
+        minimo = celdas.min().min()
+        amplitud = celdas.max().max() - minimo
+
+        def colorear_promedio(valor):
+            if pd.isna(valor):
+                return ""
+            tonos = ["#9DC3E6", "#DDEBF7", "#F7F7F7", "#F8CBAD", "#EBA19D"]
+            posicion = (valor - minimo) / amplitud if amplitud else 0.5
+            indice = min(4, int(posicion * 5))
+            return f"background-color: {tonos[indice]}; color: #111827"
+
+        st.dataframe(
+            matriz_objetivo2.style
+            .apply(
+                lambda columna: columna.map(colorear_promedio),
+                subset=pd.IndexSlice[orden_franjas, orden_dias]
+            )
+            .format(lambda valor: f"{valor:.2f}".replace(".", ",")),
+            width="stretch"
+        )
+
+        magnitud_objetivo2 = px.bar(
+            por_franja,
+            x="franja",
+            y="promedio",
+            text="promedio",
+            labels=etiquetas_objetivo2,
+            color_discrete_sequence=["#168CF0"],
+            category_orders={"franja": orden_franjas},
+            title="Magnitud del retraso por franja horaria"
+        )
+        magnitud_objetivo2.update_traces(
+            texttemplate="%{y:.2f}", textposition="outside"
+        )
+        magnitud_objetivo2.update_yaxes(rangemode="tozero")
+        st.plotly_chart(
+            magnitud_objetivo2,
+            width="stretch",
+            key="objetivo2_magnitud"
+        )
+
+        porcentajes_objetivo2 = px.bar(
+            por_franja.sort_values("porcentaje"),
+            x="porcentaje",
+            y="franja",
+            orientation="h",
+            text="porcentaje",
+            labels=etiquetas_objetivo2,
+            color_discrete_sequence=["#168CF0"],
+            title="Porcentaje de vuelos retrasados por franja"
+        )
+        porcentajes_objetivo2.update_traces(
+            texttemplate="%{x:.2f} %", textposition="outside"
+        )
+        porcentajes_objetivo2.update_xaxes(
+            range=[0, por_franja["porcentaje"].max() * 1.2]
+        )
+        st.plotly_chart(
+            porcentajes_objetivo2,
+            width="stretch",
+            key="objetivo2_porcentajes"
+        )
+
+    with derecha:
+        frecuencia_objetivo2 = por_franja.sort_values(
+            "retrasados", ascending=False
+        )
+        combinado_objetivo2 = make_subplots(
+            specs=[[{"secondary_y": True}]]
+        )
+        combinado_objetivo2.add_trace(
+            go.Bar(
+                x=frecuencia_objetivo2["franja"],
+                y=frecuencia_objetivo2["retrasados"],
+                name="Vuelos retrasados salida",
+                marker_color="#168CF0"
+            ),
+            secondary_y=False
+        )
+        combinado_objetivo2.add_trace(
+            go.Scatter(
+                x=frecuencia_objetivo2["franja"],
+                y=frecuencia_objetivo2["porcentaje"],
+                name="Vuelos retrasados (%)",
+                mode="lines+markers",
+                line=dict(color="#25258A")
+            ),
+            secondary_y=True
+        )
+        combinado_objetivo2.update_layout(
+            title="Frecuencia y tasa de retrasos por franja horaria",
+            legend=dict(orientation="h", y=-0.25),
+            xaxis=dict(
+                categoryorder="array",
+                categoryarray=frecuencia_objetivo2["franja"].tolist()
+            ),
+            margin=dict(b=100)
+        )
+        combinado_objetivo2.update_yaxes(
+            title_text="Vuelos retrasados salida",
+            secondary_y=False,
+            rangemode="tozero"
+            )
+        combinado_objetivo2.update_yaxes(
+            title_text="Vuelos retrasados (%)",
+            ticksuffix=" %",
+            secondary_y=True,
+            rangemode="tozero"
+        )
+        st.plotly_chart(
+            combinado_objetivo2,
+            width="stretch",
+            key="objetivo2_frecuencia_tasa"
+        )
+
+        dispersion_objetivo2 = px.scatter(
+            por_franja,
+            x="promedio",
+            y="retrasados",
+            color="franja",
+            size="retrasados",
+            size_max=24,
+            hover_data={"vuelos": True, "porcentaje": ":.2f"},
+            labels=etiquetas_objetivo2,
+            category_orders={"franja": orden_franjas},
+            color_discrete_sequence=["#3C3C9E", "#329AF0", "#ED8252"],
+            title="Promedio y cantidad de salidas retrasadas"
+        )
+        dispersion_objetivo2.update_layout(
+            legend=dict(orientation="h", y=-0.25),
+            margin=dict(b=100)
+        )
+        st.plotly_chart(
+            dispersion_objetivo2,
+            width="stretch",
+            key="objetivo2_dispersion"
+        )
+        st.caption(
+            "Cada punto representa una franja horaria. "
+            "Su tamaño indica la cantidad de salidas retrasadas."
+        )
+
 
 
 with pestanas[2]:
