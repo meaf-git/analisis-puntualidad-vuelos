@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
-  "name": "70d4d7e54bd10b671bb6",
+  "name": "8de988122aaac2d000e4",
   "position": {
-    "x": 24,
-    "y": 720,
-    "z": 2000,
+    "x": 320,
+    "y": 912,
+    "z": 12002,
     "height": 144,
-    "width": 264,
-    "tabOrder": 1000
+    "width": 272,
+    "tabOrder": 12002
   },
   "visual": {
     "visualType": "cardVisual",
@@ -23,11 +23,11 @@
                       "Entity": "main vuelos_denormalizados"
                     }
                   },
-                  "Property": "Total Vuelos Salidos"
+                  "Property": "% Vuelos Retrasados"
                 }
               },
-              "queryRef": "main vuelos_denormalizados.Vuelos Totales",
-              "nativeQueryRef": "Total Vuelos Salidos"
+              "queryRef": "main vuelos_denormalizados.% Vuelos Retrasados",
+              "nativeQueryRef": "% Vuelos Retrasados"
             }
           ]
         }
@@ -42,7 +42,7 @@
                     "Entity": "main vuelos_denormalizados"
                   }
                 },
-                "Property": "Total Vuelos Salidos"
+                "Property": "% Vuelos Retrasados"
               }
             },
             "direction": "Descending"

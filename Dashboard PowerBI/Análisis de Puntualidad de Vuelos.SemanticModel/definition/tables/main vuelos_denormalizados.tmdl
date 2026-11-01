@@ -2,15 +2,14 @@ table 'main vuelos_denormalizados'
 	lineageTag: 6245f576-8986-49ad-b0aa-81b982ee37e8
 
 	measure 'Total Vuelos Salidos' = COUNTROWS('main vuelos_denormalizados')
-		formatString: 0
+		formatString: 0.000
 		lineageTag: 782b1fe1-6b75-4115-b0bb-ddd0196a7517
 
 		changedProperty = IsHidden
 
 	measure 'Promedio Demora Salida' = AVERAGE('main vuelos_denormalizados'[demora_salida_15])
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: fdb90c9e-a683-46eb-a00c-6f83c5b3fd9a
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	measure 'Vuelos Retrasados Salida' = ```
 			
@@ -39,9 +38,8 @@ table 'main vuelos_denormalizados'
 			AVERAGE('main vuelos_denormalizados'[retraso_salida_min]) 
 			
 			```
+		formatString: 0.00
 		lineageTag: 5bb55bc9-fdbc-43b0-8362-34a5d8aff76a
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	measure 'Magnitud Retraso Real' =
 			CALCULATE(

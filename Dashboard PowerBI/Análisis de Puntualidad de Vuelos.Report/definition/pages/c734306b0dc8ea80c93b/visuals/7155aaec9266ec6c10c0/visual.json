@@ -3,9 +3,9 @@
   "name": "7155aaec9266ec6c10c0",
   "position": {
     "x": 672,
-    "y": 120,
+    "y": 128,
     "z": 8000,
-    "height": 216,
+    "height": 224,
     "width": 624,
     "tabOrder": 7000
   },
@@ -81,6 +81,13 @@
                   "Value": "false"
                 }
               }
+            },
+            "urlIcon": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
             }
           }
         },
@@ -106,14 +113,14 @@
                           "min": {
                             "color": {
                               "Literal": {
-                                "Value": "'#41a4ff'"
+                                "Value": "'#a0d1ff'"
                               }
                             }
                           },
                           "mid": {
                             "color": {
                               "Literal": {
-                                "Value": "'#eb895f'"
+                                "Value": "'#f0e199'"
                               }
                             }
                           },
@@ -167,6 +174,13 @@
                   "Value": "true"
                 }
               }
+            },
+            "perColumnLevel": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
             }
           }
         }
@@ -174,59 +188,31 @@
       "columnFormatting": [
         {
           "properties": {
-            "dataBars": {
-              "positiveColor": {
-                "solid": {
-                  "color": {
-                    "expr": {
-                      "Literal": {
-                        "Value": "'maxColor'"
-                      }
-                    }
-                  }
+            "styleTotal": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
-              },
-              "negativeColor": {
-                "solid": {
-                  "color": {
-                    "expr": {
-                      "Literal": {
-                        "Value": "'minColor'"
-                      }
-                    }
-                  }
+              }
+            },
+            "styleValues": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
-              },
-              "axisColor": {
-                "solid": {
-                  "color": {
-                    "expr": {
-                      "Literal": {
-                        "Value": "'foreground'"
-                      }
-                    }
-                  }
+              }
+            },
+            "styleHeader": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
-              },
-              "reverseDirection": {
-                "expr": {
-                  "Literal": {
-                    "Value": "false"
-                  }
-                }
-              },
-              "hideText": {
-                "expr": {
-                  "Literal": {
-                    "Value": "false"
-                  }
-                }
-              },
-              "totalMatchingOption": {
-                "expr": {
-                  "Literal": {
-                    "Value": "1L"
-                  }
+              }
+            },
+            "styleSubtotals": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }
@@ -250,6 +236,13 @@
               "expr": {
                 "Literal": {
                   "Value": "90D"
+                }
+              }
+            },
+            "urlIcon": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }
@@ -288,7 +281,14 @@
             "unfrozen": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "false"
+                }
+              }
+            },
+            "urlIcon": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }
@@ -309,6 +309,20 @@
               "expr": {
                 "Literal": {
                   "Value": "84D"
+                }
+              }
+            },
+            "gridHorizontal": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "gridVertical": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }
@@ -407,6 +421,19 @@
         }
       ],
       "visualTooltip": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "divider": [
         {
           "properties": {
             "show": {

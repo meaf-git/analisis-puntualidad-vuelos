@@ -3,7 +3,7 @@
   "name": "4d4d8a27a5ee0eb6db77",
   "position": {
     "x": 672,
-    "y": 336,
+    "y": 368,
     "z": 5000,
     "height": 432,
     "width": 624,
@@ -29,6 +29,24 @@
               "queryRef": "main vuelos_denormalizados.franja_horaria",
               "nativeQueryRef": "franja_horaria",
               "active": true
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "main vuelos_denormalizados"
+                    }
+                  },
+                  "Property": "franja_horaria"
+                }
+              },
+              "queryRef": "main vuelos_denormalizados.franja_horaria",
+              "nativeQueryRef": "franja_horaria"
             }
           ]
         },

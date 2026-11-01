@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "97fd379b6a31479e6bed",
   "position": {
-    "x": 48,
-    "y": 408,
-    "z": 11002,
-    "height": 288,
-    "width": 192,
-    "tabOrder": 12002
+    "x": 320,
+    "y": 432,
+    "z": 12000,
+    "height": 304,
+    "width": 240,
+    "tabOrder": 12000
   },
   "visual": {
     "visualType": "slicer",
@@ -32,6 +32,23 @@
             }
           ]
         }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "main dim_tiempo"
+                  }
+                },
+                "Property": "nombre_dia"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
       }
     },
     "objects": {
@@ -55,6 +72,41 @@
               "expr": {
                 "Literal": {
                   "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "header": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Dia de la semana'"
                 }
               }
             }

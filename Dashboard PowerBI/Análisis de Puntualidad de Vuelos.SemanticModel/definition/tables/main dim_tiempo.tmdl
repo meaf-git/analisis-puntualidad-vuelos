@@ -89,8 +89,11 @@ table 'main dim_tiempo'
 		lineageTag: 890350d3-721d-4e2d-9ab7-9a920dfd7ae6
 		summarizeBy: none
 		sourceColumn: nombre_dia
+		sortByColumn: dia_semana
 
 		changedProperty = IsHidden
+
+		changedProperty = SortByColumn
 
 		annotation SummarizationSetBy = Automatic
 
