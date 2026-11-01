@@ -39,6 +39,9 @@
       }
     ]
   },
+  "publicCustomVisuals": [
+    "InforiverCharts582F6C55AB6442EF8FA129089285CB47"
+  ],
   "resourcePackages": [
     {
       "name": "SharedResources",

@@ -23,7 +23,7 @@
                       "Entity": "main vuelos_denormalizados"
                     }
                   },
-                  "Property": "Vuelos Totales"
+                  "Property": "Total Vuelos Salidos"
                 }
               },
               "queryRef": "main vuelos_denormalizados.Total Vuelos",
@@ -42,7 +42,7 @@
                     "Entity": "main vuelos_denormalizados"
                   }
                 },
-                "Property": "Vuelos Totales"
+                "Property": "Total Vuelos Salidos"
               }
             },
             "direction": "Descending"

@@ -4,10 +4,10 @@
   "position": {
     "x": 46.666666666666671,
     "y": 693.33333333333337,
-    "z": 5001,
+    "z": 6000,
     "height": 340,
     "width": 440,
-    "tabOrder": 5001
+    "tabOrder": 6000
   },
   "visual": {
     "visualType": "donutChart",
@@ -42,7 +42,7 @@
                       "Entity": "main vuelos_denormalizados"
                     }
                   },
-                  "Property": "Vuelos Totales"
+                  "Property": "Total Vuelos Salidos"
                 }
               },
               "queryRef": "main vuelos_denormalizados.Vuelos Totales",
@@ -61,7 +61,7 @@
                     "Entity": "main vuelos_denormalizados"
                   }
                 },
-                "Property": "Vuelos Totales"
+                "Property": "Total Vuelos Salidos"
               }
             },
             "direction": "Descending"

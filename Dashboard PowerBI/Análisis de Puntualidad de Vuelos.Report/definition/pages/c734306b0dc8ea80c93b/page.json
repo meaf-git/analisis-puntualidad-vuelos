@@ -4,5 +4,11 @@
   "displayName": "Objetivo 2",
   "displayOption": "FitToPage",
   "height": 1080,
-  "width": 1920
+  "width": 1920,
+  "pageBinding": {
+    "name": "34c3a2ff87e0cded71a6",
+    "type": "Default",
+    "parameters": [],
+    "referenceScope": "CrossReport"
+  }
 }

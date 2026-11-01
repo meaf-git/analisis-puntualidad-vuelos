@@ -1,7 +1,7 @@
 table 'main vuelos_denormalizados'
 	lineageTag: 6245f576-8986-49ad-b0aa-81b982ee37e8
 
-	measure 'Vuelos Totales' = COUNTROWS('main vuelos_denormalizados')
+	measure 'Total Vuelos Salidos' = COUNTROWS('main vuelos_denormalizados')
 		formatString: 0
 		lineageTag: 782b1fe1-6b75-4115-b0bb-ddd0196a7517
 
@@ -11,6 +11,49 @@ table 'main vuelos_denormalizados'
 		lineageTag: fdb90c9e-a683-46eb-a00c-6f83c5b3fd9a
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Vuelos Retrasados Salida' = ```
+			
+			CALCULATE(
+			    COUNTROWS('main vuelos_denormalizados'),
+			    'main vuelos_denormalizados'[retraso_salida_min] > 15, 
+			    'main vuelos_denormalizados'[estado] = "Arrived" 
+			)
+			```
+		formatString: 0
+		lineageTag: 9503ab3d-fa6a-446a-977b-d7d5a3ee0361
+
+	measure '% Vuelos Retrasados' = ```
+			
+			DIVIDE(
+			    [Vuelos Retrasados Salida], 
+			    COUNTROWS('main vuelos_denormalizados'), 
+			    0
+			)
+			```
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		lineageTag: 02982008-3cdd-45e2-98a0-803bd175ab93
+
+	measure 'Promedio Retraso Salida (Min)' = ```
+			
+			AVERAGE('main vuelos_denormalizados'[retraso_salida_min]) 
+			
+			```
+		lineageTag: 5bb55bc9-fdbc-43b0-8362-34a5d8aff76a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Magnitud Retraso Real' =
+			CALCULATE(
+			    AVERAGE('main vuelos_denormalizados'[retraso_salida_min]),
+			    'main vuelos_denormalizados'[retraso_salida_min] > 0
+			)
+		lineageTag: 4d99d701-2373-4b21-b8a7-6a3d5ede9821
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Clasificación Retraso'
+		lineageTag: 66671827-903a-4731-820e-ce97d1d8cb60
 
 	column vuelo_id
 		dataType: int64
@@ -155,6 +198,8 @@ table 'main vuelos_denormalizados'
 		lineageTag: c066901b-f377-4a72-ac95-4c32655b7d4c
 		summarizeBy: none
 		sourceColumn: franja_horaria
+
+		changedProperty = SortByColumn
 
 		annotation SummarizationSetBy = Automatic
 
