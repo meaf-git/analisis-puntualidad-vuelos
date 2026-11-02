@@ -51,14 +51,17 @@ st.write(
 )
 
 consulta_2 = """
-WITH ventas_diarias AS (
+   WITH ventas_diarias AS (
     SELECT
-        CAST(SUBSTR(book_date, 1, 10) AS DATE) AS fecha,
+        CAST(
+            CAST(book_date AS TIMESTAMPTZ)
+            AT TIME ZONE 'Europe/Moscow'
+            AS DATE
+        ) AS fecha,
         COUNT(*) AS reservas,
         SUM(total_amount) AS importe
     FROM bookings
-    GROUP BY
-        CAST(SUBSTR(book_date, 1, 10) AS DATE)
+    GROUP BY 1
 ),
 serie AS (
     SELECT
@@ -120,12 +123,46 @@ LIMIT 8;
 st.code(consulta_2, language="sql")
 
 # Cargar la tabla bookings directamente desde Supabase con caché
-@st.cache_data
+@st.cache_data(ttl=600)
 def cargar_bookings_supabase():
     supabase = get_supabase_client()
-    response = supabase.table("bookings").select("*").execute()
-    print(f"¡Conexión exitosa! Se cargaron {len(response.data)} registros desde Supabase.")
-    return pd.DataFrame(response.data)
+
+    total = (
+        supabase.table("bookings")
+        .select("book_ref", count="exact", head=True)
+        .execute()
+        .count
+    )
+
+    if total is None or total == 0:
+        raise ValueError("No se pudo verificar el total de reservas.")
+
+    registros = []
+
+    while len(registros) < total:
+        inicio = len(registros)
+
+        respuesta = (
+            supabase.table("bookings")
+            .select("book_ref, book_date, total_amount")
+            .order("book_ref")
+            .range(inicio, inicio + 999)
+            .execute()
+        )
+
+        lote = respuesta.data or []
+
+        if not lote:
+            raise ValueError("La descarga de reservas quedó incompleta.")
+
+        registros.extend(lote)
+
+    datos = pd.DataFrame(registros)
+
+    if len(datos) != total or datos["book_ref"].nunique() != total:
+        raise ValueError("La descarga tiene reservas faltantes o duplicadas.")
+
+    return datos
 
 try:
     with st.spinner("Cargando datos desde Supabase..."):

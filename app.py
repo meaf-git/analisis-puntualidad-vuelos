@@ -196,7 +196,6 @@ try:
 
         if data:
             df_supabase = pd.DataFrame(data)
-            st.success(f"¡Conectado a Supabase! Mostrando registros de **{tabla_seleccionada}**.")
             st.dataframe(df_supabase, hide_index=True, use_container_width=True)
         else:
             st.warning(f"La tabla '{tabla_seleccionada}' está vacía o no se encontraron datos.")
