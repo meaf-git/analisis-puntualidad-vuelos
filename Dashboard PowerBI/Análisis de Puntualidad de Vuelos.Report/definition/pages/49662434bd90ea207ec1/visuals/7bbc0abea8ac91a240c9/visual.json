@@ -1,0 +1,88 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "7bbc0abea8ac91a240c9",
+  "position": {
+    "x": 710.20408163265313,
+    "y": 497.9591836734694,
+    "z": 2000,
+    "height": 255.10204081632654,
+    "width": 520.40816326530614,
+    "tabOrder": 2000
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "main vuelos_denormalizados"
+                    }
+                  },
+                  "Property": "ciudad_origen"
+                }
+              },
+              "queryRef": "main vuelos_denormalizados.ciudad_origen",
+              "nativeQueryRef": "ciudad_origen",
+              "active": true
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "main vuelos_denormalizados"
+                    }
+                  },
+                  "Property": "Total Vuelos Salidos"
+                }
+              },
+              "queryRef": "main vuelos_denormalizados.Total Vuelos Salidos",
+              "nativeQueryRef": "Total Vuelos Salidos"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "main vuelos_denormalizados"
+                    }
+                  },
+                  "Property": "Promedio Retraso Salida (Min)"
+                }
+              },
+              "queryRef": "main vuelos_denormalizados.Promedio Retraso Salida (Min)",
+              "nativeQueryRef": "Promedio Retraso Salida (Min)"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "main vuelos_denormalizados"
+                  }
+                },
+                "Property": "Promedio Retraso Salida (Min)"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

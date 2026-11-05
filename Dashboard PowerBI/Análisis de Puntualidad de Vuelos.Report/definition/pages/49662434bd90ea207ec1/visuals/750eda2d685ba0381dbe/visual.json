@@ -1,0 +1,88 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "750eda2d685ba0381dbe",
+  "position": {
+    "x": 710.20408163265313,
+    "y": 771.42857142857144,
+    "z": 4000,
+    "height": 261.22448979591837,
+    "width": 520.40816326530614,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "main vuelos_denormalizados"
+                    }
+                  },
+                  "Property": "ciudad_destino"
+                }
+              },
+              "queryRef": "main vuelos_denormalizados.ciudad_destino",
+              "nativeQueryRef": "ciudad_destino",
+              "active": true
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "main vuelos_denormalizados"
+                    }
+                  },
+                  "Property": "Total Vuelos Salidos"
+                }
+              },
+              "queryRef": "main vuelos_denormalizados.Total Vuelos Salidos",
+              "nativeQueryRef": "Total Vuelos Salidos"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "main vuelos_denormalizados"
+                    }
+                  },
+                  "Property": "Promedio Retraso Llegada (Min)"
+                }
+              },
+              "queryRef": "main vuelos_denormalizados.Promedio Retraso Llegada (Min)",
+              "nativeQueryRef": "Promedio Retraso Llegada (Min)"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "main vuelos_denormalizados"
+                  }
+                },
+                "Property": "Promedio Retraso Llegada (Min)"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

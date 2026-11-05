@@ -6,8 +6,13 @@
     "y": 32,
     "z": 7000,
     "height": 384,
+<<<<<<< Updated upstream
     "width": 720,
     "tabOrder": 7000
+=======
+    "width": 736,
+    "tabOrder": 8000
+>>>>>>> Stashed changes
   },
   "visual": {
     "visualType": "pivotTable",

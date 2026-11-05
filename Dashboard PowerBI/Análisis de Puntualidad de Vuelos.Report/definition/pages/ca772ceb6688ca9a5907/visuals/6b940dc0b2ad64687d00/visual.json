@@ -5,9 +5,15 @@
     "x": 560,
     "y": 224,
     "z": 6000,
+<<<<<<< Updated upstream
     "height": 304,
     "width": 560,
     "tabOrder": 5000
+=======
+    "height": 288,
+    "width": 552,
+    "tabOrder": 6000
+>>>>>>> Stashed changes
   },
   "visual": {
     "visualType": "clusteredColumnChart",
