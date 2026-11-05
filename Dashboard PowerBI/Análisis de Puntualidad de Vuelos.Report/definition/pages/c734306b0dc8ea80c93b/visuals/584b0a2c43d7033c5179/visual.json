@@ -3,9 +3,9 @@
   "name": "584b0a2c43d7033c5179",
   "position": {
     "x": 24,
-    "y": 576,
+    "y": 503.99999999999994,
     "z": 4000,
-    "height": 384,
+    "height": 456,
     "width": 743.99999999999989,
     "tabOrder": 3000
   },
@@ -29,24 +29,6 @@
               "queryRef": "main vuelos_denormalizados.franja_horaria",
               "nativeQueryRef": "franja_horaria",
               "active": true
-            }
-          ]
-        },
-        "Series": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "main vuelos_denormalizados"
-                    }
-                  },
-                  "Property": "franja_horaria"
-                }
-              },
-              "queryRef": "main vuelos_denormalizados.franja_horaria",
-              "nativeQueryRef": "franja_horaria"
             }
           ]
         },
@@ -95,7 +77,7 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             }
@@ -104,22 +86,7 @@
       ],
       "valueAxis": [
         {
-          "properties": {
-            "start": {
-              "expr": {
-                "Literal": {
-                  "Value": "0.04D"
-                }
-              }
-            },
-            "end": {
-              "expr": {
-                "Literal": {
-                  "Value": "0.05D"
-                }
-              }
-            }
-          }
+          "properties": {}
         }
       ],
       "totals": [
@@ -142,6 +109,19 @@
               "expr": {
                 "Literal": {
                   "Value": "'Bottom'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "ribbonBands": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

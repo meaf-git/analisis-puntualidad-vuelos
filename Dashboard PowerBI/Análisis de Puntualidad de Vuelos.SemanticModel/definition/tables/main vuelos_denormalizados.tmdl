@@ -18,27 +18,25 @@ table 'main vuelos_denormalizados'
 
 		changedProperty = IsHidden
 
-	measure 'Vuelos Retrasados Salida' = ```
+	measure 'Vuelos Retrasados Salida' =
 			
 			CALCULATE(
 			    COUNTROWS('main vuelos_denormalizados'),
-			    'main vuelos_denormalizados'[retraso_salida_min] > 15, 
-			    'main vuelos_denormalizados'[estado] = "Arrived" 
+			    'main vuelos_denormalizados'[estado] = "Arrived",
+			    'main vuelos_denormalizados'[retraso_salida_min] > 15
 			)
-			```
 		formatString: 0
 		lineageTag: 9503ab3d-fa6a-446a-977b-d7d5a3ee0361
 
 		changedProperty = IsHidden
 
-	measure '% Vuelos Retrasados' = ```
+	measure '% Vuelos Retrasados' =
 			
 			DIVIDE(
-			    [Vuelos Retrasados Salida], 
-			    COUNTROWS('main vuelos_denormalizados'), 
+			    [Vuelos Retrasados Salida],
+			    [Total Vuelos Analizados],
 			    0
 			)
-			```
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: 02982008-3cdd-45e2-98a0-803bd175ab93
 
@@ -47,14 +45,10 @@ table 'main vuelos_denormalizados'
 	measure 'Promedio Retraso Salida (Min)' =
 			
 			CALCULATE(
-			    AVERAGEX(
-			        'main vuelos_denormalizados',
-			        DATEDIFF('main vuelos_denormalizados'[salida_programada], 'main vuelos_denormalizados'[salida_real], MINUTE)
-			    ),
-			    FILTER(
-			        'main vuelos_denormalizados',
-			        DATEDIFF('main vuelos_denormalizados'[salida_programada], 'main vuelos_denormalizados'[salida_real], MINUTE) > 0
-			    ))
+			    AVERAGE('main vuelos_denormalizados'[retraso_salida_min]),
+			    'main vuelos_denormalizados'[estado] = "Arrived",
+			    'main vuelos_denormalizados'[retraso_salida_min] > 15
+			)
 		formatString: 0.000
 		lineageTag: 5bb55bc9-fdbc-43b0-8362-34a5d8aff76a
 
@@ -77,8 +71,10 @@ table 'main vuelos_denormalizados'
 		changedProperty = IsHidden
 
 	measure 'Promedio Retraso Llegada (Min)' =
+			
 			CALCULATE(
 			    AVERAGE('main vuelos_denormalizados'[retraso_llegada_min]),
+			    'main vuelos_denormalizados'[estado] = "Arrived",
 			    'main vuelos_denormalizados'[retraso_llegada_min] > 0
 			)
 		lineageTag: acd3893e-99f5-4e24-a21f-73d91b5b5ce2
@@ -87,16 +83,18 @@ table 'main vuelos_denormalizados'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Total Vuelos Analizados' = ```
-			COUNTROWS('main vuelos_denormalizados')
+	measure 'Total Vuelos Analizados' =
 			
-			```
+			CALCULATE(
+			    COUNTROWS('main vuelos_denormalizados'),
+			    'main vuelos_denormalizados'[estado] = "Arrived"
+			)
 		formatString: 0.000
 		lineageTag: 9a2ab7ac-29b1-4447-b57f-85a7a37837a6
 
 		changedProperty = IsHidden
 
-	measure '% Proporcion_Analizada' = DIVIDE([Total Vuelos Analizados], 33121, 0)
+	measure '% Proporcion_Analizada' = DIVIDE([Total Vuelos Analizados],33121, 0)
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: 1f20db6d-9ef2-4a1c-aca9-7f26adef8380
 
@@ -118,6 +116,15 @@ table 'main vuelos_denormalizados'
 		lineageTag: 7fed85ba-53df-4e61-8450-0fc281485e33
 
 		changedProperty = IsHidden
+
+	measure Salidas_Tardias =
+			
+			CALCULATE(
+			    DISTINCTCOUNT('main vuelos_denormalizados'[vuelo_id]),
+			    'main vuelos_denormalizados'[retraso_salida_min] > 0
+			)
+		formatString: 0
+		lineageTag: d13dc0f3-9ca6-4e12-85d5-06382630c596
 
 	column vuelo_id
 		dataType: int64
