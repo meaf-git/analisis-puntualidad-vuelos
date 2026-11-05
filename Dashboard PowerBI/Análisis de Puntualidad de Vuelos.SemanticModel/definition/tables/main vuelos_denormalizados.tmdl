@@ -1,7 +1,12 @@
 table 'main vuelos_denormalizados'
 	lineageTag: 6245f576-8986-49ad-b0aa-81b982ee37e8
 
-	measure 'Total Vuelos Salidos' = COUNTROWS('main vuelos_denormalizados')
+	measure 'Total Vuelos Salidos' =
+			
+			CALCULATE(
+			    DISTINCTCOUNT('main vuelos_denormalizados'[vuelo_id]),
+			    NOT(ISBLANK('main vuelos_denormalizados'[salida_real]))
+			)
 		formatString: 0.000
 		lineageTag: 782b1fe1-6b75-4115-b0bb-ddd0196a7517
 
@@ -10,6 +15,8 @@ table 'main vuelos_denormalizados'
 	measure 'Promedio Demora Salida' = AVERAGE('main vuelos_denormalizados'[demora_salida_15])
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: fdb90c9e-a683-46eb-a00c-6f83c5b3fd9a
+
+		changedProperty = IsHidden
 
 	measure 'Vuelos Retrasados Salida' = ```
 			
@@ -22,6 +29,8 @@ table 'main vuelos_denormalizados'
 		formatString: 0
 		lineageTag: 9503ab3d-fa6a-446a-977b-d7d5a3ee0361
 
+		changedProperty = IsHidden
+
 	measure '% Vuelos Retrasados' = ```
 			
 			DIVIDE(
@@ -33,13 +42,23 @@ table 'main vuelos_denormalizados'
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: 02982008-3cdd-45e2-98a0-803bd175ab93
 
-	measure 'Promedio Retraso Salida (Min)' = ```
+		changedProperty = IsHidden
+
+	measure 'Promedio Retraso Salida (Min)' =
 			
-			AVERAGE('main vuelos_denormalizados'[retraso_salida_min]) 
-			
-			```
-		formatString: 0.00
+			CALCULATE(
+			    AVERAGEX(
+			        'main vuelos_denormalizados',
+			        DATEDIFF('main vuelos_denormalizados'[salida_programada], 'main vuelos_denormalizados'[salida_real], MINUTE)
+			    ),
+			    FILTER(
+			        'main vuelos_denormalizados',
+			        DATEDIFF('main vuelos_denormalizados'[salida_programada], 'main vuelos_denormalizados'[salida_real], MINUTE) > 0
+			    ))
+		formatString: 0.000
 		lineageTag: 5bb55bc9-fdbc-43b0-8362-34a5d8aff76a
+
+		changedProperty = IsHidden
 
 	measure 'Magnitud Retraso Real' =
 			CALCULATE(
@@ -48,10 +67,57 @@ table 'main vuelos_denormalizados'
 			)
 		lineageTag: 4d99d701-2373-4b21-b8a7-6a3d5ede9821
 
+		changedProperty = IsHidden
+
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	measure 'Clasificación Retraso'
 		lineageTag: 66671827-903a-4731-820e-ce97d1d8cb60
+
+		changedProperty = IsHidden
+
+	measure 'Promedio Retraso Llegada (Min)' =
+			CALCULATE(
+			    AVERAGE('main vuelos_denormalizados'[retraso_llegada_min]),
+			    'main vuelos_denormalizados'[retraso_llegada_min] > 0
+			)
+		lineageTag: acd3893e-99f5-4e24-a21f-73d91b5b5ce2
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total Vuelos Analizados' = ```
+			COUNTROWS('main vuelos_denormalizados')
+			
+			```
+		formatString: 0.000
+		lineageTag: 9a2ab7ac-29b1-4447-b57f-85a7a37837a6
+
+		changedProperty = IsHidden
+
+	measure '% Proporcion_Analizada' = DIVIDE([Total Vuelos Analizados], 33121, 0)
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		lineageTag: 1f20db6d-9ef2-4a1c-aca9-7f26adef8380
+
+		changedProperty = IsHidden
+
+	measure '% Cumplimiento Global' = 1 - [% Vuelos Retrasados]
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		lineageTag: 77c1c747-47c3-46f8-b950-59365dc2405f
+
+		changedProperty = IsHidden
+
+	measure 'Vuelos Unicos Retraso' =
+			
+			CALCULATE(
+			    DISTINCTCOUNT('main vuelos_denormalizados'[vuelo_id]),
+			    NOT(ISBLANK('main vuelos_denormalizados'[retraso_salida_min]))
+			)
+		formatString: 0.0000
+		lineageTag: 7fed85ba-53df-4e61-8450-0fc281485e33
+
+		changedProperty = IsHidden
 
 	column vuelo_id
 		dataType: int64
@@ -59,6 +125,8 @@ table 'main vuelos_denormalizados'
 		lineageTag: 5e63f4a0-d533-4963-b66e-cb06e977bc0b
 		summarizeBy: sum
 		sourceColumn: vuelo_id
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -68,6 +136,8 @@ table 'main vuelos_denormalizados'
 		summarizeBy: none
 		sourceColumn: numero_vuelo
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column origen
@@ -75,6 +145,8 @@ table 'main vuelos_denormalizados'
 		lineageTag: 555d5617-26ec-451f-8a81-989b4699c5f5
 		summarizeBy: none
 		sourceColumn: origen
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -84,6 +156,8 @@ table 'main vuelos_denormalizados'
 		summarizeBy: none
 		sourceColumn: destino
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column aeronave_codigo
@@ -91,6 +165,8 @@ table 'main vuelos_denormalizados'
 		lineageTag: bfe0b7b0-448d-4ca3-8523-38d86c1308bf
 		summarizeBy: none
 		sourceColumn: aeronave_codigo
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -106,6 +182,8 @@ table 'main vuelos_denormalizados'
 			relationship: 63329a0a-d7b5-4335-a9d8-9cff786ace90
 			defaultHierarchy: LocalDateTable_7fb06059-d0b3-48ee-b9e2-bb22dc925625.'Jerarquía de fechas'
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column salida_real
@@ -119,6 +197,8 @@ table 'main vuelos_denormalizados'
 			isDefault
 			relationship: 31b70552-882a-4c7b-81fc-4a5854b3a01a
 			defaultHierarchy: LocalDateTable_be81997b-5da5-46fc-946d-1779a68f0b96.'Jerarquía de fechas'
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -134,6 +214,8 @@ table 'main vuelos_denormalizados'
 			relationship: d21d84e9-4dd9-450d-9215-4e56bcf8e147
 			defaultHierarchy: LocalDateTable_7b0e46e5-8669-4a94-aa5b-e701eca5283d.'Jerarquía de fechas'
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column llegada_real
@@ -148,25 +230,31 @@ table 'main vuelos_denormalizados'
 			relationship: 4d8dee28-1ace-41e4-a8b0-c30803e0fab7
 			defaultHierarchy: LocalDateTable_7630d93f-12f7-402f-9a29-1485279f60e1.'Jerarquía de fechas'
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column retraso_salida_min
 		dataType: int64
 		formatString: 0
 		lineageTag: 45fef347-6673-4a0f-a64a-02cf038ba43b
-		summarizeBy: sum
+		summarizeBy: average
 		sourceColumn: retraso_salida_min
 
-		annotation SummarizationSetBy = Automatic
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
 
 	column retraso_llegada_min
 		dataType: int64
 		formatString: 0
 		lineageTag: 0e458631-1f4e-4bb6-822b-64808836a009
-		summarizeBy: sum
+		summarizeBy: average
 		sourceColumn: retraso_llegada_min
 
-		annotation SummarizationSetBy = Automatic
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
 
 	column salida_prog_local
 		dataType: dateTime
@@ -180,6 +268,8 @@ table 'main vuelos_denormalizados'
 			relationship: 0804144b-62f6-4aef-9726-39c25752bf0f
 			defaultHierarchy: LocalDateTable_13f21c6e-421c-4789-8e93-726912ec65df.'Jerarquía de fechas'
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column hora_salida_local
@@ -188,6 +278,8 @@ table 'main vuelos_denormalizados'
 		lineageTag: 768156f3-9714-4a77-8880-3f8d31d33349
 		summarizeBy: sum
 		sourceColumn: hora_salida_local
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -199,6 +291,8 @@ table 'main vuelos_denormalizados'
 
 		changedProperty = SortByColumn
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column dia_semana_num
@@ -208,6 +302,8 @@ table 'main vuelos_denormalizados'
 		summarizeBy: sum
 		sourceColumn: dia_semana_num
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column dia_semana
@@ -215,6 +311,8 @@ table 'main vuelos_denormalizados'
 		lineageTag: 80906959-f8c7-495e-9d33-04ff788109a0
 		summarizeBy: none
 		sourceColumn: dia_semana
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -225,6 +323,8 @@ table 'main vuelos_denormalizados'
 		summarizeBy: sum
 		sourceColumn: salio_a_tiempo
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column llego_a_tiempo
@@ -233,6 +333,8 @@ table 'main vuelos_denormalizados'
 		lineageTag: 731d91df-571d-4828-b076-b03a8d855270
 		summarizeBy: sum
 		sourceColumn: llego_a_tiempo
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -243,6 +345,8 @@ table 'main vuelos_denormalizados'
 		summarizeBy: sum
 		sourceColumn: salio_a_tiempo_llego_tarde
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column demora_salida_15
@@ -252,6 +356,8 @@ table 'main vuelos_denormalizados'
 		summarizeBy: sum
 		sourceColumn: demora_salida_15
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column demora_llegada_15
@@ -260,6 +366,8 @@ table 'main vuelos_denormalizados'
 		lineageTag: daeb448e-4690-446b-b74b-2a3fda580b8d
 		summarizeBy: sum
 		sourceColumn: demora_llegada_15
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -275,6 +383,8 @@ table 'main vuelos_denormalizados'
 			relationship: e3bbe007-93a0-4915-8a04-e1abbc4d214c
 			defaultHierarchy: LocalDateTable_79962802-0065-4a1a-b02a-1cbd6de7496b.'Jerarquía de fechas'
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -286,6 +396,8 @@ table 'main vuelos_denormalizados'
 		summarizeBy: none
 		sourceColumn: fecha_id
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column franja_id
@@ -294,6 +406,8 @@ table 'main vuelos_denormalizados'
 		lineageTag: 72aa839c-ad40-42f8-9ebf-1799dcdf1d42
 		summarizeBy: sum
 		sourceColumn: franja_id
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -304,6 +418,8 @@ table 'main vuelos_denormalizados'
 		summarizeBy: sum
 		sourceColumn: origen_id
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column destino_id
@@ -312,6 +428,8 @@ table 'main vuelos_denormalizados'
 		lineageTag: f7939048-3369-422d-8502-8a9dbcc57a25
 		summarizeBy: sum
 		sourceColumn: destino_id
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -322,6 +440,8 @@ table 'main vuelos_denormalizados'
 		summarizeBy: sum
 		sourceColumn: ruta_id
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column aeronave_id
@@ -330,6 +450,8 @@ table 'main vuelos_denormalizados'
 		lineageTag: 1b7a86d8-89f5-40d7-9e06-57946392ad9e
 		summarizeBy: none
 		sourceColumn: aeronave_id
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -340,6 +462,8 @@ table 'main vuelos_denormalizados'
 		summarizeBy: sum
 		sourceColumn: estado_id
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column aeropuerto_origen
@@ -347,6 +471,8 @@ table 'main vuelos_denormalizados'
 		lineageTag: f257a1ae-ed2e-47e1-9047-a314c8ef98f7
 		summarizeBy: none
 		sourceColumn: aeropuerto_origen
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -356,6 +482,8 @@ table 'main vuelos_denormalizados'
 		summarizeBy: none
 		sourceColumn: ciudad_origen
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column zona_horaria_origen
@@ -363,6 +491,8 @@ table 'main vuelos_denormalizados'
 		lineageTag: efa5611c-5530-455d-af4c-0cf5ccd1544e
 		summarizeBy: none
 		sourceColumn: zona_horaria_origen
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -372,6 +502,8 @@ table 'main vuelos_denormalizados'
 		summarizeBy: none
 		sourceColumn: aeropuerto_destino
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column ciudad_destino
@@ -379,6 +511,8 @@ table 'main vuelos_denormalizados'
 		lineageTag: d2230eca-8d35-4cbc-868e-a30f614a840a
 		summarizeBy: none
 		sourceColumn: ciudad_destino
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -388,6 +522,8 @@ table 'main vuelos_denormalizados'
 		summarizeBy: none
 		sourceColumn: zona_horaria_destino
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column modelo_aeronave
@@ -395,6 +531,8 @@ table 'main vuelos_denormalizados'
 		lineageTag: ef5ce1ad-e553-427a-9510-242618a77dd0
 		summarizeBy: none
 		sourceColumn: modelo_aeronave
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -405,6 +543,8 @@ table 'main vuelos_denormalizados'
 		summarizeBy: sum
 		sourceColumn: asientos_total
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column ruta
@@ -412,6 +552,8 @@ table 'main vuelos_denormalizados'
 		lineageTag: 54d1b7b6-11c7-4a0a-a39f-3507a1bff6bc
 		summarizeBy: none
 		sourceColumn: ruta
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -422,6 +564,8 @@ table 'main vuelos_denormalizados'
 		summarizeBy: sum
 		sourceColumn: duracion_programada_min
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column estado
@@ -429,6 +573,8 @@ table 'main vuelos_denormalizados'
 		lineageTag: da0bab6e-df4e-4459-8374-ff2dbb3b3485
 		summarizeBy: none
 		sourceColumn: estado
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -439,6 +585,8 @@ table 'main vuelos_denormalizados'
 		summarizeBy: sum
 		sourceColumn: regimen_id
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column regimen_salida
@@ -446,6 +594,8 @@ table 'main vuelos_denormalizados'
 		lineageTag: c86d4cb1-7ec1-4898-9c5d-b845f846c55c
 		summarizeBy: none
 		sourceColumn: regimen_salida
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -456,6 +606,8 @@ table 'main vuelos_denormalizados'
 		summarizeBy: sum
 		sourceColumn: minutos_recuperados
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column duracion_real_min
@@ -465,11 +617,15 @@ table 'main vuelos_denormalizados'
 		summarizeBy: sum
 		sourceColumn: duracion_real_min
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column 'Promedio de retraso en llegadas' = AVERAGE('main vuelos_denormalizados'[demora_llegada_15])
 		lineageTag: e1d1e55c-eeff-4454-8e41-4f0b5576c0ee
 		summarizeBy: sum
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -478,6 +634,8 @@ table 'main vuelos_denormalizados'
 	column 'Max Retraso Salida' = MAX('main vuelos_denormalizados'[demora_salida_15])
 		lineageTag: bc4e9f54-e8ae-4037-8242-6a483326f4a6
 		summarizeBy: sum
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -488,11 +646,15 @@ table 'main vuelos_denormalizados'
 		lineageTag: c5c808dd-843d-4e8b-b02a-2850284503d4
 		summarizeBy: sum
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column 'Estado vuelo' = IF('main vuelos_denormalizados'[retraso_llegada_min] <= 15, "Puntual", "Retrasado")
 		lineageTag: 485bda69-cfa1-4bb7-9b43-7cbd1e022ec6
 		summarizeBy: none
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -510,19 +672,23 @@ table 'main vuelos_denormalizados'
 		lineageTag: e284c818-1adb-4255-bb70-21e795fed240
 		summarizeBy: none
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column 'Rangos de Retraso' =
 			
 			SWITCH(
 			    TRUE(),
-			    [retraso_salida_min] <= 0, "A tiempo",
-			    [retraso_salida_min] <= 30, "Retraso Leve [1-30 min]",
-			    [retraso_salida_min] <= 60, "Retraso Moderado [31-60 min]",
+			    [retraso_salida_min] < 15, "A tiempo (<15 min)",
+			    [retraso_salida_min] <= 30, "Retraso Leve [15-30 min]",
+			    [retraso_salida_min] <= 60, "Retraso Moderado [>30-60 min]",
 			    "Retraso Severo [>60 min]"
 			)
 		lineageTag: 85fac1f6-3674-402d-87a7-096a81bc7e47
 		summarizeBy: none
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 

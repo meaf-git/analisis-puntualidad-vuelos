@@ -14,23 +14,14 @@
               "name": {
                 "expr": {
                   "Literal": {
-                    "Value": "'Blue White and Sky Blue Modern Aerospace Innovation Presentation (1).png'"
+                    "Value": "''"
                   }
                 }
               },
               "url": {
                 "expr": {
-                  "ResourcePackageItem": {
-                    "PackageName": "RegisteredResources",
-                    "PackageType": 1,
-                    "ItemName": "Blue_White_and_Sky_Blue_Modern7025031441670366.png"
-                  }
-                }
-              },
-              "scaling": {
-                "expr": {
                   "Literal": {
-                    "Value": "'Normal'"
+                    "Value": "''"
                   }
                 }
               }

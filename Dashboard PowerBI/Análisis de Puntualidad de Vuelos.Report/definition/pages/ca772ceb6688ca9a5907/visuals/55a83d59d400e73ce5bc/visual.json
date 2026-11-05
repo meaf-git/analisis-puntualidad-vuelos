@@ -1,0 +1,75 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "55a83d59d400e73ce5bc",
+  "position": {
+    "x": 552,
+    "y": 528,
+    "z": 8001,
+    "height": 408,
+    "width": 552,
+    "tabOrder": 7001
+  },
+  "visual": {
+    "visualType": "hundredPercentStackedColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "main dim_tiempo"
+                    }
+                  },
+                  "Property": "nombre_dia"
+                }
+              },
+              "queryRef": "main dim_tiempo.nombre_dia",
+              "nativeQueryRef": "nombre_dia",
+              "active": true
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "main vuelos_denormalizados"
+                    }
+                  },
+                  "Property": "Rangos de Retraso"
+                }
+              },
+              "queryRef": "main vuelos_denormalizados.Rangos de Retraso",
+              "nativeQueryRef": "Recuento de Rangos de Retraso"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "main vuelos_denormalizados"
+                    }
+                  },
+                  "Property": "Total Vuelos Salidos"
+                }
+              },
+              "queryRef": "main vuelos_denormalizados.Total Vuelos Salidos",
+              "nativeQueryRef": "Total Vuelos Salidos"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

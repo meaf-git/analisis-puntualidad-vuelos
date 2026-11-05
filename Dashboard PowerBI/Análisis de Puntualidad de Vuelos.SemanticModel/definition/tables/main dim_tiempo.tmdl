@@ -1,6 +1,40 @@
 table 'main dim_tiempo'
 	lineageTag: 23d7b820-69bc-4930-b5ed-c504584602d9
 
+	measure 'Peor Dia Semana' =
+			
+			CALCULATE(
+			    SELECTEDVALUE('main dim_tiempo'[nombre_dia]),
+			    TOPN(1, VALUES('main dim_tiempo'[nombre_dia]), [Promedio Retraso Salida (Min)], DESC)
+			)
+		lineageTag: 23a014ec-8758-47dd-a6ec-d2666991ea24
+
+	measure 'Mejor Dia Semana' =
+			
+			CALCULATE(
+			    SELECTEDVALUE('main dim_tiempo'[nombre_dia]),
+			    TOPN(1, VALUES('main dim_tiempo'[nombre_dia]), [Promedio Retraso Salida (Min)], ASC)
+			)
+		lineageTag: a827b5e1-b9d4-4ffe-9cd0-9e3e444b40d9
+
+	measure 'Diferencia Fines de Semana' = ```
+			
+			VAR RetrasoFinDeSemana = 
+			    CALCULATE(
+			        [Promedio Retraso Salida (Min)],
+			        'main dim_tiempo'[es_fin_de_semana] = 1
+			    )
+			VAR RetrasoEntreSemana = 
+			    CALCULATE(
+			        [Promedio Retraso Salida (Min)],
+			        'main dim_tiempo'[es_fin_de_semana] = 0
+			    )
+			RETURN
+			    RetrasoFinDeSemana - RetrasoEntreSemana
+			```
+		formatString: 0.00
+		lineageTag: f85d578b-8c48-499e-854b-f0a15b6c4276
+
 	column fecha_id
 		dataType: int64
 		formatString: 0

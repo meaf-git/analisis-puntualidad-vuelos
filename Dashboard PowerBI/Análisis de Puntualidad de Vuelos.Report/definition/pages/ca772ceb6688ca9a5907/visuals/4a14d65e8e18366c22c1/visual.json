@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "4a14d65e8e18366c22c1",
+  "position": {
+    "x": 384,
+    "y": 32,
+    "z": 1000,
+    "height": 168,
+    "width": 239.99999999999997,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "main dim_tiempo"
+                    }
+                  },
+                  "Property": "Peor Dia Semana"
+                }
+              },
+              "queryRef": "main dim_tiempo.Peor Dia Semana",
+              "nativeQueryRef": "Peor Dia Semana"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

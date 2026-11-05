@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "584b0a2c43d7033c5179",
   "position": {
-    "x": 672,
-    "y": 800,
-    "z": 7000,
-    "height": 264,
-    "width": 624,
-    "tabOrder": 6000
+    "x": 24,
+    "y": 576,
+    "z": 4000,
+    "height": 384,
+    "width": 743.99999999999989,
+    "tabOrder": 3000
   },
   "visual": {
     "visualType": "barChart",
@@ -95,7 +95,7 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "false"
                 }
               }
             }
@@ -121,6 +121,32 @@
             }
           }
         }
+      ],
+      "totals": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Bottom'"
+                }
+              }
+            }
+          }
+        }
       ]
     },
     "visualContainerObjects": {
@@ -131,6 +157,19 @@
               "expr": {
                 "Literal": {
                   "Value": "'Porcentaje de Vuelos Retrasados por Franja'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "stylePreset": [
+        {
+          "properties": {
+            "name": {
+              "expr": {
+                "Literal": {
+                  "Value": "''"
                 }
               }
             }

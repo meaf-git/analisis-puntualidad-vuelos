@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "f63d01cd4bb0d721b07c",
   "position": {
-    "x": 560,
-    "y": 208,
+    "x": 840,
+    "y": 24,
     "z": 2000,
     "height": 192,
-    "width": 256,
+    "width": 264,
     "tabOrder": 1000
   },
   "visual": {
@@ -50,6 +50,24 @@
         ],
         "isDefaultSort": true
       }
+    },
+    "objects": {
+      "shapeCustomRectangle": [
+        {
+          "properties": {
+            "rectangleRoundedCurve": {
+              "expr": {
+                "Literal": {
+                  "Value": "51L"
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "default"
+          }
+        }
+      ]
     },
     "drillFilterOtherVisuals": true
   }
