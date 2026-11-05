@@ -5,15 +5,12 @@
     "x": 64,
     "y": 32,
     "z": 8000,
-<<<<<<< Updated upstream
     "height": 432,
     "width": 304,
     "tabOrder": 9000
-=======
     "height": 384.00000000000006,
     "width": 264,
     "tabOrder": 3000
->>>>>>> Stashed changes
   },
   "visualGroup": {
     "displayName": "Grupo 1",
