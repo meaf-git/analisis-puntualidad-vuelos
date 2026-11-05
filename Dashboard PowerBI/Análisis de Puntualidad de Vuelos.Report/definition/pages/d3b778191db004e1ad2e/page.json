@@ -14,7 +14,7 @@
               "name": {
                 "expr": {
                   "Literal": {
-                    "Value": "'Blue White and Sky Blue Modern Aerospace Innovation Presentation.png'"
+                    "Value": "'Blue and Silver Modern Programmers Presentation (1).png'"
                   }
                 }
               },
@@ -23,14 +23,14 @@
                   "ResourcePackageItem": {
                     "PackageName": "RegisteredResources",
                     "PackageType": 1,
-                    "ItemName": "Blue_White_and_Sky_Blue_Modern3579207912731419.png"
+                    "ItemName": "Blue_and_Silver_Modern_Program17340161524942932.png"
                   }
                 }
               },
               "scaling": {
                 "expr": {
                   "Literal": {
-                    "Value": "'Fill'"
+                    "Value": "'Normal'"
                   }
                 }
               }

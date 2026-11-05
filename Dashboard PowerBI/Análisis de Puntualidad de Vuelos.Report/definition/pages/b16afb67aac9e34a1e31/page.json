@@ -14,14 +14,23 @@
               "name": {
                 "expr": {
                   "Literal": {
-                    "Value": "''"
+                    "Value": "'Blue and Silver Modern Programmers Presentation.png'"
                   }
                 }
               },
               "url": {
                 "expr": {
+                  "ResourcePackageItem": {
+                    "PackageName": "RegisteredResources",
+                    "PackageType": 1,
+                    "ItemName": "Blue_and_Silver_Modern_Program892108035090356.png"
+                  }
+                }
+              },
+              "scaling": {
+                "expr": {
                   "Literal": {
-                    "Value": "''"
+                    "Value": "'Normal'"
                   }
                 }
               }

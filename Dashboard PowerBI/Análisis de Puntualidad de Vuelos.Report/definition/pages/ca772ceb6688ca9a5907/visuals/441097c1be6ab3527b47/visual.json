@@ -7,7 +7,7 @@
     "z": 10500,
     "height": 121.7391304347826,
     "width": 270.22222222222223,
-    "tabOrder": 2000
+    "tabOrder": 0
   },
   "visual": {
     "visualType": "slicer",
@@ -168,8 +168,8 @@
                 "color": {
                   "expr": {
                     "ThemeDataColor": {
-                      "ColorId": 1,
-                      "Percent": 0
+                      "ColorId": 3,
+                      "Percent": -0.25
                     }
                   }
                 }
@@ -185,7 +185,25 @@
             "textSize": {
               "expr": {
                 "Literal": {
-                  "Value": "12D"
+                  "Value": "15D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dropdown": [
+        {
+          "properties": {
+            "borderColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
                 }
               }
             }
@@ -207,7 +225,7 @@
             "transparency": {
               "expr": {
                 "Literal": {
-                  "Value": "0D"
+                  "Value": "100D"
                 }
               }
             },
@@ -216,8 +234,8 @@
                 "color": {
                   "expr": {
                     "ThemeDataColor": {
-                      "ColorId": 0,
-                      "Percent": 0
+                      "ColorId": 2,
+                      "Percent": -0.25
                     }
                   }
                 }
@@ -242,6 +260,18 @@
                   "Value": "'Franja Horaria'"
                 }
               }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -259,7 +289,7 @@
             "radius": {
               "expr": {
                 "Literal": {
-                  "Value": "0D"
+                  "Value": "22D"
                 }
               }
             }
@@ -315,6 +345,31 @@
                       "Percent": 0.6
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }
