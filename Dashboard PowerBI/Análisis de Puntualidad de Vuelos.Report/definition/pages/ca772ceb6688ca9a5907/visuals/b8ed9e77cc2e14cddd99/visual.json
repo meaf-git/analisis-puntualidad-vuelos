@@ -5,15 +5,12 @@
     "x": 560,
     "y": 544,
     "z": 5000,
-<<<<<<< Updated upstream
     "height": 384,
     "width": 560,
     "tabOrder": 4000
-=======
     "height": 408,
     "width": 504,
     "tabOrder": 5000
->>>>>>> Stashed changes
   },
   "visual": {
     "visualType": "scatterChart",
