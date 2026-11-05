@@ -31,7 +31,7 @@
                     "textStyle": {
                       "fontFamily": "Calibri",
                       "fontSize": "20pt",
-                      "color": "rgba(1,53,105,var(--O42jJQ,1))"
+                      "color": "#ffffff"
                     }
                   }
                 ],
