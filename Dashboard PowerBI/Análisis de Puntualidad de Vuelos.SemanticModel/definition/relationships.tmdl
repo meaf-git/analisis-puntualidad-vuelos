@@ -33,11 +33,11 @@ relationship e3bbe007-93a0-4915-8a04-e1abbc4d214c
 	fromColumn: 'main vuelos_denormalizados'.fecha_salida_local
 	toColumn: LocalDateTable_79962802-0065-4a1a-b02a-1cbd6de7496b.Date
 
-relationship AutoDetected_6c883ab1-f8d7-453c-a5bf-cebfb4a83528
-	fromColumn: 'main vuelos_denormalizados'.aeronave_id
-	toColumn: 'main dim_aeronave'.aeronave_id
-
 relationship AutoDetected_cba08a14-bf69-4b60-b443-eb1c18176232
 	fromColumn: 'main vuelos_denormalizados'.fecha_id
 	toColumn: 'main dim_tiempo'.fecha_id
+
+relationship 0c557ec3-2d91-14b7-6db1-5858e61d9943
+	fromColumn: 'main vuelos_denormalizados'.aeronave_id
+	toColumn: 'main dim_aeronave'.aeronave_id
 

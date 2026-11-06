@@ -1,0 +1,170 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "95b49fbfcdc73807b165",
+  "position": {
+    "x": 960,
+    "y": 508,
+    "z": 3000,
+    "height": 506,
+    "width": 792,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "scatterChart",
+    "query": {
+      "queryState": {
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "main dim_aeronave"
+                    }
+                  },
+                  "Property": "modelo"
+                }
+              },
+              "queryRef": "main dim_aeronave.modelo",
+              "nativeQueryRef": "modelo"
+            }
+          ]
+        },
+        "X": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "main vuelos_denormalizados"
+                    }
+                  },
+                  "Property": "Promedio Minutos Retraso Salida"
+                }
+              },
+              "queryRef": "main vuelos_denormalizados.Promedio Minutos Retraso Salida",
+              "nativeQueryRef": "Promedio Minutos Retraso Salida",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "main vuelos_denormalizados"
+                    }
+                  },
+                  "Property": "% Frecuencia Retraso Salida"
+                }
+              },
+              "queryRef": "main vuelos_denormalizados.% Frecuencia Retraso Salida",
+              "nativeQueryRef": "% Frecuencia Retraso Salida"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "categoryAxis": [
+        {
+          "properties": {
+            "end": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            },
+            "start": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "valueAxis": [
+        {
+          "properties": {
+            "end": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            },
+            "start": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            },
+            "invertAxis": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "04b2574100403c0b3cc4",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "main vuelos_denormalizados"
+              }
+            },
+            "Property": "Promedio Minutos Retraso Salida"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "5cb3fcbc15ba2cb3e008",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "main vuelos_denormalizados"
+              }
+            },
+            "Property": "% Frecuencia Retraso Salida"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "5dac4c097ea635204e5a",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "main dim_aeronave"
+              }
+            },
+            "Property": "modelo"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}
