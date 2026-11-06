@@ -75,7 +75,7 @@ table 'main vuelos_denormalizados'
 			CALCULATE(
 			    AVERAGE('main vuelos_denormalizados'[retraso_llegada_min]),
 			    'main vuelos_denormalizados'[estado] = "Arrived",
-			    'main vuelos_denormalizados'[retraso_llegada_min] > 0
+			    'main vuelos_denormalizados'[retraso_llegada_min] > 15
 			)
 		lineageTag: acd3893e-99f5-4e24-a21f-73d91b5b5ce2
 
