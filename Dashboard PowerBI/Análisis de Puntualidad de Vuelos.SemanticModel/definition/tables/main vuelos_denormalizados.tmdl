@@ -126,6 +126,62 @@ table 'main vuelos_denormalizados'
 		formatString: 0
 		lineageTag: d13dc0f3-9ca6-4e12-85d5-06382630c596
 
+		changedProperty = IsHidden
+
+	measure 'Total Vuelos' = COUNTROWS('main vuelos_denormalizados')
+		formatString: 0
+		lineageTag: ffd4f7ae-d327-4db0-abef-3384b3521534
+
+		changedProperty = IsHidden
+
+	measure 'Cant. Vuelos con Retraso Salida' = CALCULATE(COUNTROWS('main vuelos_denormalizados'), 'main vuelos_denormalizados'[demora_salida_15] >= 15)
+		formatString: 0
+		lineageTag: bfc7e35b-411b-41b8-b782-ba5e7f9e6e0f
+
+		changedProperty = IsHidden
+
+	measure '% Frecuencia Retraso Salida' = DIVIDE([Cant. Vuelos con Retraso Salida], [Total Vuelos], 0)
+		lineageTag: 85086680-bcec-4b71-9031-22ce68ee8e83
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Cant. Vuelos con Retraso Llegada' = CALCULATE(COUNTROWS('main vuelos_denormalizados'), 'main vuelos_denormalizados'[demora_llegada_15] >= 15)
+		formatString: 0
+		lineageTag: 2f07bdb8-e6a4-4ff8-bb83-415c5dc40e39
+
+		changedProperty = IsHidden
+
+	measure 'Promedio Minutos Retraso Salida' = DIVIDE([Total Minutos Retraso Salida], [Total Vuelos], 0)
+		lineageTag: 9bd8484e-444e-46d8-96cb-6a7bf76ee474
+
+		changedProperty = IsHidden
+
+	measure 'Total Minutos Retraso Salida' = SUM('main vuelos_denormalizados'[demora_salida_15])
+		formatString: 0
+		lineageTag: aa203b75-18d2-46f5-8279-7dfb66ffcefc
+
+		changedProperty = IsHidden
+
+	measure '% Frecuencia Retraso Llegada' = DIVIDE([Cant. Vuelos con Retraso Llegada], [Total Vuelos], 0)
+		lineageTag: 86cc2733-9890-4bfe-b6d1-d1665dab8448
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total Minutos Retraso Llegada' = SUM('main vuelos_denormalizados'[demora_llegada_15])
+		formatString: 0
+		lineageTag: 15bc9a0a-505f-41fa-992f-bfea903c1cdb
+
+		changedProperty = IsHidden
+
+	measure 'Promedio Minutos Retraso Llegada' = DIVIDE([Total Minutos Retraso Llegada], [Total Vuelos], 0)
+		lineageTag: 61ee302f-50a6-4740-a4fa-a0a0c3f236cd
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
 	column vuelo_id
 		dataType: int64
 		formatString: 0
@@ -707,6 +763,8 @@ table 'main vuelos_denormalizados'
 				  #"Navegación 1" = Origen{[Schema = "main", Item = "vuelos_denormalizados"]}[Data]
 				in
 				  #"Navegación 1"
+
+	changedProperty = IsHidden
 
 	annotation PBI_ResultType = Table
 
