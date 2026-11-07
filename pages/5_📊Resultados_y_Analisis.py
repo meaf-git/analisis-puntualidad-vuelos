@@ -5,6 +5,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import math
+import pydeck as pdk
 
 st.set_page_config(
     page_title="Resultados y análisis",
@@ -737,7 +738,8 @@ with pestanas[1]:
     )
 
 
-
+####################################################################################################################
+#### objetivo 3 #### PROMEDIO DE RETRASO DE SALIDA ####
 with pestanas[2]:
     presentar_objetivo(
         "Comparación entre aeropuertos",
@@ -750,8 +752,272 @@ with pestanas[2]:
         "¿Cómo varían los retrasos de salida entre los orígenes "
         "y los retrasos de llegada entre los destinos?"
     )
+    st.markdown ("""Los retrasos de salida en los orígenes se concentran en los principales 
+    centros urbanos con alto volumen de vuelos, aunque las demoras más prolongadas ocurren 
+    de forma puntual en aeropuertos secundarios con cuellos de botella operativos o climáticos. 
+    En contraste, los retrasos de llegada en los destinos registran sus mayores promedios principalmente 
+    en aeropuertos regionales de menor tráfico, lo que indica que la impuntualidad en los destinos responde 
+    más a restricciones de infraestructura local y clima extremo que al tamaño de la red.""",unsafe_allow_html=True)
 
+    st.subheader ("Promedio de retraso en salida (Aeropuerto)")
+    ####################################################################################
+    col_jesu, col_oliver = st.columns (2)
+    ####################################################################################
+    #### grafico del mapa ####
+    with col_jesu:
+        datos_mapa = consultar("""
+            SELECT
+                a.nombre AS nombre_aeropuerto,
+                v.origen AS ciudad_origen,
+                a.latitud AS lat,
+                a.longitud AS lon,
+                COUNT(*) AS total_vuelos,
+                ROUND(AVG(v.retraso_salida_min), 2) AS promedio_retraso_salida
+            FROM v_analisis_vuelos_limpios v
+            JOIN aeropuertos a ON v.origen = a.codigo
+            WHERE v.estado = 'Arrived' AND v.retraso_salida_min > 0
+            GROUP BY v.origen, a.latitud, a.longitud, a.nombre
+        """)
 
+        if not datos_mapa.empty:
+            # 1. Ajustamos el radio proporcional al total de vuelos salidos
+            # Multiplicamos por un factor en metros para que el radio refleje el volumen real en el mapa
+            datos_mapa["radio"] = datos_mapa["total_vuelos"] * 600
+            min_retraso = datos_mapa["promedio_retraso_salida"].min()
+            max_retraso = datos_mapa["promedio_retraso_salida"].max()
+
+        # 2. Asignamos colores en formato RGBA basados en el retraso promedio (escala tipo Viridis)
+            def color_personalizado(val):
+                if pd.isna(val) or max_retraso == min_retraso:
+                    t = 0.0
+                else:
+                    t = (val - min_retraso) / (max_retraso - min_retraso)
+                    t = max(0.0, min(1.0, t)) # Normalizar entre 0 y 1
+                
+                # Interpolar entre #A0D1FF (160, 209, 255) y #A38600 (163, 134, 0)
+                r = int(160 + t * (163 - 160))
+                g = int(209 + t * (134 - 209))
+                b = int(255 + t * (0 - 255))
+                return [r, g, b, 200] # RGBA con opacidad
+
+            datos_mapa["color_rgb"] = datos_mapa["promedio_retraso_salida"].apply(color_personalizado)
+            datos_mapa["promedio_retraso_salida_fmt"] = datos_mapa["promedio_retraso_salida"].round(2)
+
+        # 3. Configuramos la capa de dispersión geográfica en PyDeck
+            capa_aeropuertos = pdk.Layer(
+                "ScatterplotLayer",
+                data=datos_mapa,
+                get_position="[lon, lat]",
+                get_radius="radio",          # Proporcional a los vuelos salidos
+                get_fill_color="color_rgb",  # Color según los minutos de retraso promedio
+                pickable=True,
+                auto_highlight=True,
+                radius_min_pixels=3,         # Tamaño mínimo para aeropuertos pequeños
+                radius_max_pixels=15,        # Tamaño máximo para los hubs principales
+                stroked=True,
+                get_line_color=[255, 255, 255, 200],
+                line_width_min_pixels=1
+            )
+
+            # 4. Centramos la cámara en la región de Rusia y Europa oriental
+            punto_medio = pdk.ViewState(
+                latitude=60.0,
+                longitude=85.0,
+                zoom=2.8,
+                pitch=0
+            )
+
+            # 5. Tooltip interactivo idéntico al comportamiento en Power BI
+            tooltip_config = {
+                "html": "<b>Aeropuerto:</b> {nombre_aeropuerto}<br/>"
+                        "<b>Total vuelos con salida registrada:</b> {total_vuelos}<br/>"
+                        "<b>Retraso Promedio:</b> {promedio_retraso_salida_fmt} min",
+                "style": {
+                    "backgroundColor": "#FFFFFF",
+                    "color": "#1E293B",
+                    "fontFamily": "Arial, sans-serif",
+                    "padding": "10px",
+                    "borderRadius": "6px"
+                }
+            }
+
+            # Construcción final del objeto de mapa
+            mapa_pydeck = pdk.Deck(
+                layers=[capa_aeropuertos],
+                initial_view_state=punto_medio,
+                map_style="light",  # Estilo de mapa claro, limpio y profesional (tipo Carto Positron / Power BI)
+                tooltip=tooltip_config
+            )
+
+            with st.container(border=True):
+                st.pydeck_chart(mapa_pydeck, use_container_width=True)
+                st.caption(
+                    "El tamaño de los círculos es **proporcional al total de vuelos salidos**, "
+                    "y el color representa el promedio de retraso en la salida (minutos)."
+                )
+        else:
+            st.warning("No hay datos geográficos disponibles para mostrar el mapa.")
+    #############################################################################################################################
+    #### INTERPRETACION ####
+        with col_oliver:
+
+            st.markdown("**Interpretación**")
+            st.markdown(
+            """Los principales aeropuertos de los grandes centros urbanos concentran la 
+            mayor parte de las salidas, lo que evidencia una fuerte correlación entre 
+            el volumen de vuelos y la magnitud de la red. Aunque las terminales situadas 
+            en la cima del ranking registran los promedios de retraso más altos, las demoras 
+            más prolongadas no siempre coinciden con los aeropuertos de mayor tráfico, 
+            lo que apunta a la existencia de cuellos de botella operativos o meteorológicos 
+            en regiones específicas."""
+            ,unsafe_allow_html=True
+            )
+
+            with st.expander("**TABLA DE PROMEDIOS DE RETRASO DE SALIDA**", expanded=False):
+                df_tabla = consultar("""
+                    SELECT
+                        a.nombre AS nombre_aeropuerto,
+                        COUNT(*) AS "Total vuelos con salida registrada",
+                        ROUND(AVG(v.retraso_salida_min), 2) AS "Promedio Retraso Salida (Min)"
+                    FROM v_analisis_vuelos_limpios v
+                    JOIN aeropuertos a ON v.origen = a.codigo
+                    WHERE v.estado = 'Arrived' AND v.retraso_salida_min > 0
+                    GROUP BY a.nombre, v.origen, a.latitud, a.longitud
+                    ORDER BY "Promedio Retraso Salida (Min)" DESC
+                """)
+                st.dataframe(df_tabla, use_container_width=True, hide_index=True, height=332)
+##################################################################################################################################
+st.divider ()
+##################################################################################################################################
+#### PROMEDIO DE RETRASO DE LLEGADA ####
+st.subheader ("Promedio de retraso en ""llegada"" (Aeropuerto)")
+col_haliburton, col_rudy = st.columns (2)
+##################################################################################################################################
+with col_haliburton:
+        datos_mapi = consultar("""
+            SELECT
+                a.nombre AS nombre_aeropuerto,
+                v.origen AS ciudad_origen,
+                a.latitud AS lat,
+                a.longitud AS lon,
+                COUNT(*) AS total_vuelos,
+                ROUND(AVG(v.retraso_llegada_min), 2) AS promedio_retraso_llegada
+            FROM v_analisis_vuelos_limpios v
+            JOIN aeropuertos a ON v.origen = a.codigo
+            WHERE v.estado = 'Arrived' AND v.retraso_llegada_min > 0
+            GROUP BY v.origen, a.latitud, a.longitud, a.nombre
+        """)
+
+        if not datos_mapi.empty:
+            # 1. Ajustamos el radio proporcional al total de vuelos salidos
+            # Multiplicamos por un factor en metros para que el radio refleje el volumen real en el mapa
+            datos_mapi["radio"] = datos_mapi["total_vuelos"] * 600
+            min_retraso = datos_mapi["promedio_retraso_llegada"].min()
+            max_retraso = datos_mapi["promedio_retraso_llegada"].max()
+
+        # 2. Asignamos colores en formato RGBA basados en el retraso promedio (escala tipo Viridis)
+            def color_personalizado(val):
+                if pd.isna(val) or max_retraso == min_retraso:
+                    t = 0.0
+                else:
+                    t = (val - min_retraso) / (max_retraso - min_retraso)
+                    t = max(0.0, min(1.0, t)) # Normalizar entre 0 y 1
+                
+                # Interpolar entre #A0D1FF (160, 209, 255) y #A38600 (163, 134, 0)
+                r = int(160 + t * (163 - 160))
+                g = int(209 + t * (134 - 209))
+                b = int(255 + t * (0 - 255))
+                return [r, g, b, 200] # RGBA con opacidad
+
+            datos_mapi["color_rgb"] = datos_mapi["promedio_retraso_llegada"].apply(color_personalizado)
+            datos_mapi["promedio_retraso_llegada_fmt"] = datos_mapi["promedio_retraso_llegada"].round(2)
+
+        # 3. Configuramos la capa de dispersión geográfica en PyDeck
+            capa_aeropuertos = pdk.Layer(
+                "ScatterplotLayer",
+                data=datos_mapi,
+                get_position="[lon, lat]",
+                get_radius="radio",          # Proporcional a los vuelos salidos
+                get_fill_color="color_rgb",  # Color según los minutos de retraso promedio
+                pickable=True,
+                auto_highlight=True,
+                radius_min_pixels=3,         # Tamaño mínimo para aeropuertos pequeños
+                radius_max_pixels=15,        # Tamaño máximo para los hubs principales
+                stroked=True,
+                get_line_color=[255, 255, 255, 200],
+                line_width_min_pixels=1
+            )
+
+            # 4. Centramos la cámara en la región de Rusia y Europa oriental
+            punto_medio = pdk.ViewState(
+                latitude=60.0,
+                longitude=85.0,
+                zoom=2.8,
+                pitch=0
+            )
+
+            # 5. Tooltip interactivo idéntico al comportamiento en Power BI
+            tooltip_config = {
+                "html": "<b>Aeropuerto:</b> {nombre_aeropuerto}<br/>"
+                        "<b>Total uelos con salida registrada:</b> {total_vuelos}<br/>"
+                        "<b>Retraso Promedio:</b> {promedio_retraso_llegada_fmt} min",
+                "style": {
+                    "backgroundColor": "#FFFFFF",
+                    "color": "#1E293B",
+                    "fontFamily": "Arial, sans-serif",
+                    "padding": "10px",
+                    "borderRadius": "6px"
+                }
+            }
+
+            # Construcción final del objeto de mapa
+            mapa_pydeck = pdk.Deck(
+                layers=[capa_aeropuertos],
+                initial_view_state=punto_medio,
+                map_style="light",  # Estilo de mapa claro, limpio y profesional (tipo Carto Positron / Power BI)
+                tooltip=tooltip_config
+            )
+
+            with st.container(border=True):
+                st.pydeck_chart(mapa_pydeck, use_container_width=True)
+                st.caption(
+                    "El tamaño de los círculos es **proporcional al total de vuelos salidos**, "
+                    "y el color representa el promedio de retraso en la llegada (minutos)."
+                )
+        else:
+            st.warning("No hay datos geográficos disponibles para mostrar el mapa.")
+    #############################################################################################################################
+    #### INTERPRETACION ####
+        with col_rudy:
+
+            st.markdown("**Interpretación**")
+            st.markdown(
+            """Los aeropuertos secundarios o de menor volumen operativo suelen concentrar los mayores 
+            promedios de retraso en la llegada, lo que evidencia que la impuntualidad no 
+            depende exclusivamente de la magnitud del tráfico total. Aunque terminales 
+            con un número reducido de operaciones como Ugolny o Ignatyevo encabezan la 
+            lista con las demoras más elevadas del sistema, este comportamiento sugiere la 
+            presencia de factores meteorológicos adversos o limitaciones en la infraestructura 
+            regional que afectan la fluidez de sus arribos."""
+            ,unsafe_allow_html=True
+            )
+
+            with st.expander("**TABLA DE PROMEDIOS DE RETRASO DE LLEGADA**", expanded=False):
+                df_tabla = consultar("""
+                    SELECT
+                        a.nombre AS nombre_aeropuerto,
+                        COUNT(*) AS "Total vuelos con salida registrada",
+                        ROUND(AVG(v.retraso_llegada_min), 2) AS "Promedio Retraso Llegada (Min)"
+                    FROM v_analisis_vuelos_limpios v
+                    JOIN aeropuertos a ON v.destino = a.codigo
+                    WHERE v.estado = 'Arrived' 
+                        AND v.retraso_llegada_min > 0
+                    GROUP BY a.nombre
+                    ORDER BY "Promedio Retraso Llegada (Min)" DESC
+                """)
+                st.dataframe(df_tabla, use_container_width=True, hide_index=True, height=332)
+
+##################################################################################################################################
 with pestanas[3]:
     presentar_objetivo(
         "Comparación según la aeronave",
