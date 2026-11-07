@@ -5,8 +5,8 @@
     "x": 336,
     "y": 0,
     "z": 6000,
-    "height": 240,
-    "width": 504.00000000000006,
+    "height": 239.99999999999997,
+    "width": 744,
     "tabOrder": 6000
   },
   "visual": {
@@ -23,11 +23,11 @@
                       "Entity": "main vuelos_denormalizados"
                     }
                   },
-                  "Property": "Total Vuelos Salidos"
+                  "Property": "Total Vuelos Analizados"
                 }
               },
-              "queryRef": "main vuelos_denormalizados.Total Vuelos Salidos",
-              "nativeQueryRef": "Total Vuelos Salidos"
+              "queryRef": "main vuelos_denormalizados.Total Vuelos Analizados",
+              "nativeQueryRef": "Total Vuelos Analizados"
             }
           ]
         },
@@ -60,7 +60,7 @@
                     "Entity": "main vuelos_denormalizados"
                   }
                 },
-                "Property": "Total Vuelos Salidos"
+                "Property": "Total Vuelos Analizados"
               }
             },
             "direction": "Descending"
@@ -178,7 +178,19 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
+                }
+              }
+            },
+            "lineColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
                 }
               }
             }
@@ -215,6 +227,104 @@
               }
             }
           }
+        },
+        {
+          "properties": {
+            "fillColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 3,
+                      "Percent": -0.25
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "80D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "default"
+          }
+        }
+      ],
+      "smallMultiplesHeader": [
+        {
+          "properties": {
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "14D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "default"
+          }
+        }
+      ],
+      "value": [
+        {
+          "properties": {
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "25D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "default"
+          }
+        }
+      ],
+      "glowCustom": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "default"
+          }
         }
       ]
     },
@@ -233,6 +343,25 @@
               "expr": {
                 "Literal": {
                   "Value": "'Total de Vuelos '"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
                 }
               }
             }

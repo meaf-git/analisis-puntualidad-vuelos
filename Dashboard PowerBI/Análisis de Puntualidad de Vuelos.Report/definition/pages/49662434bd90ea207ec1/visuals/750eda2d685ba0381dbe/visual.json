@@ -42,7 +42,7 @@
                       "Entity": "main vuelos_denormalizados"
                     }
                   },
-                  "Property": "Total Vuelos Salidos"
+                  "Property": "Vuelos con salida registrada"
                 }
               },
               "queryRef": "main vuelos_denormalizados.Total Vuelos Salidos",
@@ -236,8 +236,8 @@
                 "color": {
                   "expr": {
                     "ThemeDataColor": {
-                      "ColorId": 3,
-                      "Percent": -0.25
+                      "ColorId": 7,
+                      "Percent": 0
                     }
                   }
                 }

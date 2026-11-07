@@ -2,8 +2,8 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "95b49fbfcdc73807b165",
   "position": {
-    "x": 960,
-    "y": 508,
+    "x": 1032,
+    "y": 552,
     "z": 3000,
     "height": 506,
     "width": 792,
@@ -120,51 +120,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "04b2574100403c0b3cc4",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "main vuelos_denormalizados"
-              }
-            },
-            "Property": "Promedio Minutos Retraso Salida"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "5cb3fcbc15ba2cb3e008",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "main vuelos_denormalizados"
-              }
-            },
-            "Property": "% Frecuencia Retraso Salida"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "5dac4c097ea635204e5a",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "main dim_aeronave"
-              }
-            },
-            "Property": "modelo"
-          }
-        },
-        "type": "Categorical"
-      }
-    ]
   }
 }

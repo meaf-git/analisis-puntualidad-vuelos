@@ -1,16 +1,17 @@
 table 'main vuelos_denormalizados'
 	lineageTag: 6245f576-8986-49ad-b0aa-81b982ee37e8
 
-	measure 'Total Vuelos Salidos' =
+	measure 'Vuelos con salida registrada' =
 			
 			CALCULATE(
-			    DISTINCTCOUNT('main vuelos_denormalizados'[vuelo_id]),
-			    NOT(ISBLANK('main vuelos_denormalizados'[salida_real]))
+			    [Total Vuelos Analizados],
+			    'main vuelos_denormalizados'[retraso_salida_min] > 0
 			)
-		formatString: 0.000
 		lineageTag: 782b1fe1-6b75-4115-b0bb-ddd0196a7517
 
 		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	measure 'Promedio Demora Salida' = AVERAGE('main vuelos_denormalizados'[demora_salida_15])
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
@@ -21,9 +22,8 @@ table 'main vuelos_denormalizados'
 	measure 'Vuelos Retrasados Salida' =
 			
 			CALCULATE(
-			    COUNTROWS('main vuelos_denormalizados'),
-			    'main vuelos_denormalizados'[estado] = "Arrived",
-			    'main vuelos_denormalizados'[retraso_salida_min] > 15
+			    [Total Vuelos Analizados],
+			    'main vuelos_denormalizados'[retraso_salida_min] > 0
 			)
 		formatString: 0
 		lineageTag: 9503ab3d-fa6a-446a-977b-d7d5a3ee0361
@@ -47,7 +47,7 @@ table 'main vuelos_denormalizados'
 			CALCULATE(
 			    AVERAGE('main vuelos_denormalizados'[retraso_salida_min]),
 			    'main vuelos_denormalizados'[estado] = "Arrived",
-			    'main vuelos_denormalizados'[retraso_salida_min] > 15
+			    'main vuelos_denormalizados'[retraso_salida_min] > 0
 			)
 		formatString: 0.000
 		lineageTag: 5bb55bc9-fdbc-43b0-8362-34a5d8aff76a
@@ -75,7 +75,7 @@ table 'main vuelos_denormalizados'
 			CALCULATE(
 			    AVERAGE('main vuelos_denormalizados'[retraso_llegada_min]),
 			    'main vuelos_denormalizados'[estado] = "Arrived",
-			    'main vuelos_denormalizados'[retraso_llegada_min] > 15
+			    'main vuelos_denormalizados'[retraso_llegada_min] > 0
 			)
 		lineageTag: acd3893e-99f5-4e24-a21f-73d91b5b5ce2
 
@@ -85,12 +85,10 @@ table 'main vuelos_denormalizados'
 
 	measure 'Total Vuelos Analizados' =
 			
-			CALCULATE(
-			    COUNTROWS('main vuelos_denormalizados'),
-			    'main vuelos_denormalizados'[estado] = "Arrived"
-			)
+			DISTINCTCOUNT('main vuelos_denormalizados'[vuelo_id])
 		formatString: 0.000
 		lineageTag: 9a2ab7ac-29b1-4447-b57f-85a7a37837a6
+		dataCategory: Uncategorized
 
 		changedProperty = IsHidden
 
@@ -154,6 +152,7 @@ table 'main vuelos_denormalizados'
 		changedProperty = IsHidden
 
 	measure 'Promedio Minutos Retraso Salida' = DIVIDE([Total Minutos Retraso Salida], [Total Vuelos], 0)
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: 9bd8484e-444e-46d8-96cb-6a7bf76ee474
 
 		changedProperty = IsHidden
@@ -178,9 +177,8 @@ table 'main vuelos_denormalizados'
 		changedProperty = IsHidden
 
 	measure 'Promedio Minutos Retraso Llegada' = DIVIDE([Total Minutos Retraso Llegada], [Total Vuelos], 0)
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: 61ee302f-50a6-4740-a4fa-a0a0c3f236cd
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	column vuelo_id
 		dataType: int64
@@ -741,12 +739,16 @@ table 'main vuelos_denormalizados'
 
 	column 'Rangos de Retraso' =
 			
+			VAR Retraso = 'main vuelos_denormalizados'[retraso_salida_min]
+			RETURN
 			SWITCH(
 			    TRUE(),
-			    [retraso_salida_min] < 15, "A tiempo (<15 min)",
-			    [retraso_salida_min] <= 30, "Retraso Leve [15-30 min]",
-			    [retraso_salida_min] <= 60, "Retraso Moderado [>30-60 min]",
-			    "Retraso Severo [>60 min]"
+			    ISBLANK(Retraso), "Sin datos",
+			    Retraso <= 0, "Sin retraso",
+			    Retraso < 15, "Retraso menor (>0 y <15 min)",
+			    Retraso <= 30, "Retraso leve (15-30 min)",
+			    Retraso <= 60, "Retraso moderado (>30 y <=60 min)",
+			    "Retraso severo (>60 min)"
 			)
 		lineageTag: 85fac1f6-3674-402d-87a7-096a81bc7e47
 		summarizeBy: none

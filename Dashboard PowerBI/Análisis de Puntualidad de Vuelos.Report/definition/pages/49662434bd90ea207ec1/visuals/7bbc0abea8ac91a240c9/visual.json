@@ -42,7 +42,7 @@
                       "Entity": "main vuelos_denormalizados"
                     }
                   },
-                  "Property": "Total Vuelos Salidos"
+                  "Property": "Vuelos con salida registrada"
                 }
               },
               "queryRef": "main vuelos_denormalizados.Total Vuelos Salidos",
@@ -69,13 +69,13 @@
         "sort": [
           {
             "field": {
-              "Measure": {
+              "Column": {
                 "Expression": {
                   "SourceRef": {
                     "Entity": "main vuelos_denormalizados"
                   }
                 },
-                "Property": "Promedio Retraso Salida (Min)"
+                "Property": "ciudad_origen"
               }
             },
             "direction": "Ascending"
@@ -304,8 +304,8 @@
                 "color": {
                   "expr": {
                     "ThemeDataColor": {
-                      "ColorId": 3,
-                      "Percent": -0.25
+                      "ColorId": 7,
+                      "Percent": 0
                     }
                   }
                 }
