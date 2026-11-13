@@ -20,14 +20,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "main dim_aeropuerto"
+                      "Entity": "main vuelos_denormalizados"
                     }
                   },
-                  "Property": "ciudad"
+                  "Property": "ciudad_destino"
                 }
               },
-              "queryRef": "main dim_aeropuerto.ciudad",
-              "nativeQueryRef": "ciudad",
+              "queryRef": "main vuelos_denormalizados.ciudad_destino",
+              "nativeQueryRef": "ciudad_destino",
               "active": true
             }
           ]
@@ -120,47 +120,6 @@
                   "Value": "1D"
                 }
               }
-            },
-            "filter": {
-              "filter": {
-                "Version": 2,
-                "From": [
-                  {
-                    "Name": "m",
-                    "Entity": "main dim_aeropuerto",
-                    "Type": 0
-                  }
-                ],
-                "Where": [
-                  {
-                    "Condition": {
-                      "In": {
-                        "Expressions": [
-                          {
-                            "Column": {
-                              "Expression": {
-                                "SourceRef": {
-                                  "Source": "m"
-                                }
-                              },
-                              "Property": "ciudad"
-                            }
-                          }
-                        ],
-                        "Values": [
-                          [
-                            {
-                              "Literal": {
-                                "Value": "'Yuzhno-Sakhalinsk'"
-                              }
-                            }
-                          ]
-                        ]
-                      }
-                    }
-                  }
-                ]
-              }
             }
           }
         }
@@ -238,6 +197,19 @@
               "expr": {
                 "Literal": {
                   "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "selection": [
+        {
+          "properties": {
+            "selectAllCheckboxEnabled": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }

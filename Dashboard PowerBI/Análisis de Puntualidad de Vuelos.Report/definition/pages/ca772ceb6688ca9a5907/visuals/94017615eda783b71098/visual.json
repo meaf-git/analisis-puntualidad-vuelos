@@ -368,7 +368,7 @@
             "strokeWidth": {
               "expr": {
                 "Literal": {
-                  "Value": "7D"
+                  "Value": "12D"
                 }
               }
             }
@@ -405,6 +405,20 @@
         {
           "properties": {
             "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "showOnValueAxis": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "showOnCategoryAxis": {
               "expr": {
                 "Literal": {
                   "Value": "false"
