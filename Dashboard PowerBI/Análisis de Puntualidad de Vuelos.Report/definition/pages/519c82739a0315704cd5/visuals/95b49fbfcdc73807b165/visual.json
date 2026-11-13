@@ -2,8 +2,8 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "95b49fbfcdc73807b165",
   "position": {
-    "x": 1032,
-    "y": 552,
+    "x": 1051.3513513513515,
+    "y": 537.83783783783781,
     "z": 3000,
     "height": 506,
     "width": 792,
@@ -13,7 +13,7 @@
     "visualType": "scatterChart",
     "query": {
       "queryState": {
-        "Series": {
+        "Category": {
           "projections": [
             {
               "field": {
@@ -27,7 +27,8 @@
                 }
               },
               "queryRef": "main dim_aeronave.modelo",
-              "nativeQueryRef": "modelo"
+              "nativeQueryRef": "modelo",
+              "active": true
             }
           ]
         },
@@ -41,11 +42,11 @@
                       "Entity": "main vuelos_denormalizados"
                     }
                   },
-                  "Property": "Promedio Minutos Retraso Salida"
+                  "Property": "Promedio Minutos Retraso Salida2"
                 }
               },
-              "queryRef": "main vuelos_denormalizados.Promedio Minutos Retraso Salida",
-              "nativeQueryRef": "Promedio Minutos Retraso Salida",
+              "queryRef": "main vuelos_denormalizados.Promedio Minutos Retraso Salida2",
+              "nativeQueryRef": "Promedio Minutos Retraso Salida2",
               "active": true
             }
           ]
@@ -68,19 +69,15 @@
             }
           ]
         }
+      },
+      "sortDefinition": {
+        "isDefaultSort": true
       }
     },
     "objects": {
       "categoryAxis": [
         {
           "properties": {
-            "end": {
-              "expr": {
-                "Literal": {
-                  "Value": "0D"
-                }
-              }
-            },
             "start": {
               "expr": {
                 "Literal": {
@@ -94,24 +91,17 @@
       "valueAxis": [
         {
           "properties": {
-            "end": {
+            "invertAxis": {
               "expr": {
                 "Literal": {
-                  "Value": "0D"
+                  "Value": "false"
                 }
               }
             },
             "start": {
               "expr": {
                 "Literal": {
-                  "Value": "0D"
-                }
-              }
-            },
-            "invertAxis": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
+                  "Value": "2D"
                 }
               }
             }

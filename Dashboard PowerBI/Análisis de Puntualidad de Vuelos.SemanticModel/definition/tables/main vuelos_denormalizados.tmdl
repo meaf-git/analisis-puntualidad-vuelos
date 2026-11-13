@@ -139,12 +139,11 @@ table 'main vuelos_denormalizados'
 
 		changedProperty = IsHidden
 
-	measure '% Frecuencia Retraso Salida' = DIVIDE([Cant. Vuelos con Retraso Salida], [Total Vuelos], 0)
+	measure '% Frecuencia Retraso Salida' = DIVIDE([Cant. Vuelos con Retraso Salida 2], [Total Vuelos], 0)
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: 85086680-bcec-4b71-9031-22ce68ee8e83
 
 		changedProperty = IsHidden
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	measure 'Cant. Vuelos con Retraso Llegada' = CALCULATE(COUNTROWS('main vuelos_denormalizados'), 'main vuelos_denormalizados'[demora_llegada_15] >= 15)
 		formatString: 0
@@ -153,10 +152,12 @@ table 'main vuelos_denormalizados'
 		changedProperty = IsHidden
 
 	measure 'Promedio Minutos Retraso Salida' = DIVIDE([Total Minutos Retraso Salida], [Total Vuelos], 0)
-		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		formatString: 0
 		lineageTag: 9bd8484e-444e-46d8-96cb-6a7bf76ee474
 
 		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isDecimal":true}
 
 	measure 'Total Minutos Retraso Salida' = SUM('main vuelos_denormalizados'[demora_salida_15])
 		formatString: 0
@@ -164,7 +165,7 @@ table 'main vuelos_denormalizados'
 
 		changedProperty = IsHidden
 
-	measure '% Frecuencia Retraso Llegada' = DIVIDE([Cant. Vuelos con Retraso Llegada], [Total Vuelos], 0)
+	measure '% Frecuencia Retraso Llegada' = DIVIDE([Cant. Vuelos con Retraso Llegada 2], [Total Vuelos], 0)
 		lineageTag: 86cc2733-9890-4bfe-b6d1-d1665dab8448
 
 		changedProperty = IsHidden
@@ -180,6 +181,24 @@ table 'main vuelos_denormalizados'
 	measure 'Promedio Minutos Retraso Llegada' = DIVIDE([Total Minutos Retraso Llegada], [Total Vuelos], 0)
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: 61ee302f-50a6-4740-a4fa-a0a0c3f236cd
+
+	measure 'Promedio Minutos Retraso Salida2' = DIVIDE(SUM('main vuelos_denormalizados'[retraso_salida_min]), [Total Vuelos], 0)
+		lineageTag: a8037389-074e-48f5-97e0-b8cc38d8067f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Cant. Vuelos con Retraso Salida 2' = CALCULATE(COUNTROWS('main vuelos_denormalizados'), 'main vuelos_denormalizados'[demora_salida_15] = 1)
+		formatString: 0
+		lineageTag: 7c3cdbcd-e2a5-44a3-946b-8b0f194a2327
+
+	measure 'Cant. Vuelos con Retraso Llegada 2' = CALCULATE(COUNTROWS('main vuelos_denormalizados'), 'main vuelos_denormalizados'[demora_llegada_15] = 1)
+		formatString: 0
+		lineageTag: f4c2e4be-3519-4c75-b60b-dc898bdd24d1
+
+	measure 'Promedio Minutos Retraso Llegada2' = DIVIDE(SUM('main vuelos_denormalizados'[retraso_llegada_min]), [Total Vuelos], 0)
+		lineageTag: 801d059b-ba7f-42c7-a69f-e4890e81fbca
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	column vuelo_id
 		dataType: int64

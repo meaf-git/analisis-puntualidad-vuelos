@@ -2,8 +2,8 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "b2d76e278852303bdb0b",
   "position": {
-    "x": 24.000000000000004,
-    "y": 384.00000000000006,
+    "x": 82.089552238805965,
+    "y": 395.52238805970148,
     "z": 3000,
     "height": 528,
     "width": 720,
@@ -190,6 +190,13 @@
               "expr": {
                 "Literal": {
                   "Value": "'15'"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Relacion entre los retrasos de salida y llegada'"
                 }
               }
             }
