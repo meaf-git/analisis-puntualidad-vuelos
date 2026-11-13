@@ -6,3 +6,4 @@ __pycache__/
 .DS_Store
 Base_de_datos/travel_original.sqlite
 /Base_de_datos/travel.descarga
+

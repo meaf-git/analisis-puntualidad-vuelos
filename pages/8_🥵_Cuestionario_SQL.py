@@ -1,8 +1,7 @@
 import streamlit as st
-import sqlite3
-import pandas as pd 
-from pathlib import Path 
-from urllib.request import urlretrieve
+import pandas as pd
+import duckdb
+from utils.db import get_supabase_client
 
 st.markdown("""
 <style>
@@ -47,18 +46,22 @@ st.title("Cuestionario SQL")
 st.header("Pregunta 2. Mayores saltos diarios de venta")
 
 st.write(
-    "Identificar los ocho dias con mayor aumento absoluto del importe total de las reservas"
+    "Identificar los ocho dias con mayor aumento absoluto del importe total de las reservas "
     "respecto al dia calendario inmediatamente anterior, excluyendo los primeros catorce dias de la serie."
 )
+
 consulta_2 = """
-WITH ventas_diarias AS (
+   WITH ventas_diarias AS (
     SELECT
-        DATE(SUBSTR(book_date, 1, 19)) AS fecha,
+        CAST(
+            CAST(book_date AS TIMESTAMPTZ)
+            AT TIME ZONE 'Europe/Moscow'
+            AS DATE
+        ) AS fecha,
         COUNT(*) AS reservas,
         SUM(total_amount) AS importe
     FROM bookings
-    GROUP BY
-        DATE(SUBSTR(book_date, 1, 19))
+    GROUP BY 1
 ),
 serie AS (
     SELECT
@@ -77,7 +80,7 @@ comparacion AS (
         actual.importe - anterior.importe AS aumento
     FROM serie AS actual
     JOIN serie AS anterior
-        ON anterior.fecha = DATE(actual.fecha, '-1 day')
+        ON anterior.fecha = actual.fecha - INTERVAL 1 DAY
     WHERE actual.numero_dia > 14
 ),
 clasificacion AS (
@@ -118,47 +121,68 @@ ORDER BY
 LIMIT 8;
 """
 st.code(consulta_2, language="sql")
-ruta_base = (
-    Path(__file__).resolve().parent.parent
-    / "Base_de_datos"
-    / "travel_original.sqlite"
-)
 
-if not ruta_base.is_file():
-    url_base = (
-        "https://github.com/meaf-git/"
-        "analisis-puntualidad-vuelos/releases/download/"
-        "datos-originales-v1/travel.sqlite"
+# Cargar la tabla bookings directamente desde Supabase con caché
+@st.cache_data(ttl=600)
+def cargar_bookings_supabase():
+    supabase = get_supabase_client()
+
+    total = (
+        supabase.table("bookings")
+        .select("book_ref", count="exact", head=True)
+        .execute()
+        .count
     )
 
-    ruta_base.parent.mkdir(parents=True, exist_ok=True)
-    ruta_temporal = ruta_base.with_suffix(".descarga")
+    if total is None or total == 0:
+        raise ValueError("No se pudo verificar el total de reservas.")
 
-    try:
-        with st.spinner("Descargando la base original..."):
-            urlretrieve(url_base, ruta_temporal)
-            ruta_temporal.replace(ruta_base)
-    except Exception as error:
-        ruta_temporal.unlink(missing_ok=True)
-        st.error(
-            "No se pudo descargar la base original. "
-            "Comprueba la conexión e inténtalo nuevamente."
+    registros = []
+
+    while len(registros) < total:
+        inicio = len(registros)
+
+        respuesta = (
+            supabase.table("bookings")
+            .select("book_ref, book_date, total_amount")
+            .order("book_ref")
+            .range(inicio, inicio + 999)
+            .execute()
         )
-        st.exception(error)
-        st.stop()
 
-conexion = sqlite3.connect(
-    ruta_base.as_uri() + "?mode=ro",
-    uri=True
-)
+        lote = respuesta.data or []
+
+        if not lote:
+            raise ValueError("La descarga de reservas quedó incompleta.")
+
+        registros.extend(lote)
+
+    datos = pd.DataFrame(registros)
+
+    if len(datos) != total or datos["book_ref"].nunique() != total:
+        raise ValueError("La descarga tiene reservas faltantes o duplicadas.")
+
+    return datos
 
 try:
-    resultado_2 = pd.read_sql_query(consulta_2, conexion)
-finally:
-    conexion.close()
+    with st.spinner("Cargando datos desde Supabase..."):
+        bookings = cargar_bookings_supabase()
+except Exception as error:
+    st.error("No se pudo conectar o cargar la tabla 'bookings' desde Supabase.")
+    st.exception(error)
+    st.stop()
+
+# Ejecutar la consulta SQL usando DuckDB sobre el DataFrame obtenido de Supabase
+try:
+    resultado_2 = duckdb.query(consulta_2).df()
+except Exception as error:
+    st.error("Error al ejecutar la consulta SQL.")
+    st.exception(error)
+    st.stop()
 
 st.subheader("Resultados")
 st.dataframe(resultado_2, hide_index=True)
+
 st.subheader("Interpretación de los resultados")
 
 st.write(
