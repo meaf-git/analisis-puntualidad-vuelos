@@ -5,8 +5,8 @@
     "x": 96,
     "y": 480,
     "z": 5000,
-    "height": 104,
-    "width": 296,
+    "height": 112,
+    "width": 304,
     "tabOrder": 5000
   },
   "visual": {
@@ -433,7 +433,7 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "false"
                 }
               }
             },

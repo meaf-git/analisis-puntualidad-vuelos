@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "e0f5b6f913d70d0881a3",
   "position": {
-    "x": 32,
-    "y": 512,
+    "x": 48,
+    "y": 528,
     "z": 3000,
-    "height": 416,
-    "width": 928,
+    "height": 432,
+    "width": 936,
     "tabOrder": 3000
   },
   "visual": {
@@ -92,7 +92,7 @@
                 "Property": "% Frecuencia Retraso Llegada"
               }
             },
-            "direction": "Descending"
+            "direction": "Ascending"
           }
         ]
       }
@@ -433,6 +433,38 @@
               "expr": {
                 "Literal": {
                   "Value": "80D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Frecuencia de Retrasos por Modelo de Avión'"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
                 }
               }
             }

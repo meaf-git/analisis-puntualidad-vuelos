@@ -2,7 +2,7 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
   "name": "519c82739a0315704cd5",
   "displayName": "Objetivo 4",
-  "displayOption": "ActualSize",
+  "displayOption": "FitToPage",
   "height": 1080,
   "width": 1918,
   "objects": {
@@ -14,7 +14,7 @@
               "name": {
                 "expr": {
                   "Literal": {
-                    "Value": "'Blue and Silver Modern Programmers Presentation.png'"
+                    "Value": "'Blue and Silver Modern Programmers Presentation (17).png'"
                   }
                 }
               },
@@ -23,7 +23,7 @@
                   "ResourcePackageItem": {
                     "PackageName": "RegisteredResources",
                     "PackageType": 1,
-                    "ItemName": "Blue_and_Silver_Modern_Program8577446577934901.png"
+                    "ItemName": "Blue_and_Silver_Modern_Program5172316721995363.png"
                   }
                 }
               },
