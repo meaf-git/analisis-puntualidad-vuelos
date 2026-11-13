@@ -42,6 +42,18 @@
                 "Value": "0D"
               }
             }
+          },
+          "color": {
+            "solid": {
+              "color": {
+                "expr": {
+                  "ThemeDataColor": {
+                    "ColorId": 3,
+                    "Percent": -0.25
+                  }
+                }
+              }
+            }
           }
         }
       }

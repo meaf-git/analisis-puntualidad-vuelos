@@ -77,20 +77,21 @@ table 'main vuelos_denormalizados'
 			    'main vuelos_denormalizados'[estado] = "Arrived",
 			    'main vuelos_denormalizados'[retraso_llegada_min] > 0
 			)
+		formatString: 0.000
 		lineageTag: acd3893e-99f5-4e24-a21f-73d91b5b5ce2
 
 		changedProperty = IsHidden
 
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
 	measure 'Total Vuelos Analizados' =
 			
 			DISTINCTCOUNT('main vuelos_denormalizados'[vuelo_id])
-		formatString: 0.000
+		formatString: 0
 		lineageTag: 9a2ab7ac-29b1-4447-b57f-85a7a37837a6
 		dataCategory: Uncategorized
 
 		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isDecimal":true}
 
 	measure '% Proporcion_Analizada' = DIVIDE([Total Vuelos Analizados],33121, 0)
 		formatString: 0.00\ %;-0.00\ %;0.00\ %

@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "4fccf6ba3a97be30a6ac",
   "position": {
-    "x": 1320,
-    "y": 264,
-    "z": 3000,
-    "height": 696,
-    "width": 576,
-    "tabOrder": 2000
+    "x": 768.00000000000011,
+    "y": 24.000000000000004,
+    "z": 2000,
+    "height": 576,
+    "width": 504,
+    "tabOrder": 1000
   },
   "visual": {
     "visualType": "lineStackedColumnComboChart",
@@ -446,7 +446,7 @@
                 "color": {
                   "expr": {
                     "ThemeDataColor": {
-                      "ColorId": 7,
+                      "ColorId": 1,
                       "Percent": 0
                     }
                   }

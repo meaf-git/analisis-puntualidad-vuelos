@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "7155aaec9266ec6c10c0",
   "position": {
-    "x": 360,
-    "y": 239.99999999999997,
-    "z": 5000,
-    "height": 288,
-    "width": 959.99999999999989,
-    "tabOrder": 4000
+    "x": 96.000000000000014,
+    "y": 624,
+    "z": 3000,
+    "height": 312,
+    "width": 1176,
+    "tabOrder": 2000
   },
   "visual": {
     "visualType": "pivotTable",
@@ -158,6 +158,13 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "15D"
                 }
               }
             }
@@ -329,6 +336,13 @@
                   }
                 }
               }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
             }
           },
           "selector": {
@@ -375,7 +389,21 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "12D"
+                  "Value": "15D"
+                }
+              }
+            },
+            "titleAlignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Auto'"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
                 }
               }
             }
@@ -440,7 +468,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "13D"
+                  "Value": "15D"
                 }
               }
             }
@@ -453,14 +481,14 @@
             "imageHeight": {
               "expr": {
                 "Literal": {
-                  "Value": "85D"
+                  "Value": "100D"
                 }
               }
             },
             "imageWidth": {
               "expr": {
                 "Literal": {
-                  "Value": "86D"
+                  "Value": "100D"
                 }
               }
             },
@@ -518,7 +546,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "144.86121823692173D"
+                  "Value": "190.74199440523535D"
                 }
               }
             }
@@ -532,7 +560,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "106.62274815492945D"
+                  "Value": "114.34301111456229D"
                 }
               }
             }
@@ -563,6 +591,257 @@
               }
             ]
           }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "108.58231253301895D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "total": [
+                  {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "main dim_tiempo"
+                        }
+                      },
+                      "Property": "nombre_dia"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "126.34385551676793D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "scopeId": {
+                  "Comparison": {
+                    "ComparisonKind": 0,
+                    "Left": {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Entity": "main dim_tiempo"
+                          }
+                        },
+                        "Property": "nombre_dia"
+                      }
+                    },
+                    "Right": {
+                      "Literal": {
+                        "Value": "'Miercoles'"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "114.03846174373095D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "scopeId": {
+                  "Comparison": {
+                    "ComparisonKind": 0,
+                    "Left": {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Entity": "main dim_tiempo"
+                          }
+                        },
+                        "Property": "nombre_dia"
+                      }
+                    },
+                    "Right": {
+                      "Literal": {
+                        "Value": "'Martes'"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "122.1070870763071D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "scopeId": {
+                  "Comparison": {
+                    "ComparisonKind": 0,
+                    "Left": {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Entity": "main dim_tiempo"
+                          }
+                        },
+                        "Property": "nombre_dia"
+                      }
+                    },
+                    "Right": {
+                      "Literal": {
+                        "Value": "'Lunes'"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "99.61538477213583D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "scopeId": {
+                  "Comparison": {
+                    "ComparisonKind": 0,
+                    "Left": {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Entity": "main dim_tiempo"
+                          }
+                        },
+                        "Property": "nombre_dia"
+                      }
+                    },
+                    "Right": {
+                      "Literal": {
+                        "Value": "'Jueves'"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "99.61539417721748D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "scopeId": {
+                  "Comparison": {
+                    "ComparisonKind": 0,
+                    "Left": {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Entity": "main dim_tiempo"
+                          }
+                        },
+                        "Property": "nombre_dia"
+                      }
+                    },
+                    "Right": {
+                      "Literal": {
+                        "Value": "'Viernes'"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "140.8006690817093D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "scopeId": {
+                  "Comparison": {
+                    "ComparisonKind": 0,
+                    "Left": {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Entity": "main dim_tiempo"
+                          }
+                        },
+                        "Property": "nombre_dia"
+                      }
+                    },
+                    "Right": {
+                      "Literal": {
+                        "Value": "'Sabado'"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
         }
       ],
       "rowTotal": [
@@ -583,7 +862,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "12D"
+                  "Value": "15D"
                 }
               }
             }
@@ -596,7 +875,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "12D"
+                  "Value": "15D"
                 }
               }
             },
@@ -633,7 +912,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "16D"
+                  "Value": "15D"
                 }
               }
             }
@@ -703,7 +982,7 @@
                 "color": {
                   "expr": {
                     "ThemeDataColor": {
-                      "ColorId": 7,
+                      "ColorId": 1,
                       "Percent": 0
                     }
                   }
@@ -797,6 +1076,19 @@
               "expr": {
                 "Literal": {
                   "Value": "30D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "visualTooltip": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }
