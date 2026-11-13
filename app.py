@@ -1,8 +1,11 @@
 from pathlib import Path
-import sqlite3
+import duckdb
+import pandas as pd
 import streamlit as st
+from utils.db import get_supabase_client
 
-from Base_de_datos.base_datos import cargar_configuracion, comprobar_base, resumen_base, muestra_vuelos
+
+
 
 st.set_page_config(page_title="Análisis de vuelos", page_icon="✈️", layout="wide")
 
@@ -83,46 +86,127 @@ st.sidebar.caption("Análisis de horarios y retrasos")
 st.title("Análisis de vuelos y retrasos")
 st.caption("Estudio del cumplimiento de horarios en aeropuertos de Rusia")
 
+ruta_base = raiz / "Base_de_datos" / "vuelos_final.duckdb"
+
 try:
+
     configuracion = cargar_configuracion(raiz)
     ruta_base = raiz / configuracion["ruta_base_datos"]
     comprobar_base(ruta_base)
 except (OSError, ValueError, sqlite3.Error) as error:
     st.error(str(error))
 
+
+    if not ruta_base.is_file():
+        raise FileNotFoundError(f"No se encontró {ruta_base.name}")
+
+    with duckdb.connect(str(ruta_base), read_only=True) as conexion:
+        total = conexion.execute(
+            "SELECT COUNT(*) FROM vuelos"
+        ).fetchone()[0]
+
+        aptos = conexion.execute(
+            "SELECT COUNT(*) FROM v_analisis_vuelos_limpios"
+        ).fetchone()[0]
+
+        fecha_min, fecha_max = conexion.execute(
+            "SELECT MIN(CAST(salida_prog_local AS DATE)), "
+            "MAX(CAST(salida_prog_local AS DATE)) FROM lim_vuelos"
+        ).fetchone()
+
+        muestra = None
+        if seccion == "Explorar vuelos":
+            muestra = conexion.execute(
+                "SELECT * FROM v_analisis_vuelos_limpios LIMIT 100"
+            ).fetchdf()
+
+    if aptos > total:
+        raise ValueError(
+            "La vista limpia contiene más registros que la tabla vuelos."
+        )
+
+except (OSError, ValueError, duckdb.Error) as error:
+    st.error(f"No se pudo consultar la base de datos: {error}")
     st.stop()
 
-try:
-    resumen = resumen_base(ruta_base)
 
-    if seccion == "Inicio":
-        st.subheader("Objetivo del panel")
-        st.write(
-            "Explorar los horarios programados y reales para estudiar "
-            "los retrasos de salida y llegada de los vuelos."
-        )
-        columnas = st.columns(3)
-        columnas[0].metric("Vuelos en la tabla de análisis", f"{resumen['total']:,}")
-        columnas[1].metric("Vuelos aptos para analizar", f"{resumen['aptos']:,}")
-        columnas[2].metric("Vuelos excluidos del análisis", f"{resumen['excluidos']:,}")
-        st.write(
-            "**Fechas de salida local de la muestra apta:** "
-            f"{resumen['fecha_min']} a {resumen['fecha_max']}"
-        )
-        st.info(
-        "Los vuelos excluidos se conservan en la base, pero "
-        "no cumplen los requisitos de información del análisis "
-        "de retrasos, como disponer de las horas necesarias "
-        "para calcular la demora. "
-        "Los vuelos puntuales sí forman parte del análisis "
-        "y se incluyen en el total utilizado para calcular "
-        "el porcentaje de vuelos con retraso."
+
+if seccion == "Inicio":
+    st.subheader("Objetivo del panel")
+    st.write(
+        "Explorar los horarios programados y reales para estudiar "
+        "los retrasos de salida y llegada de los vuelos."
     )
-    else:
-        st.subheader("Muestra de vuelos aptos")
-        st.caption(
-            "Primeros 100 vuelos ordenados por salida programada y número de identificación."
-        )
-        st.dataframe(muestra_vuelos(ruta_base), hide_index=True, width="stretch")
-except sqlite3.Error as error:
-    st.error(f"No se pudo consultar la base de datos: {error}")
+
+    columnas = st.columns(3)
+    columnas[0].metric("Vuelos registrados", f"{total:,}")
+    columnas[1].metric("Vuelos aptos para analizar", f"{aptos:,}")
+    columnas[2].metric("Vuelos excluidos del análisis", f"{total - aptos:,}")
+
+    st.write(
+        "**Fechas de salida local de la tabla limpia:** "
+        f"{fecha_min or 'Sin datos'} a {fecha_max or 'Sin datos'}"
+    )
+    st.html("""
+    <div style="background: rgba(59, 130, 246, 0.10);
+                padding: 20px 24px; border-radius: 10px;">
+
+        <p style="font-size: 18px; line-height: 1.7; margin: 0 0 16px;">
+            <strong>Vuelos incluidos:</strong>
+            vuelos que completaron su recorrido (estado Arrived)
+            y cuentan con horarios programados y reales
+            de salida y llegada.
+        </p>
+
+        <p style="font-size: 18px; line-height: 1.7; margin: 0 0 16px;">
+            <strong>Vuelos excluidos:</strong>
+            vuelos en otros estados o con horarios incompletos,
+            porque no permiten comparar los horarios programados
+            con los reales y calcular los retrasos de salida y llegada.
+        </p>
+
+        <p style="font-size: 18px; line-height: 1.7; margin: 0;">
+            Los vuelos excluidos se conservan en la base de datos.
+        </p>
+
+    </div>
+    """)
+else:
+    st.subheader("Muestra de vuelos aptos")
+    st.caption("Muestra de hasta 100 registros de la vista de análisis limpia.")
+    st.dataframe(muestra, hide_index=True, width="stretch")
+
+#==============================================================================
+# conexion con supabase
+#==============================================================================
+try:
+        # Inicializamos en supabase
+        supabase = get_supabase_client()
+
+        # Tablas de la base de datos origial
+        tablas_disponibles = [
+            "flights",
+            "bookings",
+            "tickets",
+            "ticket_flights",
+            "boarding_passes",
+            "aircrafts_data",
+            "airports_data",
+            "seats"
+        ]
+
+        # Menú desplegable para elegir qué tabla ver en la app
+        tabla_seleccionada = st.selectbox("Selecciona la tabla a consultar:", tablas_disponibles)
+
+        # Consultar los datos de la tabla elegida (limitado a 500 registros para rendimiento)
+        response = supabase.table(tabla_seleccionada).select("*").range(0,99999).execute()
+        data = response.data
+
+        if data:
+            df_supabase = pd.DataFrame(data)
+            st.dataframe(df_supabase, hide_index=True, use_container_width=True)
+        else:
+            st.warning(f"La tabla '{tabla_seleccionada}' está vacía o no se encontraron datos.")
+
+except Exception as e:
+        st.error(f"Error al conectar o consultar Supabase: {e}")
