@@ -1,0 +1,57 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "b2d76e278852303bdb0b",
+  "position": {
+    "x": 1344,
+    "y": 448,
+    "z": 3000,
+    "height": 504,
+    "width": 552,
+    "tabOrder": 2000
+  },
+  "visual": {
+    "visualType": "scatterChart",
+    "query": {
+      "queryState": {
+        "X": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "main vuelos_denormalizados"
+                    }
+                  },
+                  "Property": "retraso_salida_min"
+                }
+              },
+              "queryRef": "Sum(main vuelos_denormalizados.retraso_salida_min)",
+              "nativeQueryRef": "retraso_salida_min",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "main vuelos_denormalizados"
+                    }
+                  },
+                  "Property": "retraso_llegada_min"
+                }
+              },
+              "queryRef": "Sum(main vuelos_denormalizados.retraso_llegada_min)",
+              "nativeQueryRef": "retraso_llegada_min"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

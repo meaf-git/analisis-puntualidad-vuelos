@@ -1,0 +1,107 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/3.3.0/schema.json",
+  "themeCollection": {
+    "baseTheme": {
+      "name": "Fluent2-CY26SU10",
+      "reportVersionAtImport": {
+        "visual": "2.14.0",
+        "report": "3.4.0",
+        "page": "2.3.1"
+      },
+      "type": "SharedResources"
+    }
+  },
+  "objects": {
+    "section": [
+      {
+        "properties": {
+          "verticalAlignment": {
+            "expr": {
+              "Literal": {
+                "Value": "'Top'"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "outspacePane": [
+      {
+        "properties": {
+          "expanded": {
+            "expr": {
+              "Literal": {
+                "Value": "false"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "publicCustomVisuals": [
+    "InforiverCharts582F6C55AB6442EF8FA129089285CB47"
+  ],
+  "resourcePackages": [
+    {
+      "name": "SharedResources",
+      "type": "SharedResources",
+      "items": [
+        {
+          "name": "Fluent2-CY26SU10",
+          "path": "BaseThemes/Fluent2-CY26SU10.json",
+          "type": "BaseTheme"
+        }
+      ]
+    },
+    {
+      "name": "RegisteredResources",
+      "type": "RegisteredResources",
+      "items": [
+        {
+          "name": "Blue_and_Silver_Modern_Program17340161524942932.png",
+          "path": "Blue_and_Silver_Modern_Program17340161524942932.png",
+          "type": "Image"
+        },
+        {
+          "name": "Blue_and_Silver_Modern_Program4484768754023115.png",
+          "path": "Blue_and_Silver_Modern_Program4484768754023115.png",
+          "type": "Image"
+        },
+        {
+          "name": "Blue_and_Silver_Modern_Program4761237568343929.png",
+          "path": "Blue_and_Silver_Modern_Program4761237568343929.png",
+          "type": "Image"
+        },
+        {
+          "name": "Blue_and_Silver_Modern_Program5122136079252523.png",
+          "path": "Blue_and_Silver_Modern_Program5122136079252523.png",
+          "type": "Image"
+        },
+        {
+          "name": "Blue_and_Silver_Modern_Program5357304901324373.png",
+          "path": "Blue_and_Silver_Modern_Program5357304901324373.png",
+          "type": "Image"
+        },
+        {
+          "name": "Blue_and_Silver_Modern_Program8577446577934901.png",
+          "path": "Blue_and_Silver_Modern_Program8577446577934901.png",
+          "type": "Image"
+        },
+        {
+          "name": "Blue_and_Silver_Modern_Program892108035090356.png",
+          "path": "Blue_and_Silver_Modern_Program892108035090356.png",
+          "type": "Image"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "useStylableVisualContainerHeader": true,
+    "exportDataMode": "AllowSummarized",
+    "defaultDrillFilterOtherVisuals": true,
+    "allowChangeFilterTypes": true,
+    "useEnhancedTooltips": true,
+    "useDefaultAggregateDisplayName": true
+  }
+}

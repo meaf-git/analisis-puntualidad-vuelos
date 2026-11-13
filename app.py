@@ -89,6 +89,14 @@ st.caption("Estudio del cumplimiento de horarios en aeropuertos de Rusia")
 ruta_base = raiz / "Base_de_datos" / "vuelos_final.duckdb"
 
 try:
+
+    configuracion = cargar_configuracion(raiz)
+    ruta_base = raiz / configuracion["ruta_base_datos"]
+    comprobar_base(ruta_base)
+except (OSError, ValueError, sqlite3.Error) as error:
+    st.error(str(error))
+
+
     if not ruta_base.is_file():
         raise FileNotFoundError(f"No se encontró {ruta_base.name}")
 

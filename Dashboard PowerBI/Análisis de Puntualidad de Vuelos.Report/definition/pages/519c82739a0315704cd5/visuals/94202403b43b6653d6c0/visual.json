@@ -1,0 +1,89 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "94202403b43b6653d6c0",
+  "position": {
+    "x": 32,
+    "y": 692,
+    "z": 2000,
+    "height": 350,
+    "width": 892,
+    "tabOrder": 2000
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "main dim_aeronave"
+                    }
+                  },
+                  "Property": "modelo"
+                }
+              },
+              "queryRef": "main dim_aeronave.modelo",
+              "nativeQueryRef": "modelo",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "main vuelos_denormalizados"
+                    }
+                  },
+                  "Property": "% Frecuencia Retraso Llegada"
+                }
+              },
+              "queryRef": "main vuelos_denormalizados.% Frecuencia Retraso Llegada",
+              "nativeQueryRef": "% Frecuencia Retraso Llegada"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "main vuelos_denormalizados"
+                    }
+                  },
+                  "Property": "% Frecuencia Retraso Salida"
+                }
+              },
+              "queryRef": "main vuelos_denormalizados.% Frecuencia Retraso Salida",
+              "nativeQueryRef": "% Frecuencia Retraso Salida"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "main vuelos_denormalizados"
+                  }
+                },
+                "Property": "% Frecuencia Retraso Llegada"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}
