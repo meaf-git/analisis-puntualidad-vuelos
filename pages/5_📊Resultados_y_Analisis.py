@@ -260,10 +260,10 @@ with pestanas[0]:
     ]
 
     colores = {
-        "A tiempo": "#2563EB",
-        "Leve: 1–30 min": "#0F766E",
-        "Moderado: 31–60 min": "#F59E0B",
-        "Severo: más de 60 min": "#DC2626"
+        "A tiempo": "#F6E39A",
+        "Leve: 1–30 min": "#E6C975",
+        "Moderado: 31–60 min": "#C9A956",
+        "Severo: más de 60 min": "#C9A956"
     }
 
     columnas_histogramas = st.columns(2)
@@ -359,8 +359,8 @@ with pestanas[0]:
             hole=0.65,
             color="Estado",
             color_discrete_map={
-                "Puntual": "#2563EB",
-                "Retrasado": "#F91616"
+                "Puntual": "#C9A956",
+                "Retrasado": "#F6E39A"
             },
             title="Vuelos según su puntualidad"
         )
@@ -400,7 +400,7 @@ with pestanas[0]:
                 "retraso_llegada_min":
                     "Diferencia de llegada (min)"
             },
-            color_discrete_sequence=["#2563EB"],
+            color_discrete_sequence=["#C9A956"],
             opacity=0.5
         )
 
@@ -539,7 +539,7 @@ with pestanas[1]:
             hoverlabel=dict(bgcolor="#FFFFFF", font_size=13)
         )
         figura.update_xaxes(showgrid=False, zeroline=False)
-        figura.update_yaxes(gridcolor="#E8EDF4", zeroline=False)
+        figura.update_yaxes(gridcolor="#F6F7EF", zeroline=False)
         return figura
 
     def _fila_objetivo2(titulo, figura, interpretacion, clave, nota=None):
@@ -547,7 +547,44 @@ with pestanas[1]:
         grafico, texto = st.columns([2, 1], gap="large")
         with grafico:
             with st.container(border=True):
-                st.plotly_chart(figura, width="stretch", key=clave)
+                es_grafico_de_barras = clave in {
+                    "objetivo2_magnitud",
+                    "objetivo2_porcentajes",
+                    "objetivo2_frecuencia_tasa",
+                    "objetivo2_dispersion",
+                }
+                if es_grafico_de_barras:
+                    figura.update_layout(
+                        paper_bgcolor="#021559",
+                        plot_bgcolor="#021559",
+                        font_color="#FFFFFF",
+                        legend_font_color="#FFFFFF",
+                        hoverlabel=dict(bgcolor="#021559", font_color="#FFFFFF"),
+                    )
+                    figura.update_xaxes(
+                        tickfont_color="#FFFFFF",
+                        title_font_color="#FFFFFF",
+                    )
+                    figura.update_yaxes(
+                        tickfont_color="#FFFFFF",
+                        title_font_color="#FFFFFF",
+                        gridcolor="#35477E",
+                    )
+                    figura.update_traces(
+                        outsidetextfont_color="#FFFFFF",
+                        insidetextfont_color="#021559",
+                        selector=dict(type="bar"),
+                    )
+                    figura.update_traces(
+                        textfont_color="#FFFFFF",
+                        selector=dict(type="scatter", mode="lines+markers+text"),
+                    )
+                st.plotly_chart(
+                    figura,
+                    width="stretch",
+                    key=clave,
+                    theme=None if es_grafico_de_barras else "streamlit",
+                )
                 if nota:
                     st.caption(nota)
         with texto:
@@ -562,7 +599,7 @@ with pestanas[1]:
     else:
         orden_vis_obj2 = franjas_vis_obj2["franja"].tolist()
         dias_matriz_obj2 = [dia_obj2] if dia_obj2 else list(dias_vis_obj2)
-        paleta_vis_obj2 = ["#168CF0", "#32339B", "#E76F3C", "#139E8E"]
+        paleta_vis_obj2 = ["#F6E39A", "#E6C975", "#C9A956", "#139E8E"]
         colores_vis_obj2 = {
             franja: paleta_vis_obj2[i % len(paleta_vis_obj2)]
             for i, franja in enumerate(orden_vis_obj2)
@@ -705,7 +742,7 @@ with pestanas[1]:
         combinado_objetivo2.add_trace(
             go.Bar(
                 x=frecuencia_vis_obj2["franja"], y=frecuencia_vis_obj2["retrasados"],
-                name="Salidas retrasadas", marker_color="#168CF0",
+                name="Salidas retrasadas", marker_color="#F6E39A",
                 width=0.55, text=frecuencia_vis_obj2["retrasados"],
                 texttemplate="%{y:,.0f}", textposition="outside", cliponaxis=False,
                 hovertemplate="%{x}<br>Salidas retrasadas: %{y:,.0f}<extra></extra>"
@@ -719,8 +756,8 @@ with pestanas[1]:
                     lambda tasa: f"{_numero_objetivo2(tasa)} %"
                 ),
                 textposition="top center",
-                line=dict(color="#25258A", width=3, shape="spline", smoothing=1.0),
-                marker=dict(size=8, color="#25258A", line=dict(color="white", width=1)),
+                line=dict(color="#9670BF", width=3, shape="spline", smoothing=1.0),
+                marker=dict(size=8, color="#9670BF", line=dict(color="white", width=1)),
                 hovertemplate="%{x}<br>Tasa: %{y:.2f} %<extra></extra>"
             ), secondary_y=True
         )
