@@ -20,34 +20,19 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "main vuelos_denormalizados"
+                      "Entity": "main dim_aeronave"
                     }
                   },
-                  "Property": "Promedio Retraso Salida (Min)"
+                  "Property": "Promedio Retraso salida"
                 }
               },
-              "queryRef": "main vuelos_denormalizados.Promedio Retraso Salida (Min)",
-              "nativeQueryRef": "Promedio Retraso Salida (Min)"
+              "queryRef": "main dim_aeronave.Promedio Retraso salida (para el cuadrito)",
+              "nativeQueryRef": "Promedio Retraso salida"
             }
           ]
         }
       },
       "sortDefinition": {
-        "sort": [
-          {
-            "field": {
-              "Measure": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "main vuelos_denormalizados"
-                  }
-                },
-                "Property": "Promedio Retraso Salida (Min)"
-              }
-            },
-            "direction": "Descending"
-          }
-        ],
         "isDefaultSort": true
       }
     },
@@ -92,6 +77,20 @@
                       "Percent": 0
                     }
                   }
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "heading": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Heading4'"
                 }
               }
             }
@@ -218,6 +217,13 @@
               "expr": {
                 "Literal": {
                   "Value": "'15'"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "''"
                 }
               }
             }

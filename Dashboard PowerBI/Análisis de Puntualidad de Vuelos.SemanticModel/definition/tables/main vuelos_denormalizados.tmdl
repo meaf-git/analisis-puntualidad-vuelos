@@ -49,10 +49,12 @@ table 'main vuelos_denormalizados'
 			    'main vuelos_denormalizados'[estado] = "Arrived",
 			    'main vuelos_denormalizados'[retraso_salida_min] > 0
 			)
-		formatString: 0.000
+		formatString: 0. "min"
 		lineageTag: 5bb55bc9-fdbc-43b0-8362-34a5d8aff76a
 
 		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isCustom":true}
 
 	measure 'Magnitud Retraso Real' =
 			CALCULATE(
@@ -77,10 +79,12 @@ table 'main vuelos_denormalizados'
 			    'main vuelos_denormalizados'[estado] = "Arrived",
 			    'main vuelos_denormalizados'[retraso_llegada_min] > 0
 			)
-		formatString: 0.000
+		formatString: 0 "min"
 		lineageTag: acd3893e-99f5-4e24-a21f-73d91b5b5ce2
 
 		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isCustom":true}
 
 	measure 'Total Vuelos Analizados' =
 			
@@ -93,7 +97,7 @@ table 'main vuelos_denormalizados'
 
 		annotation PBI_FormatHint = {"isDecimal":true}
 
-	measure '% Proporcion_Analizada' = DIVIDE([Total Vuelos Analizados],33121, 0)
+	measure '% Porcentaje Analizado' = DIVIDE([Total Vuelos Analizados],33121, 0)
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: 1f20db6d-9ef2-4a1c-aca9-7f26adef8380
 
@@ -196,9 +200,29 @@ table 'main vuelos_denormalizados'
 		lineageTag: f4c2e4be-3519-4c75-b60b-dc898bdd24d1
 
 	measure 'Promedio Minutos Retraso Llegada2' = DIVIDE(SUM('main vuelos_denormalizados'[retraso_llegada_min]), [Total Vuelos], 0)
+		formatString: 0 "min"
 		lineageTag: 801d059b-ba7f-42c7-a69f-e4890e81fbca
 
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'Promedio Retraso Llegada' = ```
+			
+			VAR TotalMinutos = 
+			    CALCULATE(
+			        AVERAGE('main vuelos_denormalizados'[retraso_llegada_min]),
+			        'main vuelos_denormalizados'[estado] = "Arrived",
+			        'main vuelos_denormalizados'[retraso_llegada_min] > 0
+			    )
+			VAR Minutos = INT(TotalMinutos)
+			VAR Segundos = ROUND((TotalMinutos - Minutos) * 60, 0)
+			RETURN
+			IF(
+			    ISBLANK(TotalMinutos),
+			    "0m 0s",
+			    Minutos & "m " & Segundos & "s"
+			)
+			```
+		lineageTag: aa5e0b38-e9b6-4554-8cb4-e62923750126
 
 	column vuelo_id
 		dataType: int64

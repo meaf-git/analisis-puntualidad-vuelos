@@ -1,6 +1,26 @@
 table 'main dim_aeronave'
 	lineageTag: f66a5ae4-8953-4a5e-b10d-c2d525e46a11
 
+	measure 'Promedio Retraso salida' = ```
+			
+			VAR TotalMinutos = 
+			    CALCULATE(
+			    AVERAGE('main vuelos_denormalizados'[retraso_salida_min]),
+			    'main vuelos_denormalizados'[estado] = "Arrived",
+			    'main vuelos_denormalizados'[retraso_salida_min] > 0
+			)
+			VAR Minutos = INT(TotalMinutos)
+			VAR Segundos = ROUND((TotalMinutos - Minutos) * 60, 0)
+			RETURN
+			IF(
+			    ISBLANK(TotalMinutos),
+			    "0m 0s",
+			    Minutos & "m " & Segundos & "s"
+			)
+			
+			```
+		lineageTag: 5874a5da-7ffb-417e-b214-7789513ef919
+
 	column aeronave_id
 		dataType: int64
 		formatString: 0
