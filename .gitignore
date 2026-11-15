@@ -2,8 +2,10 @@ data/*.sqlite
 data/*.sqlite-*
 __pycache__/
 *.pyc
-.venv/
+venv/
 .DS_Store
 Base_de_datos/travel_original.sqlite
 /Base_de_datos/travel.descarga
-
+.streamlit/secrets.toml
+migrar.py
+secrets.toml

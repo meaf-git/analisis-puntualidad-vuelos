@@ -2,8 +2,8 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "c250d2fcd04004041026",
   "position": {
-    "x": 55.102040816326529,
-    "y": 497.9591836734694,
+    "x": 48.000000000000007,
+    "y": 408,
     "z": 1000,
     "height": 534.69387755102036,
     "width": 589.795918367347,
@@ -42,7 +42,7 @@
                       "Entity": "main vuelos_denormalizados"
                     }
                   },
-                  "Property": "Total Vuelos Salidos"
+                  "Property": "Vuelos con salida registrada"
                 }
               },
               "queryRef": "main vuelos_denormalizados.Total Vuelos Salidos",
@@ -105,21 +105,21 @@
             "zoom": {
               "expr": {
                 "Literal": {
-                  "Value": "2.65D"
+                  "Value": "1.15D"
                 }
               }
             },
             "centerLatitude": {
               "expr": {
                 "Literal": {
-                  "Value": "57.399870231256614D"
+                  "Value": "58.55547551899207D"
                 }
               }
             },
             "centerLongitude": {
               "expr": {
                 "Literal": {
-                  "Value": "76.49166331671267D"
+                  "Value": "99.0083360671997D"
                 }
               }
             }

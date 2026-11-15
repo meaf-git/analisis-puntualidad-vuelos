@@ -3,7 +3,7 @@ import duckdb
 import pandas as pd
 import streamlit as st
 from utils.db import get_supabase_client
-
+import sqlite3
 
 
 

@@ -14,7 +14,7 @@
               "name": {
                 "expr": {
                   "Literal": {
-                    "Value": "'Blue and Silver Modern Programmers Presentation.png'"
+                    "Value": "'Blue and Silver Modern Programmers Presentation (7).png'"
                   }
                 }
               },
@@ -23,7 +23,7 @@
                   "ResourcePackageItem": {
                     "PackageName": "RegisteredResources",
                     "PackageType": 1,
-                    "ItemName": "Blue_and_Silver_Modern_Program5122136079252523.png"
+                    "ItemName": "Blue_and_Silver_Modern_Program4226624638673211.png"
                   }
                 }
               },
@@ -40,6 +40,18 @@
             "expr": {
               "Literal": {
                 "Value": "0D"
+              }
+            }
+          },
+          "color": {
+            "solid": {
+              "color": {
+                "expr": {
+                  "ThemeDataColor": {
+                    "ColorId": 3,
+                    "Percent": -0.25
+                  }
+                }
               }
             }
           }
