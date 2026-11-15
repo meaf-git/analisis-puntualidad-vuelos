@@ -1,6 +1,11 @@
 ![Análisis de Puntualidad de Vuelos](assets/banner-aviones.png)
-# Análisis de Puntualidad de Vuelos ✈️
+### 📊 Dashboard PowerBI: **https://app.powerbi.com/links/WBdUJViIkW?ctid=7a4eb842-eae9-42ac-944a-d526c4f7fad4&pbi_source=linkShare&bookmarkGuid=4115b6dc-f76e-4af3-a6ce-106d64214de7**
 
+### ▶ Aplicativo en vivo: **https://puntualidadvuelos.streamlit.app/**
+
+---
+
+# Análisis de Puntualidad de Vuelos ✈️
 Análisis estadístico de los patrones de puntualidad y retraso en vuelos comerciales.
 
 ## Metodología
@@ -103,3 +108,10 @@ Con respecto a los aspectos operativos y comerciales, el diseño aplicó una des
     ├── 06_Bibliografia.py          
     └── 07_Cuestionario SQL.py                          
 ```
+--- 
+## 🔍 Equipo de investigación
+- **Maria Emilia Arteaga**
+- **Daniela Daza**
+- **Gabriel Gonzalez**
+- **Eduardo Espinoza**
+- **David Linarez**
