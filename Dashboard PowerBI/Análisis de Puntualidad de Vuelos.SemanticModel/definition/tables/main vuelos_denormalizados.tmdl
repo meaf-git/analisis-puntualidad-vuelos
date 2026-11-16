@@ -224,6 +224,37 @@ table 'main vuelos_denormalizados'
 			```
 		lineageTag: aa5e0b38-e9b6-4554-8cb4-e62923750126
 
+	measure '% Cumplimiento Horario Salida' =
+			
+			VAR VuelosPuntuales =
+			    CALCULATE (
+			        COUNTROWS ( 'main vuelos_denormalizados' ),
+			        'main vuelos_denormalizados'[demora_salida_15] = 0
+			    )
+			RETURN
+			    DIVIDE ( VuelosPuntuales, [Total Vuelos], 0 )
+		lineageTag: adc0754a-6234-4364-acb5-75d38e48efc2
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Magnitud Media Solo Demorados' =
+			
+			VAR MinutosEnDemora =
+			    CALCULATE (
+			        SUM ( 'main vuelos_denormalizados'[retraso_salida_min] ),
+			        'main vuelos_denormalizados'[demora_salida_15] = 1
+			    )
+			VAR ConteoDemorados =
+			    CALCULATE (
+			        COUNTROWS ( 'main vuelos_denormalizados' ),
+			        'main vuelos_denormalizados'[demora_salida_15] = 1
+			    )
+			RETURN
+			    DIVIDE ( MinutosEnDemora, ConteoDemorados, 0 )
+		lineageTag: caedc37a-3891-494b-958d-e2ed848b9d0e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
 	column vuelo_id
 		dataType: int64
 		formatString: 0
