@@ -209,11 +209,11 @@ col_vettel, col_hamilton, col_verstappen = st.columns(3)
 #### LADO IZQUIERDO PA ####
 with col_vettel:
     st.markdown("""
-        <div style="background-color: #E2ECFD; border: 1.5px solid #91B8FC; border-radius: 12px; padding: 16px; height: 100%;">
+        <div style="background-color: #E2ECFD; border: 1.5px solid #91B8FC; border-radius: 12px; padding: 16px; min-height: 220px; box-sizing:border-box;">
         <h5 style="color: #304b7a; margin-top: 0; font-family: sans-serif;"> Limitación temporal </h5>
         <p style="font-size: 14px; color: #304b7a; font-family: sans-serif;
         ">
-        ### info aqui###
+        El análisis se restringe al período comprendido entre el xx de julio y el xx de agosto de 2017. Por lo tanto, los patrones y conclusiones obtenidos no son aplicables a otras épocas del año.
         </p>
         </div>
         """, unsafe_allow_html=True)
@@ -221,11 +221,11 @@ with col_vettel:
 #### LADO CENTRAL PA ####
 with col_hamilton:
     st.markdown("""
-        <div style="background-color: #E2ECFD; border: 1.5px solid #91B8FC; border-radius: 12px; padding: 16px; height: 100%;">
+        <div style="background-color: #E2ECFD; border: 1.5px solid #91B8FC; border-radius: 12px; padding: 16px; min-height: 220px; box-sizing:border-box;">
         <h5 style="color: #475569; margin-top: 0; font-family: sans-serif;"> Limitación espacial: </h5>
         <p style="font-size: 14px; color: #475569; font-family: sans-serif;
         ">
-        ### info aqui###
+     El estudio se enfoca únicamente en los aeropuertos rusos contenidos en la base de datos, por lo que los resultados no pueden usarse para el comportamiento de la aviación en otras regiones.
         </p>
         </div>
         """, unsafe_allow_html=True)
@@ -233,11 +233,11 @@ with col_hamilton:
 #### LADO DERECHO PA ####
 with col_verstappen:
     st.markdown("""
-        <div style="background-color: #E2ECFD; border: 1.5px solid #91B8FC; border-radius: 12px; padding: 16px; height: 100%;">
+        <div style="background-color: #E2ECFD; border: 1.5px solid #91B8FC; border-radius: 12px; padding: 16px; min-height: 220px; box-sizing:border-box;">
         <h5 style="color: #1E3A8A; margin-top: 0; font-family: sans-serif;"> Limitación de datos </h5>
         <p style="font-size: 14px; color: #1E3A8A; font-family: sans-serif;
         ">
-        ### info aqui###
+         La muestra se reduce de manera exclusiva a los vuelos que completaron su itinerario con éxito (estado "Arrived", con un total de 16.707 registros). Esto implica que los vuelos que sufrieron cancelaciones definitivas o desvíos quedan excluidos del análisis comparativo.
         </p>
         </div>
         """, unsafe_allow_html=True)    
@@ -249,7 +249,10 @@ st.divider ()
 
 st.title(""" ​**Variables no contempladas**""")
 st.markdown("""
- ###########info aqui########
+ El estudio se limita al procesamiento de las variables temporales y operacionales disponibles en la estructura de los datos (horarios programados y reales, aeropuertos, tipo de aeronave y días de la semana).
+   Factores externos que explican a fondo la causa raíz de una demora, como condiciones meteorológicas severas, congestión temporal del espacio aéreo, huelgas o problemas de mantenimiento específicos, quedan fuera del alcance al no estar contemplados en los registros analizados.
+
+
 """, unsafe_allow_html=True)
 
 ##################################################################################################
