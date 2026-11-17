@@ -251,7 +251,8 @@ def mostrar_pregunta_2(carga_automatica):
         "Identificar los ocho días con mayor aumento absoluto del importe total de las reservas "
         "respecto al día calendario inmediatamente anterior, excluyendo los primeros catorce días de la serie."
     )
-    st.code(consulta_2, language="sql")
+    with st.expander("Ver consulta SQL", expanded=False):
+        st.code(consulta_2, language="sql")
     resultado_2 = mostrar_resultado(2, consulta_2, fuentes_pregunta_2, carga_automatica)
     if resultado_2 is None:
         return
@@ -292,7 +293,8 @@ def mostrar_pregunta_5(carga_automatica):
         "Comparamos las filas asignadas a pasajeros de la misma reserva "
         "y del mismo vuelo, por modelo de avión."
     )
-    st.code(consulta_5, language="sql")
+    with st.expander("Ver consulta SQL", expanded=False):
+        st.code(consulta_5, language="sql")
     resultado_5 = mostrar_resultado(5, consulta_5, fuentes_pregunta_5, carga_automatica)
     if resultado_5 is None:
         return
@@ -320,6 +322,7 @@ def mostrar_pregunta_5(carga_automatica):
     cercana = f"{lider['porcentaje_misma_o_contigua']:.2f}".replace(".", ",")
 
     st.subheader("Interpretación de los resultados")
+
     st.write(
         f"El {lider['modelo_avion']} ocupa el primer puesto. De {total} parejas, "
         f"{misma} se sentaron en la misma fila ({porcentaje} %). "
