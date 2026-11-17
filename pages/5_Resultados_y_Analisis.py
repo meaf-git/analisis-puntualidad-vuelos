@@ -7,6 +7,43 @@ import plotly.graph_objects as go
 import math
 import pydeck as pdk
 
+st.markdown("""
+<style>
+    [data-testid="collapsedControl"], button[kind="header"] {
+        display: none !important;
+    }
+    header[data-testid="stHeader"] {
+        background: transparent !important;
+    }
+    section[data-testid="stSidebar"] {
+        width: 75px !important;
+        min-width: 75px !important;
+        max-width: 75px !important;
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        overflow-x: hidden !important;
+    }
+    section[data-testid="stSidebar"]:hover {
+        width: 290px !important;
+        min-width: 290px !important;
+        max-width: 290px !important;
+    }
+    section[data-testid="stSidebar"] [data-testid="stSidebarNav"] span {
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0.2s, opacity 0.2s ease-in-out;
+        white-space: nowrap !important;
+    }
+    section[data-testid="stSidebar"]:hover [data-testid="stSidebarNav"] span {
+        visibility: visible;
+        opacity: 1;
+    }
+    [data-testid="stSidebarNav"] ul li a {
+        font-size: 15px !important;
+        padding: 8px 12px !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 st.set_page_config(
     page_title="Resultados y análisis",
     page_icon="📊",
@@ -970,7 +1007,7 @@ with pestanas[2]:
                     GROUP BY a.nombre, v.origen, a.latitud, a.longitud
                     ORDER BY "Promedio Retraso Salida (Min)" DESC
                 """)
-                st.dataframe(df_tabla, use_container_width=True, hide_index=True, height=332)
+                st.dataframe(df_tabla, use_container_width=True, hide_index=True, height=283)
 ##################################################################################################################################
     st.divider ()
     ##################################################################################################################################
@@ -1100,7 +1137,7 @@ with pestanas[2]:
                     GROUP BY a.nombre
                     ORDER BY "Promedio Retraso Llegada (Min)" DESC
                 """)
-                    st.dataframe(df_tabla, use_container_width=True, hide_index=True, height=332)
+                    st.dataframe(df_tabla, use_container_width=True, hide_index=True, height=283)
 
     ############################################################################
 with pestanas[3]:
