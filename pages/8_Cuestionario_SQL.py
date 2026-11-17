@@ -1,7 +1,11 @@
+from inspect import signature
+
 import streamlit as st
 import pandas as pd
 import duckdb
 from utils.db import get_supabase_client
+
+st.set_page_config(page_title="Cuestionario SQL", layout="wide")
 
 st.markdown("""
 <style>
@@ -40,18 +44,10 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.set_page_config(page_title="Cuestionario SQL", page_icon="🥵", layout="wide")
 st.title("Cuestionario SQL")
 
-st.header("Pregunta 2. Mayores saltos diarios de venta")
-
-st.write(
-    "Identificar los ocho dias con mayor aumento absoluto del importe total de las reservas "
-    "respecto al dia calendario inmediatamente anterior, excluyendo los primeros catorce dias de la serie."
-)
-
 consulta_2 = """
-   WITH ventas_diarias AS (
+WITH ventas_diarias AS (
     SELECT
         CAST(
             CAST(book_date AS TIMESTAMPTZ)
@@ -59,7 +55,7 @@ consulta_2 = """
             AS DATE
         ) AS fecha,
         COUNT(*) AS reservas,
-        SUM(total_amount) AS importe
+        SUM(total_amount::numeric) AS importe
     FROM bookings
     GROUP BY 1
 ),
@@ -80,7 +76,7 @@ comparacion AS (
         actual.importe - anterior.importe AS aumento
     FROM serie AS actual
     JOIN serie AS anterior
-        ON anterior.fecha = actual.fecha - INTERVAL 1 DAY
+        ON anterior.fecha = actual.fecha - 1
     WHERE actual.numero_dia > 14
 ),
 clasificacion AS (
@@ -119,90 +115,237 @@ ORDER BY
     puesto_aumento,
     fecha
 LIMIT 8;
-"""
-st.code(consulta_2, language="sql")
+""".strip()
 
-# Cargar la tabla bookings directamente desde Supabase con caché
-@st.cache_data(ttl=600)
-def cargar_bookings_supabase():
+consulta_5 = """
+WITH pasajeros AS (
+    SELECT bp.flight_id, t.book_ref, bp.ticket_no,
+           TRY_CAST(regexp_extract(bp.seat_no, '^[0-9]+') AS INTEGER) AS fila
+    FROM boarding_passes bp
+    JOIN tickets t ON t.ticket_no = bp.ticket_no
+    WHERE bp.seat_no IS NOT NULL
+), metricas AS (
+    SELECT a.aircraft_code,
+           json_extract_string(CAST(a.model AS JSON), '$.en') AS modelo_avion,
+           COUNT(*) AS cantidad_parejas,
+           COUNT(*) FILTER (WHERE p1.fila = p2.fila) AS parejas_misma_fila,
+           COUNT(*) FILTER (WHERE ABS(p1.fila - p2.fila) <= 1) AS parejas_cercanas,
+           (SELECT COUNT(DISTINCT TRY_CAST(regexp_extract(s.seat_no, '^[0-9]+') AS INTEGER))
+            FROM seats s
+            WHERE s.aircraft_code = a.aircraft_code) AS filas_distintas
+    FROM pasajeros p1
+    JOIN pasajeros p2 ON p1.flight_id = p2.flight_id
+                     AND p1.book_ref = p2.book_ref
+                     AND p1.ticket_no < p2.ticket_no
+    JOIN flights f ON f.flight_id = p1.flight_id
+    JOIN aircrafts_data a ON a.aircraft_code = f.aircraft_code
+    GROUP BY a.aircraft_code, a.model
+)
+SELECT RANK() OVER (
+           ORDER BY 100.0 * parejas_misma_fila / cantidad_parejas DESC
+       ) AS puesto,
+       modelo_avion,
+       cantidad_parejas,
+       parejas_misma_fila,
+       ROUND(100.0 * parejas_misma_fila / cantidad_parejas, 2) AS porcentaje_misma_fila,
+       ROUND(100.0 * parejas_cercanas / cantidad_parejas, 2) AS porcentaje_misma_o_contigua,
+       filas_distintas
+FROM metricas
+ORDER BY puesto, modelo_avion;
+""".strip()
+
+
+# Las columnas y las claves de orden corresponden a la base original de vuelos.
+fuentes_pregunta_2 = (
+    ("bookings", ("book_ref", "book_date", "total_amount"), ("book_ref",)),
+)
+fuentes_pregunta_5 = (
+    ("tickets", ("ticket_no", "book_ref"), ("ticket_no",)),
+    ("boarding_passes", ("ticket_no", "flight_id", "seat_no"), ("ticket_no", "flight_id")),
+    ("flights", ("flight_id", "aircraft_code"), ("flight_id",)),
+    ("aircrafts_data", ("aircraft_code", "model"), ("aircraft_code",)),
+    ("seats", ("aircraft_code", "seat_no"), ("aircraft_code", "seat_no")),
+)
+
+
+def leer_tabla(supabase, nombre, columnas, claves):
+    registros = []
+    cursor = None
+
+    while True:
+        consulta = supabase.table(nombre).select(",".join(columnas)).limit(1000)
+        for clave in claves:
+            consulta = consulta.order(clave)
+
+        if cursor is not None:
+            if len(claves) == 1:
+                consulta = consulta.gt(claves[0], cursor[0])
+            else:
+                primera, segunda = claves
+                valor_primero, valor_segundo = cursor
+                consulta = consulta.gte(primera, valor_primero).or_(
+                    f"{primera}.gt.{valor_primero},"
+                    f"and({primera}.eq.{valor_primero},{segunda}.gt.{valor_segundo})"
+                )
+
+        filas = consulta.execute().data
+        if not filas:
+            break
+
+        siguiente = tuple(filas[-1][clave] for clave in claves)
+        if siguiente == cursor:
+            raise ValueError(f"La lectura de {nombre} no avanzó a la siguiente página.")
+
+        registros.extend(tuple(fila[columna] for columna in columnas) for fila in filas)
+        cursor = siguiente
+
+    if not registros:
+        raise ValueError(f"Supabase no devolvió filas de {nombre}. Revisa el permiso de lectura.")
+
+    return pd.DataFrame.from_records(registros, columns=columnas)
+
+
+@st.cache_data(persist="disk", show_spinner="Leyendo tablas de Supabase y calculando el resultado…")
+def calcular_resultado(sql, fuentes, proyecto_url):
+    # El URL forma parte de la clave de caché para separar los proyectos de Supabase.
     supabase = get_supabase_client()
+    with duckdb.connect(":memory:") as conexion:
+        for nombre, columnas, claves in fuentes:
+            conexion.register(nombre, leer_tabla(supabase, nombre, columnas, claves))
+        return conexion.execute(sql).df()
 
-    total = (
-        supabase.table("bookings")
-        .select("book_ref", count="exact", head=True)
-        .execute()
-        .count
+
+def mostrar_resultado(numero, consulta, fuentes, carga_automatica):
+    st.subheader("Resultados")
+
+    if not carga_automatica:
+        estado = f"pregunta_{numero}_cargada"
+        if not st.session_state.get(estado, False):
+            if not st.button("Cargar resultados desde Supabase", key=f"cargar_pregunta_{numero}"):
+                return None
+            st.session_state[estado] = True
+
+    try:
+        proyecto_url = st.secrets["SUPABASE_URL"]
+    except (KeyError, FileNotFoundError):
+        st.error(
+            "Este Streamlit no tiene configurada la conexión a Supabase. "
+            "Abre la app publicada del equipo o pide a quien la administra "
+            "que configure la conexión de lectura de esta copia."
+        )
+        return None
+
+    if st.button("Actualizar resultados desde Supabase", key=f"actualizar_pregunta_{numero}"):
+        calcular_resultado.clear(consulta, fuentes, proyecto_url)
+
+    try:
+        return calcular_resultado(consulta, fuentes, proyecto_url)
+    except Exception as error:
+        st.error(f"No se pudo leer el resultado de la pregunta {numero} desde Supabase. {error}")
+        return None
+
+
+def mostrar_pregunta_2(carga_automatica):
+    st.header("Pregunta 2. Mayores saltos diarios de venta")
+    st.write(
+        "Identificar los ocho días con mayor aumento absoluto del importe total de las reservas "
+        "respecto al día calendario inmediatamente anterior, excluyendo los primeros catorce días de la serie."
+    )
+    st.code(consulta_2, language="sql")
+    resultado_2 = mostrar_resultado(2, consulta_2, fuentes_pregunta_2, carga_automatica)
+    if resultado_2 is None:
+        return
+    if resultado_2.empty:
+        st.info("La consulta no devolvió resultados.")
+        return
+
+    st.dataframe(resultado_2, hide_index=True)
+
+    st.subheader("Interpretación de los resultados")
+
+    st.write(
+        "El mayor aumento se registró el 14 de julio de 2017. "
+        "El importe de las reservas pasó de 432.826.700 el día "
+        "anterior a 460.449.000, un aumento de 27.622.300, "
+        "equivalente al 6,38 %."
     )
 
-    if total is None or total == 0:
-        raise ValueError("No se pudo verificar el total de reservas.")
+    st.write(
+        "El mayor aumento diario no corresponde necesariamente "
+        "al día con mayor importe de reservas. El 14 de agosto "
+        "registró el importe máximo de toda la serie, con "
+        "524.600.500, pero ocupa el octavo puesto por aumento."
+    )
 
-    registros = []
+    st.write(
+        "El puesto en el ranking de caídas se calcula entre "
+        "todos los días considerados, antes de seleccionar "
+        "estos ocho resultados. El puesto 1 corresponde a la "
+        "mayor caída; por eso los mayores aumentos aparecen "
+        "en los últimos puestos de ese ranking."
+    )
 
-    while len(registros) < total:
-        inicio = len(registros)
 
-        respuesta = (
-            supabase.table("bookings")
-            .select("book_ref, book_date, total_amount")
-            .order("book_ref")
-            .range(inicio, inicio + 999)
-            .execute()
-        )
+def mostrar_pregunta_5(carga_automatica):
+    st.header("Pregunta 5. Acompañantes y asignación de asientos")
+    st.write(
+        "Comparamos las filas asignadas a pasajeros de la misma reserva "
+        "y del mismo vuelo, por modelo de avión."
+    )
+    st.code(consulta_5, language="sql")
+    resultado_5 = mostrar_resultado(5, consulta_5, fuentes_pregunta_5, carga_automatica)
+    if resultado_5 is None:
+        return
+    if resultado_5.empty:
+        st.info("La consulta no devolvió parejas de pasajeros.")
+        return
 
-        lote = respuesta.data or []
+    st.dataframe(
+        resultado_5.rename(columns={
+            "puesto": "Puesto",
+            "modelo_avion": "Modelo de avión",
+            "cantidad_parejas": "Cantidad de parejas",
+            "parejas_misma_fila": "Parejas en la misma fila",
+            "porcentaje_misma_fila": "% misma fila",
+            "porcentaje_misma_o_contigua": "% misma fila o contigua",
+            "filas_distintas": "Filas distintas",
+        }),
+        hide_index=True,
+    )
 
-        if not lote:
-            raise ValueError("La descarga de reservas quedó incompleta.")
+    lider = resultado_5.iloc[0]
+    total = f"{int(lider['cantidad_parejas']):,}".replace(",", ".")
+    misma = f"{int(lider['parejas_misma_fila']):,}".replace(",", ".")
+    porcentaje = f"{lider['porcentaje_misma_fila']:.2f}".replace(".", ",")
+    cercana = f"{lider['porcentaje_misma_o_contigua']:.2f}".replace(".", ",")
 
-        registros.extend(lote)
+    st.subheader("Interpretación de los resultados")
+    st.write(
+        f"El {lider['modelo_avion']} ocupa el primer puesto. De {total} parejas, "
+        f"{misma} se sentaron en la misma fila ({porcentaje} %). "
+        f"El {cercana} % se sentó en la misma fila o a una fila de distancia."
+    )
 
-    datos = pd.DataFrame(registros)
 
-    if len(datos) != total or datos["book_ref"].nunique() != total:
-        raise ValueError("La descarga tiene reservas faltantes o duplicadas.")
+nombres_pestanas = [f"Pregunta {numero}" for numero in range(1, 6)]
+pestanas_dinamicas = "on_change" in signature(st.tabs).parameters
 
-    return datos
+if pestanas_dinamicas:
+    pestanas = st.tabs(
+        nombres_pestanas, default="Pregunta 2", key="preguntas_cuestionario", on_change="rerun"
+    )
+else:
+    pestanas = st.tabs(nombres_pestanas)
 
-try:
-    with st.spinner("Cargando datos desde Supabase..."):
-        bookings = cargar_bookings_supabase()
-except Exception as error:
-    st.error("No se pudo conectar o cargar la tabla 'bookings' desde Supabase.")
-    st.exception(error)
-    st.stop()
+preguntas_disponibles = {2: mostrar_pregunta_2, 5: mostrar_pregunta_5}
 
-# Ejecutar la consulta SQL usando DuckDB sobre el DataFrame obtenido de Supabase
-try:
-    resultado_2 = duckdb.query(consulta_2).df()
-except Exception as error:
-    st.error("Error al ejecutar la consulta SQL.")
-    st.exception(error)
-    st.stop()
+for numero, pestana in enumerate(pestanas, start=1):
+    if pestanas_dinamicas and not pestana.open:
+        continue
 
-st.subheader("Resultados")
-st.dataframe(resultado_2, hide_index=True)
-
-st.subheader("Interpretación de los resultados")
-
-st.write(
-    "El mayor aumento se registró el 14 de julio de 2017. "
-    "El importe de las reservas pasó de 432.826.700 el día "
-    "anterior a 460.449.000, un aumento de 27.622.300, "
-    "equivalente al 6,38 %."
-)
-
-st.write(
-    "El mayor aumento diario no corresponde necesariamente "
-    "al día con mayor importe de reservas. El 14 de agosto "
-    "registró el importe máximo de toda la serie, con "
-    "524.600.500, pero ocupa el octavo puesto por aumento."
-)
-
-st.write(
-    "El puesto en el ranking de caídas se calcula entre "
-    "todos los días considerados, antes de seleccionar "
-    "estos ocho resultados. El puesto 1 corresponde a la "
-    "mayor caída; por eso los mayores aumentos aparecen "
-    "en los últimos puestos de ese ranking."
-)
+    with pestana:
+        mostrar_pregunta = preguntas_disponibles.get(numero)
+        if mostrar_pregunta is None:
+            st.info("Pregunta pendiente de incorporar.")
+        else:
+            mostrar_pregunta(pestanas_dinamicas)

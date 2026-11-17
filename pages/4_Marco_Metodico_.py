@@ -58,7 +58,9 @@ st.markdown("""
 
 st.title("Marco Metódico")
 st.subheader("Denormalización de los datos")
-
+from pathlib import Path
+diagrama = Path(__file__).resolve().parents[1]/ "assets" / "denormalizacion_vuelos.svg"
+st.image(diagrama.read_text(encoding="utf-8"), width="stretch")
 st.markdown("""
 <section class="metodo-denormalizacion">
   <h3>De las tablas originales al modelo de análisis</h3>
