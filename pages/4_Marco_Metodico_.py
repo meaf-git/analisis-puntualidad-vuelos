@@ -57,6 +57,64 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.title("Marco Metódico")
+
+st.subheader("Proceso de Normalización de los datos")
+st.markdown("""
+<section class="metodo-denormalizacion">
+  <h3>Primera forma normal (1FN): valores atómicos</h3>
+  <p>Inicialmente, campos como los nombres de las ciudades, aeropuertos o modelos de
+  aviones se encontraban aglomerados en objetos JSON multilingües (ruso), mientras que
+  las coordenadas geográficas estaban unidas en un solo texto. Para cumplir con la
+  atomicidad de la Primera Forma Normal (1FN), en el diseño final estos valores se
+  desaglomeraron en columnas atómicas individuales
+  (<span class="metodo-tabla">nombre</span>, <span class="metodo-tabla">nombre_ru</span>,
+  <span class="metodo-tabla">longitud</span> y <span class="metodo-tabla">latitud</span>),
+  permitiendo un manejo directo de los datos sin tener que procesar cadenas compuestas.</p>
+
+  <h3>Tercera forma normal (3FN): catálogos independientes</h3>
+  <p>Para erradicar las dependencias transitivas y alcanzar la Tercera Forma Normal (3FN),
+  se extrajeron catálogos independientes, siendo la creación de la tabla
+  <span class="metodo-tabla">ciudades</span> la modificación más evidente. Anteriormente,
+  el nombre de la ciudad y su zona horaria residían directamente en la tabla de
+  aeropuertos, lo que generaba duplicación si una misma ciudad poseía varios aeropuertos.
+  Al aislar las ciudades con su propia clave primaria, se eliminó esa redundancia.</p>
+
+  <p>Del mismo modo, textos repetitivos como las condiciones de tarifa ('Economy',
+  'Business') y los estados de vuelo ('Scheduled', 'Arrived') se transformaron en las
+  tablas de soporte <span class="metodo-tabla">clases_tarifarias</span> y
+  <span class="metodo-tabla">estados_vuelo</span>, reemplazando cadenas de texto pesadas
+  por IDs enteros ligeros.</p>
+
+  <h3>Separación entre el itinerario y el evento real</h3>
+  <p>Asimismo, en el núcleo del negocio se aplicó una descomposición semántica al separar
+  el itinerario conceptual del evento real. La tabla <span class="metodo-tabla">rutas</span>
+  pasó a definir la plantilla fija del trayecto (origen, destino, aeronave asignada por
+  defecto y duración estimada), mientras que la tabla
+  <span class="metodo-tabla">vuelos</span> se reservó únicamente para registrar las
+  ejecuciones físicas en el tiempo, controlando sus fechas, horas reales y estados de
+  operación.</p>
+
+  <h3>Reservas, pasajes y embarque (2FN)</h3>
+  <p>Finalmente, el diseño garantiza la integridad del proceso de compra y abordaje
+  alineando las claves primarias compuestas propias de la Segunda Forma Normal. La
+  transacción comercial se divide entre la reserva (la compra global) y el pasaje
+  (asociado a un pasajero). Como un pasaje puede incluir varios tramos o escalas, la
+  tabla <span class="metodo-tabla">cupones</span> resuelve esta relación de muchos a
+  muchos, conectando el pasaje con el vuelo correspondiente y fijando el costo del
+  tramo.</p>
+
+  <p>A su vez, la tarjeta de embarque valida su emisión, vinculando su clave foránea
+  compuesta directamente a la pareja
+  (<span class="metodo-tabla">numero_pasaje</span>, <span class="metodo-tabla">vuelo_id</span>)
+  de los cupones, asegurando que nadie pueda recibir un pase de abordaje para un vuelo si
+  previamente no adquirió un cupón para ese trayecto específico. Todo esto se complementa
+  con reglas de validación en la base de datos (CHECK y UNIQUE) que impiden incoherencias
+  horarias, coordenadas fuera de rango o la asignación de un mismo asiento a dos
+  pasajeros en el mismo vuelo.</p>
+</section>
+""", unsafe_allow_html=True)
+
+
 st.subheader("Denormalización de los datos")
 from pathlib import Path
 diagrama = Path(__file__).resolve().parents[1]/ "assets" / "denormalizacion_vuelos.svg"
