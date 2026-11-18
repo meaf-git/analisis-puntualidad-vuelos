@@ -97,9 +97,3 @@ de los vuelos registrados en los aeropuertos rusos durante el período comprendi
  influyen en la frecuencia y magnitud de los retrasos, medidos a partir de la desviación entre los horarios reales y programados.
 
 """, unsafe_allow_html=True)
-########################################################################################################
-### ESTRUCTURA DEL INFORME ###
-st.subheader("Estructura del informe")
-st.markdown(""" la estructura del informe
-""", unsafe_allow_html=True)
-########################################################################################################
