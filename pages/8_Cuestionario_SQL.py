@@ -208,6 +208,56 @@ FROM metricas
 ORDER BY puesto, modelo_avion;
 """.strip()
 
+consulta_6 = """
+WITH salidos AS (                                   -- CTE considerando solo vuelos que salieron
+    SELECT flight_no,
+           CAST(CAST(scheduled_departure AS TIMESTAMPTZ)
+                AT TIME ZONE 'Europe/Moscow' AS DATE) AS dia,    -- día programado (hora local)
+           aircraft_code,
+           -- retraso grave (>60 min)
+           CAST(date_diff('second',
+                          CAST(scheduled_departure AS TIMESTAMPTZ),
+                          TRY_CAST(actual_departure AS TIMESTAMPTZ)) > 3600 AS INTEGER) AS grave
+    FROM flights
+    WHERE status IN ('Arrived', 'Departed')         -- llegaron o en vuelo
+),
+pares AS (                                          -- SELF JOIN para vuelo del día D con el del día D+1
+    SELECT a.aircraft_code,                         -- modelo del Día 1
+           a.grave AS g1,
+           b.grave AS g2
+    FROM salidos a
+    JOIN salidos b
+      ON  b.flight_no = a.flight_no
+      AND b.dia       = a.dia + 1
+)
+SELECT m.nombre_modelo                                             AS "Modelo de avión",
+       m.pares                                                     AS "Pares de días consecutivos",
+       m.graves_1                                                  AS "Pares con retraso grave en el día 1",
+       ROUND(100.0 * m.graves_1 / m.pares, 2)                      AS "Porcentaje de retraso grave día 1",
+       ROUND(100.0 * m.rep_si / m.graves_1, 2)                     AS "Porcentaje grave del día 2 si día 1 grave",
+       ROUND(100.0 * m.rep_no / (m.pares - m.graves_1), 2)         AS "Porcentaje grave del día 2 si día 1 no grave",
+       ROUND(1.0 * m.rep_si * (m.pares - m.graves_1)
+                 / NULLIF(m.rep_no * m.graves_1, 0), 2)            AS "Cociente de repetición",
+       ROUND(100.0 * m.rep_si / m.graves_1 - g.pct_global, 2)      AS "Diferencia vs. base",
+       ROUND(100.0 * m.pares / SUM(m.pares) OVER (), 2)            AS "Porcentaje de pares entre los modelos mostrados",
+       RANK() OVER (ORDER BY 1.0 * m.rep_si * (m.pares - m.graves_1)
+                           / NULLIF(m.rep_no * m.graves_1, 0) DESC) AS "Puesto por cociente"
+FROM (                                              -- subconsulta para los agregados por modelo
+    SELECT json_extract_string(CAST(ac.model AS JSON), '$.en') AS nombre_modelo,
+           COUNT(*)                  AS pares,
+           SUM(p.g1)                 AS graves_1,
+           SUM(p.g1 * p.g2)          AS rep_si,        -- grave -> grave
+           SUM((1 - p.g1) * p.g2)    AS rep_no         -- no grave -> grave
+    FROM pares p
+    JOIN aircrafts_data ac ON ac.aircraft_code = p.aircraft_code
+    GROUP BY ac.aircraft_code, ac.model
+    HAVING SUM(p.g1) >= 30
+) m
+CROSS JOIN (                                        -- porcentaje de repetición en toda la base
+    SELECT 100.0 * SUM(g1 * g2) / SUM(g1) AS pct_global FROM pares
+) g
+ORDER BY "Puesto por cociente";
+""".strip()
 
 # Las columnas y las claves de orden corresponden a la base original de vuelos.
 fuentes_pregunta_1 = (
@@ -224,6 +274,11 @@ fuentes_pregunta_5 = (
     ("flights", ("flight_id", "aircraft_code"), ("flight_id",)),
     ("aircrafts_data", ("aircraft_code", "model"), ("aircraft_code",)),
     ("seats", ("aircraft_code", "seat_no"), ("aircraft_code", "seat_no")),
+)
+fuentes_pregunta_6 = (
+    ("flights", ("flight_id", "flight_no", "scheduled_departure", "actual_departure",
+                 "status", "aircraft_code"), ("flight_id",)),
+    ("aircrafts_data", ("aircraft_code", "model"), ("aircraft_code",)),
 )
 
 
@@ -414,8 +469,62 @@ def mostrar_pregunta_5(carga_automatica):
         f"El {cercana} % se sentó en la misma fila o a una fila de distancia."
     )
 
+def mostrar_pregunta_6(carga_automatica):
+    st.header("Pregunta 6. Repetición de retrasos graves")
+    st.write(
+        "Se mide si un vuelo que sale con retraso grave (más de 60 minutos) tiende a repetir este patrón "
+        "al día siguiente, uniendo el mismo número de vuelo en días consecutivos por modelo de avión."
+    )
+    with st.expander("Ver consulta SQL", expanded=False):
+        st.code(consulta_6, language="sql")
+    resultado_6 = mostrar_resultado(6, consulta_6, fuentes_pregunta_6, carga_automatica)
+    if resultado_6 is None:
+        return
+    if resultado_6.empty:
+        st.info("La consulta no devuelve modelos con suficientes pares.")
+        return
 
-nombres_pestanas = [f"Pregunta {numero}" for numero in range(1, 6)]
+    st.dataframe(resultado_6, hide_index=True)
+
+    def num(valor):
+        return f"{valor:.2f}".replace(".", ",")
+
+    primero = resultado_6.iloc[0]
+    ultimo = resultado_6.iloc[-1]
+
+    st.subheader("Interpretación de los resultados")
+
+    st.write(
+        f"Si los retrasos se debieran a causas persistentes, el cociente de repetición "
+        f"sería significativamente mayor que 1. En este caso, va de {num(ultimo['Cociente de repetición'])} "
+        f"a {num(primero['Cociente de repetición'])}."
+    )
+    st.write(
+        f"El {primero['Modelo de avión']} tiene el cociente más alto: "
+        f"{num(primero['Porcentaje grave del día 2 si día 1 grave'])} % de retraso grave el día 2 "
+        f"cuando el día 1 fue grave, frente a "
+        f"{num(primero['Porcentaje grave del día 2 si día 1 no grave'])} % cuando no lo fue. "
+        f"El {ultimo['Modelo de avión']} tiene el más bajo "
+        f"({num(ultimo['Diferencia vs. base'])} puntos porcentuales respecto a la base)."
+    )
+    if resultado_6["Cociente de repetición"].max() < 1.5:
+        st.write(
+            "Haber salido muy tarde un día influye mínimamente en la probabilidad de salir muy tarde "
+            "al siguiente. Los retrasos graves parecen ocurrir de forma independiente de un día "
+            "a otro, y no por motivos asociados al vuelo o al modelo formalmente."
+        )
+    else:
+        st.write(
+            "Al menos un modelo repite el retraso grave con más frecuencia que cuando "
+            "el día anterior fue normal, lo que sugiere causas persistentes en esos casos específicamente."
+        )
+    st.write(
+        f"Solo {len(resultado_6)} modelos tienen, al menos, 30 pares con retraso grave el primer "
+        f"día, por lo que se debe tener cautela con las diferencias entre ellos."
+    )
+
+
+nombres_pestanas = [f"Pregunta {numero}" for numero in range(1, 7)]
 pestanas_dinamicas = "on_change" in signature(st.tabs).parameters
 
 if pestanas_dinamicas:
@@ -425,7 +534,7 @@ if pestanas_dinamicas:
 else:
     pestanas = st.tabs(nombres_pestanas)
 
-preguntas_disponibles = {1: mostrar_pregunta_1,2: mostrar_pregunta_2, 5: mostrar_pregunta_5}
+preguntas_disponibles = {1: mostrar_pregunta_1,2: mostrar_pregunta_2, 5: mostrar_pregunta_5, 6: mostrar_pregunta_6}
 
 for numero, pestana in enumerate(pestanas, start=1):
     if pestanas_dinamicas and not pestana.open:
