@@ -46,6 +46,60 @@ st.markdown("""
 
 st.title("Cuestionario SQL")
 
+consulta_1 = """
+WITH ruta_dir AS (
+    SELECT 
+        f.departure_airport AS dep,
+        f.arrival_airport AS arr,
+        COUNT(tf.ticket_no) AS tramos,
+        SUM(tf.amount) AS ingreso
+    FROM flights f
+    JOIN ticket_flights tf ON f.flight_id = tf.flight_id
+    GROUP BY f.departure_airport, f.arrival_airport
+),
+pares_rutas AS (
+    SELECT 
+        r1.dep AS aero1_code,
+        r1.arr AS aero2_code,
+        r1.tramos AS tramos_12,
+        r1.ingreso AS ingreso_12,
+        COALESCE(r2.tramos, 0) AS tramos_21,
+        COALESCE(r2.ingreso, 0) AS ingreso_21,
+        (r1.ingreso + COALESCE(r2.ingreso, 0)) AS ingreso_total
+    FROM ruta_dir r1
+    LEFT JOIN ruta_dir r2 
+        ON r1.dep = r2.arr AND r1.arr = r2.dep
+    WHERE r1.dep < r1.arr
+),
+pares_con_puesto AS (
+    SELECT 
+        ROW_NUMBER() OVER (ORDER BY ingreso_total DESC) AS puesto,
+        aero1_code,
+        aero2_code,
+        tramos_12,
+        tramos_21,
+        ingreso_12,
+        ingreso_21,
+        ingreso_total
+    FROM pares_rutas
+)
+SELECT 
+    p.puesto AS "Puesto",
+    json_extract_string(CAST(ap1.airport_name AS JSON), '$.en') AS "Aeropuerto A",
+    json_extract_string(CAST(ap2.airport_name AS JSON), '$.en') AS "Aeropuerto B",
+    (p.tramos_12 + p.tramos_21) AS "Tramos Vendidos Totales",
+    p.ingreso_12 AS "Ingreso A hacia B",
+    p.ingreso_21 AS "Ingreso B hacia A",
+    p.ingreso_total AS "Ingreso Total",
+    ROUND((p.ingreso_total * 100.0) / (SELECT SUM(amount) FROM ticket_flights), 4) AS "Porcentaje sobre Red (%)",
+    ROUND(((p.ingreso_12 - p.ingreso_21) * 100.0) / NULLIF(p.ingreso_21, 0), 2) AS "Desequilibrio (%)"
+FROM pares_con_puesto p
+JOIN airports_data ap1 ON p.aero1_code = ap1.airport_code
+JOIN airports_data ap2 ON p.aero2_code = ap2.airport_code
+ORDER BY p.puesto
+LIMIT 10;
+""".strip()
+
 consulta_2 = """
 WITH ventas_diarias AS (
     SELECT
@@ -156,6 +210,11 @@ ORDER BY puesto, modelo_avion;
 
 
 # Las columnas y las claves de orden corresponden a la base original de vuelos.
+fuentes_pregunta_1 = (
+    ("flights", ("flight_id", "departure_airport", "arrival_airport"), ("flight_id",)),
+    ("ticket_flights", ("ticket_no", "flight_id", "amount"), ("ticket_no", "flight_id")),
+    ("airports_data", ("airport_code", "airport_name"), ("airport_code",)),
+)
 fuentes_pregunta_2 = (
     ("bookings", ("book_ref", "book_date", "total_amount"), ("book_ref",)),
 )
@@ -243,6 +302,32 @@ def mostrar_resultado(numero, consulta, fuentes, carga_automatica):
     except Exception as error:
         st.error(f"No se pudo leer el resultado de la pregunta {numero} desde Supabase. {error}")
         return None
+
+
+def mostrar_pregunta_1(carga_automatica):
+    st.header("Pregunta 1. Ingresos por Par de Aeropuertos")
+    st.write(
+        "Muestra los diez pares de mayor ingreso total con su puesto, los dos aeropuertos, "
+        "los tramos vendidos en ambos sentidos y el análisis financiero y de desequilibrio."
+    )
+    with st.expander("Ver consulta SQL", expanded=False):
+        st.code(consulta_1, language="sql")
+    
+    resultado_1 = mostrar_resultado(1, consulta_1, fuentes_pregunta_1, carga_automatica)
+    if resultado_1 is None:
+        return
+    if resultado_1.empty:
+        st.info("La consulta no devolvió resultados.")
+        return
+
+    st.dataframe(resultado_1, hide_index=True)
+
+    st.subheader("Interpretación de los resultados")
+    st.write(
+        "Los resultados muestran los pares de aeropuertos con mayor volumen de ingresos acumulados "
+        "en ambas direcciones, ordenados del 1 al 10, permitiendo evaluar el peso de cada ruta "
+        "sobre el total de la red y su asimetría o desequilibrio comercial."
+    )
 
 
 def mostrar_pregunta_2(carga_automatica):
@@ -340,7 +425,7 @@ if pestanas_dinamicas:
 else:
     pestanas = st.tabs(nombres_pestanas)
 
-preguntas_disponibles = {2: mostrar_pregunta_2, 5: mostrar_pregunta_5}
+preguntas_disponibles = {1: mostrar_pregunta_1,2: mostrar_pregunta_2, 5: mostrar_pregunta_5}
 
 for numero, pestana in enumerate(pestanas, start=1):
     if pestanas_dinamicas and not pestana.open:
