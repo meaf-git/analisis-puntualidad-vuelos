@@ -43,7 +43,7 @@ st.set_page_config(page_title="Planteamiento del Problema", page_icon="➕", lay
 ### PLANTEAMIENTO DEL PROBLEMA ###
 st.title("Planteamiento del Problema")
 st.markdown(""" 
-​​A nivel mundial, la aviación comercial es la columna vertebral del transporte, donde la puntualidad es uno de los indicadores de desempeño más importantes para la logística, los costos de las aerolíneas y la fluidez del tránsito aéreo. A su vez, la red de aeropuertos de la Federación Rusa demanda una sincronización precisa para conectar múltiples zonas y, durante el período comprendido entre el 16 de julio y el 17 de agosto de 2017, este sistema aeroportuario gestionó un volumen alto de operaciones.
+​​A nivel mundial, la aviación comercial es la columna vertebral del transporte, donde la puntualidad es uno de los indicadores de desempeño más importantes para la logística, los costos de las aerolíneas y la fluidez del tránsito aéreo. A su vez, la red de aeropuertos de la Federación Rusa demanda una sincronización precisa para conectar múltiples zonas y, durante el período comprendido entre el 16 de julio y el 15 de agosto de 2017, este sistema aeroportuario gestionó un volumen alto de operaciones.
 
 A pesar de la planificación de los itinerarios, se observan desviaciones constantes entre los horarios de salida y llegada programados frente a los horarios reales, lo que se traduce en una acumulación de retrasos que no se distribuye de manera correcta.
 """, unsafe_allow_html=True)
@@ -213,7 +213,7 @@ with col_vettel:
         <h5 style="color: #304b7a; margin-top: 0; font-family: sans-serif;"> Limitación temporal </h5>
         <p style="font-size: 14px; color: #304b7a; font-family: sans-serif;
         ">
-        El análisis se restringe al período comprendido entre el xx de julio y el xx de agosto de 2017. Por lo tanto, los patrones y conclusiones obtenidos no son aplicables a otras épocas del año.
+        El análisis se restringe al período comprendido entre el 16 de julio y el 15 de agosto de 2017. Por lo tanto, los patrones y conclusiones obtenidos no son aplicables a otras épocas del año.
         </p>
         </div>
         """, unsafe_allow_html=True)
