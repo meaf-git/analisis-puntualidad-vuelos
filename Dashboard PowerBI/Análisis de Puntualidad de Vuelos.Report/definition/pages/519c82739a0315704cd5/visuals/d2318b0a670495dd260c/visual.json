@@ -84,7 +84,7 @@
                     "Entity": "main vuelos_denormalizados"
                   }
                 },
-                "Property": "% Frecuencia Retraso Llegada"
+                "Property": "Promedio Minutos Retraso Llegada2"
               }
             },
             "direction": "Ascending"

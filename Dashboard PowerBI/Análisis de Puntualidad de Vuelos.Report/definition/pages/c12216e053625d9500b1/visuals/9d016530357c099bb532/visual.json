@@ -99,6 +99,13 @@
                   }
                 }
               }
+            },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'outside'"
+                }
+              }
             }
           }
         }
@@ -214,7 +221,7 @@
                 "color": {
                   "expr": {
                     "ThemeDataColor": {
-                      "ColorId": 4,
+                      "ColorId": 2,
                       "Percent": 0
                     }
                   }
@@ -259,6 +266,19 @@
                 }
               }
             ]
+          }
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Right'"
+                }
+              }
+            }
           }
         }
       ]
