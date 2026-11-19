@@ -1,0 +1,83 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "5fd99aabd702411db4ba",
+  "position": {
+    "x": 251.16666666666666,
+    "y": 296.83333333333331,
+    "z": 5002,
+    "height": 176.14285714285714,
+    "width": 303.35714285714283,
+    "tabOrder": 5002
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "main vuelos_denormalizados"
+                    }
+                  },
+                  "Property": "Magnitud Media Solo Demorados"
+                }
+              },
+              "queryRef": "main vuelos_denormalizados.Magnitud Media Solo Demorados",
+              "nativeQueryRef": "Magnitud Media Solo Demorados"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "main vuelos_denormalizados"
+                  }
+                },
+                "Property": "Magnitud Media Solo Demorados"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}
