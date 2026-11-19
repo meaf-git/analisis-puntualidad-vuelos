@@ -5,6 +5,8 @@ import streamlit as st
 import plotly.express as px
 from utils.db import get_supabase_client
 from fids_board import mostrar_tablero_vuelos  #modulo de tablero
+import sqlite3
+
 
 
 st.set_page_config(page_title="Análisis de vuelos", page_icon="✈️", layout="wide")
