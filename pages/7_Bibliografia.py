@@ -37,5 +37,5 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.set_page_config(page_title="Bibliografia", page_icon="📚", layout="wide")
+st.set_page_config(page_title="Bibliografía", page_icon="📚", layout="wide")
 st.title("Bibliografia")
