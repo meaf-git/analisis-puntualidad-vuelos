@@ -1152,7 +1152,213 @@ with pestanas[3]:
         "¿Qué diferencias de frecuencia y magnitud de retrasos "
         "se observan entre los modelos de aeronave?"
     )
+    st.caption(
+        "Filtros de control para el análisis de flotas y modelos de aeronave."
+    )
 
+    dias_vis_obj4 = {
+        "Lunes": "Lunes", "Martes": "Martes", "Miercoles": "Miércoles",
+        "Jueves": "Jueves", "Viernes": "Viernes", "Sabado": "Sábado", "Domingo": "Domingo"
+    }
+    
+    franjas_disp_obj4 = consultar("""
+        SELECT DISTINCT franja_horaria 
+        FROM v_analisis_vuelos_limpios 
+        WHERE franja_horaria IS NOT NULL 
+        ORDER BY franja_horaria
+    """)["franja_horaria"].tolist()
+
+    modelos_disp_obj4 = consultar("""
+        SELECT DISTINCT modelo_aeronave 
+        FROM v_analisis_vuelos_limpios 
+        WHERE modelo_aeronave IS NOT NULL 
+        ORDER BY modelo_aeronave
+    """)["modelo_aeronave"].tolist()
+
+    fecha_min_obj4 = pd.Timestamp(control.loc[0, "desde"]).date()
+    fecha_max_obj4 = pd.Timestamp(control.loc[0, "hasta"]).date()
+
+    col_f1, col_f2, col_f3, col_f4 = st.columns(4)
+    fechas_obj4 = col_f1.date_input(
+        "Rango de Fechas", value=(fecha_min_obj4, fecha_max_obj4),
+        min_value=fecha_min_obj4, max_value=fecha_max_obj4,
+        format="DD/MM/YYYY", key="obj4_fecha"
+    )
+    dia_obj4 = col_f2.selectbox(
+        "Día de la semana", [None, *dias_vis_obj4],
+        format_func=lambda d: dias_vis_obj4.get(d, "Todas"), key="obj4_dia"
+    )
+    franja_obj4 = col_f3.selectbox(
+        "Franja Horaria", [None, *franjas_disp_obj4],
+        format_func=lambda f: f or "Todas", key="obj4_franja"
+    )
+    modelo_obj4 = col_f4.selectbox(
+        "Modelo de Aeronave", [None, *modelos_disp_obj4],
+        format_func=lambda m: m or "Todas", key="obj4_modelo"
+    )
+    
+    fechas_obj4 = fechas_obj4 or (fecha_min_obj4, fecha_max_obj4)
+
+    datos_obj4 = consultar("""
+        SELECT
+            modelo_aeronave AS modelo,
+            COUNT(*) AS total_vuelos,
+            CAST(SUM(CASE WHEN demora_llegada_15 = 1 THEN 1 ELSE 0 END) AS DOUBLE) / COUNT(*) AS frec_llegada,
+            CAST(SUM(CASE WHEN demora_salida_15 = 1 THEN 1 ELSE 0 END) AS DOUBLE) / COUNT(*) AS frec_salida,
+            SUM(COALESCE(retraso_llegada_min, 0)) / COUNT(*) AS prom_llegada_min2,
+            SUM(COALESCE(retraso_salida_min, 0)) / COUNT(*) AS prom_salida_min2
+        FROM v_analisis_vuelos_limpios
+        WHERE modelo_aeronave IS NOT NULL
+          AND CAST(salida_prog_local AS DATE) BETWEEN ? AND ?
+          AND (? IS NULL OR dia_semana = ?)
+          AND (? IS NULL OR franja_horaria = ?)
+          AND (? IS NULL OR modelo_aeronave = ?)
+        GROUP BY modelo_aeronave
+        ORDER BY frec_llegada DESC
+    """, [
+        fechas_obj4[0], fechas_obj4[-1],
+        dia_obj4, dia_obj4,
+        franja_obj4, franja_obj4,
+        modelo_obj4, modelo_obj4
+    ])
+
+    if datos_obj4.empty:
+        st.warning("No hay datos disponibles para los filtros seleccionados en el Objetivo 4.")
+    else:
+        st.divider()
+
+        # grafico
+        st.markdown("#### Promedio Minutos Retraso Llegada y Promedio Minutos Retraso Salida por modelo")
+        col_g1, col_i1 = st.columns([1.3, 0.7], gap="large")
+        
+        with col_g1:
+            with st.container(border=True):
+                fig_sup = px.bar(
+                    datos_obj4,
+                    x="modelo",
+                    y=["frec_llegada", "frec_salida"],
+                    barmode="group",
+                    labels={"value": "", "modelo": "", "variable": ""},
+                    color_discrete_map={
+                        "frec_llegada": "#C9A956",
+                        "frec_salida": "#F6E39A"
+                    }
+                )
+                fig_sup.for_each_trace(lambda t: t.update(
+                    name="Promedio Minutos Retraso Llegada" if t.name == "frec_llegada" else "Promedio Minutos Retraso Salida"
+                ))
+                fig_sup.update_layout(
+                    template="plotly_white",
+                    height=420,
+                    margin=dict(b=120),
+                    yaxis=dict(tickformat=".0%", showgrid=True, gridcolor="#eee"),
+                    xaxis=dict(showgrid=False, tickangle=-25),
+                    legend=dict(orientation="h", yanchor="top", y=-0.35, xanchor="left", x=0)
+                )
+                st.plotly_chart(fig_sup, use_container_width=True)
+
+        with col_i1:
+            st.markdown("##### Interpretación")
+            st.markdown(
+                "Se observa una tendencia consistente en los distintos modelos de aeronave donde las frecuencias de retraso "
+                "en origen y destino mantienen proporciones muy cercanas. Los modelos con mayor índice de afectación "
+                "superan ligeramente el umbral superior, evidenciando cuellos de botella operativos en determinados tipos de flota."
+            )
+
+        st.divider()
+
+       # segundo grafico
+        col_tabla_obj4, col_i_tabla = st.columns([1.1, 0.9], gap="large")
+
+        with col_tabla_obj4:
+            st.markdown("#### Detalle por Modelo de Aeronave")
+            tabla_df = datos_obj4.sort_values("prom_llegada_min2", ascending=True).copy()
+            
+            total_v = int(tabla_df["total_vuelos"].sum())
+            frec_total = (tabla_df["frec_llegada"] * tabla_df["total_vuelos"]).sum() / total_v
+            prom_total = (tabla_df["prom_llegada_min2"] * tabla_df["total_vuelos"]).sum() / total_v
+
+            tabla_mostrar = pd.DataFrame({
+                "modelo": tabla_df["modelo"],
+                "Total Vuelos": tabla_df["total_vuelos"].astype(int).astype(str),
+                "% Frecuencia Retraso Llegada": tabla_df["frec_llegada"].map(lambda x: f"{x:.2f}".replace(".", ",")),
+                "Promedio Minutos Retraso Llegada2": tabla_df["prom_llegada_min2"].round(0).astype(int).astype(str) + " min"
+            })
+
+            fila_total = pd.DataFrame([{
+                "modelo": "Total",
+                "Total Vuelos": str(total_v),
+                "% Frecuencia Retraso Llegada": f"{frec_total:.2f}".replace(".", ","),
+                "Promedio Minutos Retraso Llegada2": f"{round(prom_total):.0f} min"
+            }])
+
+            tabla_mostrar = pd.concat([tabla_mostrar, fila_total], ignore_index=True)
+
+            def aplicar_estilo_tabla(row):
+                if row.name == len(tabla_mostrar) - 1:
+                    return ['background-color: #1E293B; color: white; font-weight: bold'] * len(row)
+                elif row.name % 2 == 0:
+                    return ['background-color: #F6E39A; color: white'] * len(row)
+                else:
+                    return ['background-color: transparent; color: white'] * len(row)
+
+            st.dataframe(
+                tabla_mostrar.style.apply(aplicar_estilo_tabla, axis=1),
+                use_container_width=True,
+                hide_index=True,
+                height=360
+            )
+
+        with col_i_tabla:
+            st.markdown("##### Interpretación")
+            st.markdown(
+                "El desglose por modelo permite identificar que aeronaves con mayor volumen operativo "
+                "concentran la mayor cantidad de registros, permitiendo evaluar el impacto de los retrasos por cada tipo de flota."
+            )
+
+        st.divider()
+
+        col_graf_obj4, col_i2 = st.columns([1.1, 0.9], gap="large")
+
+        with col_graf_obj4:
+            st.markdown("#### % Frecuencia Retraso Llegada y Salida por modelo")
+            with st.container(border=True):
+                fig_freq_obj4 = px.bar(
+                    datos_obj4.sort_values("frec_llegada", ascending=True),
+                    y="modelo",
+                    x=["frec_llegada", "frec_salida"],
+                    barmode="group",
+                    orientation="h",
+                    labels={"value": "", "modelo": "", "variable": ""},
+                    color_discrete_map={
+                        "frec_llegada": "#C9A956",
+                        "frec_salida": "#F6E39A"
+                    }
+                )
+                fig_freq_obj4.for_each_trace(lambda t: t.update(
+                    name="% Frecuencia Retraso Llegada" if t.name == "frec_llegada" else "% Frecuencia Retraso Salida"
+                ))
+                fig_freq_obj4.update_layout(
+                    template="plotly_white",
+                    height=360,
+                    xaxis=dict(
+                        tickformat=".0%", 
+                        showgrid=True, 
+                        gridcolor="#C9A956", 
+                        griddash="solid",
+                        dtick=0.01
+                    ),
+                    yaxis=dict(showgrid=False),
+                    legend=dict(orientation="h", yanchor="top", y=-0.22, xanchor="left", x=0)
+                )
+                st.plotly_chart(fig_freq_obj4, use_container_width=True)
+
+        with col_i2:
+            st.markdown("##### Interpretación")
+            st.markdown(
+                "Las frecuencias de retraso en llegada y salida muestran el comportamiento porcentual frente al total de operaciones, "
+                "evidenciando qué modelos de aeronave presentan mayor recurrencia de demoras operativas superiores a los 15 minutos."
+            )
 
 with pestanas[4]:
     presentar_objetivo(
