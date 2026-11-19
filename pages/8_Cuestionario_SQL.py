@@ -399,8 +399,6 @@ def mostrar_resultado(numero, consulta, fuentes, carga_automatica):
     except (KeyError, FileNotFoundError):
         st.error(
             "Este Streamlit no tiene configurada la conexión a Supabase. "
-            "Abre la app publicada del equipo o pide a quien la administra "
-            "que configure la conexión de lectura de esta copia."
         )
         return None
 
@@ -602,7 +600,7 @@ def mostrar_pregunta_6(carga_automatica):
     )
 
 
-nombres_pestanas = [f"Pregunta {numero}" for numero in range(1, 7)]
+nombres_pestanas = [f"Pregunta {numero}" for numero in [1, 2, 3, 5, 6]]
 pestanas_dinamicas = "on_change" in signature(st.tabs).parameters
 
 if pestanas_dinamicas:
@@ -620,7 +618,7 @@ preguntas_disponibles = {
     6: mostrar_pregunta_6,
 }
 
-for numero, pestana in enumerate(pestanas, start=1):
+for numero, pestana in zip([1,2,3,5,6], pestanas):
     if pestanas_dinamicas and not pestana.open:
         continue
 
