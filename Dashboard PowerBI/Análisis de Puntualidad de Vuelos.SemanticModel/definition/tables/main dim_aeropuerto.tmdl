@@ -1,0 +1,101 @@
+table 'main dim_aeropuerto'
+	lineageTag: 9dcba348-41c7-4d87-8f52-0674942b9bd0
+
+	column aeropuerto_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 2f121c82-e85c-4f13-8755-42709bcc7a90
+		summarizeBy: sum
+		sourceColumn: aeropuerto_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column codigo
+		dataType: string
+		lineageTag: 0007b722-7b2a-48ed-8a86-168d476691ea
+		summarizeBy: none
+		sourceColumn: codigo
+
+		annotation SummarizationSetBy = Automatic
+
+	column nombre
+		dataType: string
+		lineageTag: 243c00ad-f0ad-41ea-af2c-b921d27f2b59
+		summarizeBy: none
+		sourceColumn: nombre
+
+		annotation SummarizationSetBy = Automatic
+
+	column ciudad
+		dataType: string
+		lineageTag: e0334e26-d742-4031-9a82-20c84e8b3207
+		summarizeBy: none
+		sourceColumn: ciudad
+
+		annotation SummarizationSetBy = Automatic
+
+	column zona_horaria
+		dataType: string
+		lineageTag: a18b00ad-85a2-4cb4-98bf-4f348dbf75a5
+		summarizeBy: none
+		sourceColumn: zona_horaria
+
+		annotation SummarizationSetBy = Automatic
+
+	column longitud
+		dataType: double
+		lineageTag: 89511311-4143-4397-bc8e-562002414013
+		summarizeBy: sum
+		sourceColumn: longitud
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column latitud
+		dataType: double
+		lineageTag: 1bba7117-ed37-453c-a6f6-73d8f3b8f7d3
+		summarizeBy: sum
+		sourceColumn: latitud
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column vuelos_salida
+		dataType: int64
+		formatString: 0
+		lineageTag: e66568e9-ea15-42b4-b275-42a9da632be4
+		summarizeBy: sum
+		sourceColumn: vuelos_salida
+
+		annotation SummarizationSetBy = Automatic
+
+	column banda_trafico
+		dataType: string
+		lineageTag: d272bdea-4c4a-4485-ad6b-8e8ae51427ee
+		summarizeBy: none
+		sourceColumn: banda_trafico
+
+		annotation SummarizationSetBy = Automatic
+
+	column orden_banda
+		dataType: int64
+		formatString: 0
+		lineageTag: 017e16b0-4e1a-4277-acca-21d4b1e68499
+		summarizeBy: sum
+		sourceColumn: orden_banda
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'main dim_aeropuerto' = m
+		mode: import
+		source =
+				let
+				  Origen = PostgreSQL.Database("pg.us-east-1-aws.motherduck.com", "vuelos_motherduck"),
+				  #"Navegación 1" = Origen{[Schema = "main", Item = "dim_aeropuerto"]}[Data]
+				in
+				  #"Navegación 1"
+
+	annotation PBI_ResultType = Table
+
