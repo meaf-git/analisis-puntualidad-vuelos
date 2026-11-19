@@ -46,7 +46,7 @@ Evaluar el cumplimiento de los horarios programados de salida y llegada de los v
 
 - Comparar el comportamiento de los retrasos entre los diferentes aeropuertos de origen y destino, a fin de identificar diferencias en el cumplimiento de los horarios programados.
 
-- Comparar la frecuencia y magnitud de los retrasos según el tipo de aeronave asignada a los vuelos, con el propósito de identificar diferencias en el cumplimiento de los horarios programados.
+- Estudiar la frecuencia con la que, los vuelos que despegan puntualmente, presentan llegadas tarde, y qué características presentan los mismos en dichos casos.
 
 - Examinar la variación de los retrasos según el día de la semana, con el propósito de identificar patrones temporales en el cumplimiento de los horarios programados.
 
