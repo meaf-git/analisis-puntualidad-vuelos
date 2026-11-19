@@ -171,6 +171,57 @@ ORDER BY
 LIMIT 8;
 """.strip()
 
+# Los datos se leen de Supabase y esta consulta se ejecuta en DuckDB.
+consulta_3 = """
+WITH vuelos_modelo AS (
+    SELECT 
+        a.aircraft_code,
+        a.model,
+        a.range,
+        COUNT(f.flight_id) AS cantidad_vuelos,
+        AVG(
+            EXTRACT(
+                EPOCH FROM (
+                    CAST(f.actual_arrival AS TIMESTAMPTZ)
+                    - CAST(f.actual_departure AS TIMESTAMPTZ)
+                )
+            ) / 3600.0
+        ) AS duracion_media
+    FROM flights f
+    JOIN aircrafts_data a ON f.aircraft_code = a.aircraft_code
+    WHERE f.status = 'Arrived'
+    GROUP BY a.aircraft_code, a.model, a.range
+),
+modelo_ordenado AS (
+    SELECT 
+        *,
+        ROW_NUMBER() OVER (ORDER BY range ASC) AS numero_orden,
+        (SELECT COUNT(*) FROM flights WHERE status = 'Arrived') AS total_vuelos_llegados
+    FROM vuelos_modelo
+),
+comparacion AS (
+    SELECT 
+        actual.*,
+        anterior.duracion_media AS duracion_anterior,
+        anterior.range AS autonomia_anterior
+    FROM modelo_ordenado actual
+    LEFT JOIN modelo_ordenado anterior 
+        ON actual.numero_orden = anterior.numero_orden + 1
+)
+SELECT 
+    numero_orden AS "Número de orden",
+    model->>'en' AS "Modelo de avión",
+    range AS "Autonomía",
+    cantidad_vuelos AS "Cantidad de vuelos",
+    ROUND(100.0 * cantidad_vuelos / total_vuelos_llegados, 2) AS "Porcentaje de vuelos (%)",
+    ROUND(duracion_media, 2) AS "Duración media (horas)",
+    ROUND((duracion_media - duracion_anterior), 2) AS "Diferencia de duración",
+    (range - autonomia_anterior) AS "Diferencia de autonomía",
+    RANK() OVER (ORDER BY duracion_media DESC) AS "Puesto por duración media"
+FROM comparacion
+ORDER BY range ASC;
+""".strip()
+
 consulta_5 = """
 WITH pasajeros AS (
     SELECT bp.flight_id, t.book_ref, bp.ticket_no,
@@ -267,6 +318,10 @@ fuentes_pregunta_1 = (
 )
 fuentes_pregunta_2 = (
     ("bookings", ("book_ref", "book_date", "total_amount"), ("book_ref",)),
+)
+fuentes_pregunta_3 = (
+    ("flights", ("flight_id", "aircraft_code", "status", "actual_departure", "actual_arrival"), ("flight_id",)),
+    ("aircrafts_data", ("aircraft_code", "model", "range"), ("aircraft_code",)),
 )
 fuentes_pregunta_5 = (
     ("tickets", ("ticket_no", "book_ref"), ("ticket_no",)),
@@ -427,6 +482,29 @@ def mostrar_pregunta_2(carga_automatica):
     )
 
 
+def mostrar_pregunta_3(carga_automatica):
+    st.header("Pregunta 3. Escalera de Autonomía de la Flota")
+    st.write(
+        "Comparamos la autonomía y la duración real media de los vuelos por modelo de avión, "
+        "ordenados de menor a mayor autonomía y cruzados con el modelo anterior."
+    )
+    with st.expander("Ver consulta SQL", expanded=False):
+        st.code(consulta_3, language="sql")
+
+    resultado_3 = mostrar_resultado(3, consulta_3, fuentes_pregunta_3, carga_automatica)
+    if resultado_3 is None:
+        return
+
+    st.dataframe(resultado_3, hide_index=True)
+
+    st.subheader("Interpretación de los resultados")
+    st.write(
+        "Los resultados nos ordenanlos modelos de aeronaves según su autonomía, permitiendo analizar "
+        "si los aviones con mayor rango efectivamente operan vuelos más largos en promedio, "
+        "así como la variacion en la duración y autonomía respecto al modelo precedente."
+    )
+
+
 def mostrar_pregunta_5(carga_automatica):
     st.header("Pregunta 5. Acompañantes y asignación de asientos")
     st.write(
@@ -534,7 +612,13 @@ if pestanas_dinamicas:
 else:
     pestanas = st.tabs(nombres_pestanas)
 
-preguntas_disponibles = {1: mostrar_pregunta_1,2: mostrar_pregunta_2, 5: mostrar_pregunta_5, 6: mostrar_pregunta_6}
+preguntas_disponibles = {
+    1: mostrar_pregunta_1,
+    2: mostrar_pregunta_2,
+    3: mostrar_pregunta_3,
+    5: mostrar_pregunta_5,
+    6: mostrar_pregunta_6,
+}
 
 for numero, pestana in enumerate(pestanas, start=1):
     if pestanas_dinamicas and not pestana.open:
