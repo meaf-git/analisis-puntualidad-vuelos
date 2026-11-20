@@ -1082,7 +1082,7 @@ with pestanas[2]:
                 # 5. Tooltip interactivo idéntico al comportamiento en Power BI
                 tooltip_config = {
                     "html": "<b>Aeropuerto:</b> {nombre_aeropuerto}<br/>"
-                            "<b>Total uelos con salida registrada:</b> {total_vuelos}<br/>"
+                            "<b>Total vuelos con salida registrada:</b> {total_vuelos}<br/>"
                             "<b>Retraso Promedio:</b> {promedio_retraso_llegada_fmt} min",
                     "style": {
                         "backgroundColor": "#FFFFFF",
