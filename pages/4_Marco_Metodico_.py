@@ -1,4 +1,5 @@
 import streamlit as st
+from pathlib import Path
 
 st.set_page_config(page_title="Marco Metódico", page_icon="🧠", layout="wide")
 
@@ -41,7 +42,8 @@ st.markdown("""
         color: #454545 !important;
     }
     .metodo-denormalizacion {
-        max-width: 82ch;
+        width: 100%;
+        max-width: 100%;
     }
     .metodo-denormalizacion h3 {
         margin-top: 1.2rem;
@@ -59,6 +61,8 @@ st.markdown("""
 st.title("Marco Metódico")
 
 st.subheader("Proceso de Normalización de los datos")
+diagrama_normalizacion = Path(__file__).resolve().parents[1] / "assets" / "esquema_relacional_vuelosFormato.svg"
+st.image(diagrama_normalizacion.read_text(encoding="utf-8"), width="stretch")
 st.markdown("""
 <section class="metodo-denormalizacion">
   <h3>Primera forma normal (1FN): valores atómicos</h3>
@@ -189,7 +193,7 @@ st.markdown("""
     <li><span class="metodo-tabla">demora_llegada_15</span>: retraso en llegada mayor a 15 minutos.</li>
   </ol>
 
-  <h3>Tercera Etapa: indexación y eliminación de tablas originales innecesarias</h3>
+  <h3>Tercera: indexación y eliminación de tablas originales innecesarias</h3>
   <p>Para finalizar el proceso y optimizar el rendimiento de la base de datos, se definen
   cuatro índices (<span class="metodo-tabla">ix_vuelos_ruta</span>,
   <span class="metodo-tabla">ix_vuelos_origen</span>,
@@ -205,8 +209,7 @@ st.markdown("""
 
 
 st.subheader("Proceso de Denormalización de los datos")
-from pathlib import Path
-diagrama = Path(__file__).resolve().parents[1]/ "assets" / "denormalizacion_vuelos.svg"
+diagrama = Path(__file__).resolve().parents[1] / "assets" / "denormalizacion_vuelos.svg"
 st.image(diagrama.read_text(encoding="utf-8"), width="stretch")
 st.markdown("""
 <section class="metodo-denormalizacion">
