@@ -1371,3 +1371,305 @@ with pestanas[4]:
         "¿Cómo cambian la frecuencia y la magnitud de los retrasos "
         "según el día de salida programada?"
     )
+    st.caption(
+        "Filtros de control para la variación semanal y rangos de retraso."
+    )
+
+    dias_vis_obj5 = {
+        "Lunes": "Lunes", "Martes": "Martes", "Miercoles": "Miércoles",
+        "Jueves": "Jueves", "Viernes": "Viernes", "Sabado": "Sábado", "Domingo": "Domingo"
+    }
+    
+    franjas_disp_obj5 = consultar("""
+        SELECT DISTINCT franja_horaria 
+        FROM v_analisis_vuelos_limpios 
+        WHERE franja_horaria IS NOT NULL 
+        ORDER BY franja_horaria
+    """)["franja_horaria"].tolist()
+
+    fecha_min_obj5 = pd.Timestamp(control.loc[0, "desde"]).date()
+    fecha_max_obj5 = pd.Timestamp(control.loc[0, "hasta"]).date()
+
+    col_f1, col_f2, col_f3 = st.columns(3)
+    fechas_obj5 = col_f1.date_input(
+        "Rango de Fechas", value=(fecha_min_obj5, fecha_max_obj5),
+        min_value=fecha_min_obj5, max_value=fecha_max_obj5,
+        format="DD/MM/YYYY", key="obj5_fecha"
+    )
+    dia_obj5 = col_f2.selectbox(
+        "Día de la semana", [None, *dias_vis_obj5],
+        format_func=lambda d: dias_vis_obj5.get(d, "Todas"), key="obj5_dia"
+    )
+    franja_obj5 = col_f3.selectbox(
+        "Franja Horaria", [None, *franjas_disp_obj5],
+        format_func=lambda f: f or "Todas", key="obj5_franja"
+    )
+    
+    fechas_obj5 = fechas_obj5 or (fecha_min_obj5, fecha_max_obj5)
+
+    # Objetivo 5
+    datos_dias = consultar("""
+        SELECT
+            CASE TRIM(dia_semana)
+                WHEN 'Miércoles' THEN 'Miércoles'
+                WHEN 'Miercoles' THEN 'Miércoles'
+                WHEN 'Sábado' THEN 'Sábado'
+                WHEN 'Sabado' THEN 'Sábado'
+                ELSE TRIM(dia_semana)
+            END AS dia_semana,
+            ROUND(AVG(CASE WHEN retraso_salida_min > 0 THEN retraso_salida_min ELSE NULL END), 2) AS prom_salida_min,
+            SUM(CASE WHEN retraso_salida_min > 0 AND retraso_salida_min < 60 THEN 1 ELSE 0 END) AS r_menor,
+            SUM(CASE WHEN retraso_salida_min >= 60 THEN 1 ELSE 0 END) AS r_severo,
+            COUNT(*) AS total_vuelos
+        FROM v_analisis_vuelos_limpios
+        WHERE dia_semana IS NOT NULL
+          AND fecha_salida_local >= ? AND fecha_salida_local <= ?
+          AND (? IS NULL OR TRIM(dia_semana) = ?)
+          AND (? IS NULL OR franja_horaria = ?)
+        GROUP BY 1
+        ORDER BY 
+            CASE 
+                WHEN CASE TRIM(dia_semana)
+                    WHEN 'Miércoles' THEN 'Miércoles'
+                    WHEN 'Miercoles' THEN 'Miércoles'
+                    WHEN 'Sábado' THEN 'Sábado'
+                    WHEN 'Sabado' THEN 'Sábado'
+                    ELSE TRIM(dia_semana)
+                END = 'Lunes' THEN 1 
+                WHEN CASE TRIM(dia_semana)
+                    WHEN 'Miércoles' THEN 'Miércoles'
+                    WHEN 'Miercoles' THEN 'Miércoles'
+                    WHEN 'Sábado' THEN 'Sábado'
+                    WHEN 'Sabado' THEN 'Sábado'
+                    ELSE TRIM(dia_semana)
+                END = 'Martes' THEN 2 
+                WHEN CASE TRIM(dia_semana)
+                    WHEN 'Miércoles' THEN 'Miércoles'
+                    WHEN 'Miercoles' THEN 'Miércoles'
+                    WHEN 'Sábado' THEN 'Sábado'
+                    WHEN 'Sabado' THEN 'Sábado'
+                    ELSE TRIM(dia_semana)
+                END = 'Miércoles' THEN 3 
+                WHEN CASE TRIM(dia_semana)
+                    WHEN 'Miércoles' THEN 'Miércoles'
+                    WHEN 'Miercoles' THEN 'Miércoles'
+                    WHEN 'Sábado' THEN 'Sábado'
+                    WHEN 'Sabado' THEN 'Sábado'
+                    ELSE TRIM(dia_semana)
+                END = 'Jueves' THEN 4 
+                WHEN CASE TRIM(dia_semana)
+                    WHEN 'Miércoles' THEN 'Miércoles'
+                    WHEN 'Miercoles' THEN 'Miércoles'
+                    WHEN 'Sábado' THEN 'Sábado'
+                    WHEN 'Sabado' THEN 'Sábado'
+                    ELSE TRIM(dia_semana)
+                END = 'Viernes' THEN 5 
+                WHEN CASE TRIM(dia_semana)
+                    WHEN 'Miércoles' THEN 'Miércoles'
+                    WHEN 'Miercoles' THEN 'Miércoles'
+                    WHEN 'Sábado' THEN 'Sábado'
+                    WHEN 'Sabado' THEN 'Sábado'
+                    ELSE TRIM(dia_semana)
+                END = 'Sábado' THEN 6 
+                WHEN CASE TRIM(dia_semana)
+                    WHEN 'Miércoles' THEN 'Miércoles'
+                    WHEN 'Miercoles' THEN 'Miércoles'
+                    WHEN 'Sábado' THEN 'Sábado'
+                    WHEN 'Sabado' THEN 'Sábado'
+                    ELSE TRIM(dia_semana)
+                END = 'Domingo' THEN 7 
+                ELSE 8 
+            END
+    """, [
+        str(fechas_obj5[0]), str(fechas_obj5[-1]),
+        dia_obj5, dia_obj5,
+        franja_obj5, franja_obj5
+    ])
+
+    if datos_dias.empty:
+        st.warning("No hay datos disponibles para los filtros seleccionados en el Objetivo 5.")
+    else:
+        st.divider()
+        
+        mejor_fila = datos_dias.loc[datos_dias["prom_salida_min"].idxmin()] if not datos_dias.empty else None
+        peor_fila = datos_dias.loc[datos_dias["prom_salida_min"].idxmax()] if not datos_dias.empty else None
+        
+        mejor_dia_val = mejor_fila["dia_semana"] if mejor_fila is not None else "N/A"
+        peor_dia_val = peor_fila["dia_semana"] if peor_fila is not None else "N/A"
+        
+        fds_df = consultar("""
+            SELECT ROUND(AVG(retraso_salida_min), 2) as prom FROM v_analisis_vuelos_limpios 
+            WHERE retraso_salida_min > 0 AND TRIM(dia_semana) IN ('Sábado', 'Sabado', 'Domingo')
+        """)
+        sem_df = consultar("""
+            SELECT ROUND(AVG(retraso_salida_min), 2) as prom FROM v_analisis_vuelos_limpios 
+            WHERE retraso_salida_min > 0 AND TRIM(dia_semana) NOT IN ('Sábado', 'Sabado', 'Domingo')
+        """)
+        
+        val_fds = fds_df.loc[0, "prom"] if not fds_df.empty and pd.notna(fds_df.loc[0, "prom"]) else 0
+        val_sem = sem_df.loc[0, "prom"] if not sem_df.empty and pd.notna(sem_df.loc[0, "prom"]) else 0
+        dif_fds_val = round(abs(val_fds - val_sem), 2)
+
+        kpi1, kpi2, kpi3 = st.columns(3)
+        with kpi1:
+            with st.container(border=True):
+                st.metric("Mejor Día Semana", str(mejor_dia_val))
+        with kpi2:
+            with st.container(border=True):
+                st.metric("Peor Día Semana", str(peor_dia_val))
+        with kpi3:
+            with st.container(border=True):
+                st.metric("Diferencia Fines de Semana", f"{dif_fds_val:.2f}".replace(".", ","))
+
+        st.divider()
+
+        st.markdown("#### Promedio Retraso Salida (Min) por nombre_dia")
+        col_g1, col_i1 = st.columns([1.3, 0.7], gap="large")
+        
+        with col_g1:
+            with st.container(border=True):
+                fig_obj5_sup = px.bar(
+                    datos_dias,
+                    x="dia_semana",
+                    y="prom_salida_min",
+                    text="prom_salida_min",
+                    labels={"dia_semana": "", "prom_salida_min": ""},
+                    color_discrete_sequence=["#C9A956"]
+                )
+                fig_obj5_sup.update_traces(texttemplate='%{text:.0f} min', textposition='outside')
+                fig_obj5_sup.update_layout(
+                    template="plotly_white",
+                    height=350,
+                    margin=dict(b=40, t=30),
+                    yaxis=dict(showgrid=True, gridcolor="#eee", range=[0, datos_dias["prom_salida_min"].max() * 1.2]),
+                    xaxis=dict(showgrid=False, categoryorder="array", categoryarray=["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"])
+                )
+                st.plotly_chart(fig_obj5_sup, use_container_width=True)
+
+        with col_i1:
+            st.markdown("##### Interpretación")
+            st.markdown(
+                f"El día **{mejor_dia_val}** registra el mejor comportamiento operativo con el menor promedio de minutos en salida, "
+                f"mientras que **{peor_dia_val}** concentra las mayores demoras promedio, reflejando puntos de congestión a evaluar."
+            )
+
+        st.divider()
+
+        col_g2, col_i2 = st.columns([1.3, 0.7], gap="large")
+
+        with col_g2:
+            st.markdown("#### Vuelos con salida registrada por nombre_dia y Rangos de Retraso")
+            with st.container(border=True):
+                df_pct = datos_dias.copy()
+                suma_rangos = df_pct["r_menor"] + df_pct["r_severo"]
+                suma_rangos = suma_rangos.replace(0, 1)
+                
+                df_pct["r_menor"] = (df_pct["r_menor"] / suma_rangos) * 100
+                df_pct["r_severo"] = (df_pct["r_severo"] / suma_rangos) * 100
+
+                df_melted = pd.melt(
+                    df_pct,
+                    id_vars=["dia_semana"],
+                    value_vars=["r_menor", "r_severo"],
+                    var_name="rango",
+                    value_name="porcentaje"
+                )
+                
+                mapa_rangos = {
+                    "r_menor": "Retraso menor (>0 y <15 min)",
+                    "r_severo": "Retraso severo (>=60 min)"
+                }
+                df_melted["rango"] = df_melted["rango"].map(mapa_rangos)
+
+                fig_obj5_mid = px.bar(
+                    df_melted,
+                    x="dia_semana",
+                    y="porcentaje",
+                    color="rango",
+                    barmode="stack",
+                    labels={"porcentaje": "", "dia_semana": "", "rango": ""},
+                    color_discrete_map={
+                        "Retraso menor (>0 y <15 min)": "#F6E39A",
+                        "Retraso severo (>=60 min)": "#C9A956"
+                    }
+                )
+                fig_obj5_mid.update_layout(
+                    template="plotly_white",
+                    height=350,
+                    xaxis=dict(showgrid=False, categoryorder="array", categoryarray=["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]),
+                    yaxis=dict(showgrid=True, gridcolor="#eee", range=[0, 100], ticksuffix="%"),
+                    legend=dict(orientation="h", yanchor="top", y=-0.25, xanchor="left", x=0)
+                )
+                st.plotly_chart(fig_obj5_mid, use_container_width=True)
+
+        with col_i2:
+            st.markdown("##### Interpretación")
+            st.markdown(
+                "La distribución porcentual al 100% muestra la proporción exacta entre los retrasos menores y severos (>=60 min) a lo largo de los días de la semana."
+            )
+
+        st.divider()
+
+        col_g3, col_i3 = st.columns([1.3, 0.7], gap="large")
+
+        with col_g3:
+            st.markdown("#### Promedio Retraso Salida (Min) por Fecha y Día de la Semana")
+            with st.container(border=True):
+                datos_lineas = consultar("""
+                    SELECT
+                        CAST(fecha_salida_local AS DATE) as fecha_vuelo,
+                        CASE TRIM(dia_semana)
+                            WHEN 'Miércoles' THEN 'Miércoles'
+                            WHEN 'Miercoles' THEN 'Miércoles'
+                            WHEN 'Sábado' THEN 'Sábado'
+                            WHEN 'Sabado' THEN 'Sábado'
+                            ELSE TRIM(dia_semana)
+                        END AS dia_semana,
+                        ROUND(AVG(CASE WHEN retraso_salida_min > 0 THEN retraso_salida_min ELSE NULL END), 2) AS prom_min
+                    FROM v_analisis_vuelos_limpios
+                    WHERE fecha_salida_local IS NOT NULL
+                      AND fecha_salida_local >= ? AND fecha_salida_local <= ?
+                      AND (? IS NULL OR TRIM(dia_semana) = ?)
+                      AND (? IS NULL OR franja_horaria = ?)
+                    GROUP BY 1, 2
+                    ORDER BY fecha_vuelo
+                """, [
+                    str(fechas_obj5[0]), str(fechas_obj5[-1]),
+                    dia_obj5, dia_obj5,
+                    franja_obj5, franja_obj5
+                ])
+
+                if datos_lineas.empty:
+                    st.info("No hay suficientes datos temporales para las líneas.")
+                else:
+                    fig_obj5_line = px.line(
+                        datos_lineas,
+                        x="fecha_vuelo",
+                        y="prom_min",
+                        color="dia_semana",
+                        labels={"fecha_vuelo": "", "prom_min": "", "dia_semana": "Día"},
+                        color_discrete_map={
+                            "Lunes": "#FF69B4",      # Rosado
+                            "Martes": "#A0522D",     # Marrón
+                            "Miércoles": "#00BFFF",  # Azul vibrante
+                            "Jueves": "#FFD700",     # Amarillo
+                            "Viernes": "#D2691E",    # Naranja / Café claro
+                            "Sábado": "#FFF8DC",     # Crema
+                            "Domingo": "#800020"     # Vinotinto
+                        }
+                    )
+                    fig_obj5_line.update_layout(
+                        template="plotly_white",
+                        height=350,
+                        xaxis=dict(showgrid=False),
+                        yaxis=dict(showgrid=True, gridcolor="#eee"),
+                        legend=dict(orientation="h", yanchor="top", y=-0.25, xanchor="left", x=0)
+                    )
+                    st.plotly_chart(fig_obj5_line, use_container_width=True)
+
+        with col_i3:
+            st.markdown("##### Interpretación")
+            st.markdown(
+                "La evolución temporal de las líneas permite observar la tendencia continua de los retrasos por día de la semana "
+                "a lo largo del período analizado, identificando picos específicos de inestabilidad operativa."
+            )
