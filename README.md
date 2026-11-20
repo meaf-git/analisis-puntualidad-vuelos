@@ -92,10 +92,21 @@ Con respecto a los aspectos operativos y comerciales, el diseño aplicó una des
 ├──.config/settings.json                       Ruta de la base de datos 
 │
 ├── Base de datos/
+│   ├── DICCIONARIO DE DATOS.md                Definicion de variables y tipos de datos
+│   ├── DICCIONARIO_DENORMALIZACION.md         Esquema y reglas de datos denormalizados
 │   ├── base_datos.py                          Llamada a la base de datos 
 │   ├── data_normal.sql                        Carga de Datos de la Normalizacion 
-│   └── esquema_normal.sql                     Esquema de la Normalizacion 
-│                         
+│   ├── esquema_normal.sql                     Esquema de la Normalizacion
+│   ├── limpieza_final.sql                     Base de datos limpia
+│   ├── travel_original.duckdb                 Base de datos original DuckDB
+│   └── vuelos_final.duckdb                    Correcion se de datos limpia a motherduck
+│
+├── Dashboard PowerBI                          Tablero interactivo y modelo semantico del PowerBI
+│   ├── Analisis de Puntualidad de Vuelos.Report
+│   ├── Analisis de Puntualidad de Vuelos.SemanticModel
+│   ├── .gitignore
+│   └── Analisis Puntualidad de Vuelos.pbip
+│                       
 ├── src/
 │   └── .gitkeep                               Para mantener la estructura de las carpetas      
 │
@@ -103,10 +114,11 @@ Con respecto a los aspectos operativos y comerciales, el diseño aplicó una des
     ├── 01_Resumen.py                          Introduccion, Extructura del informe 
     ├── 02_Plantamiento del problema.py        Justificacion, Objetivos, Variables 
     ├── 03_Marco_Teorico.py                    Fundamentos 
-    ├── 04_Marco Metodologico.py      
-    ├── 05_Conclusion.py           
-    ├── 06_Bibliografia.py          
-    └── 07_Cuestionario SQL.py                          
+    ├── 04_Marco Metodologico.py               Diseño, enfoque y tecnicas tecnicas de analisis 
+    ├── 05_Resultados_y_Analisis.py            Hallasgos, graficos e interpretacion de datos 
+    ├── 06_Conclusiones.py                     Resultados
+    ├── 07_Bibliografia.py                     Referencias
+    └── 08_ Cuestionario SQL.py                Cinco Consultas Analiticas Resueltas   
 ```
 --- 
 ## 🔍 Equipo de investigación

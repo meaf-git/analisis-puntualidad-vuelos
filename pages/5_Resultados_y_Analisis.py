@@ -860,6 +860,7 @@ with pestanas[1]:
             "objetivo2_dispersion"
         )
 
+
 ####################################################################################################################
 #### objetivo 3 #### PROMEDIO DE RETRASO DE SALIDA ####
 with pestanas[2]:
@@ -1139,226 +1140,395 @@ with pestanas[2]:
                 """)
                     st.dataframe(df_tabla, use_container_width=True, hide_index=True, height=283)
 
-    ############################################################################
+    ##################################################################################################################################
 with pestanas[3]:
     presentar_objetivo(
-        "Comparación según la aeronave",
+        "Salidas puntuales y llegadas tardías",
         (
-            "Comparar la frecuencia y magnitud de los retrasos "
-            "según el tipo de aeronave asignada a los vuelos, "
-            "con el propósito de identificar diferencias "
-            "en el cumplimiento de los horarios programados."
+            "Estudiar la frecuencia con la que los vuelos que despegan "
+            "puntualmente presentan llegadas tarde y qué características "
+            "presentan los mismos en dichos casos."
         ),
-        "¿Qué diferencias de frecuencia y magnitud de retrasos "
-        "se observan entre los modelos de aeronave?"
+        "¿Con qué frecuencia un vuelo sale puntualmente y llega tarde, "
+        "y cómo varían esos retrasos según la duración programada?"
     )
     st.caption(
-        "Filtros de control para el análisis de flotas y modelos de aeronave."
+        "Salida puntual: diferencia de salida menor o igual a 0 min. "
+        "Llegada tardía: diferencia de llegada mayor de 0 min. "
+        "Se incluyen vuelos completados (Arrived) con ambas diferencias "
+        "registradas. La fecha, el día y la franja corresponden a la salida "
+        "programada local del aeropuerto de origen."
     )
+
+    def _numero_obj4(valor, decimales=0):
+        return (
+            f"{valor:,.{decimales}f}"
+            .replace(",", "_").replace(".", ",").replace("_", ".")
+        )
+
+    def _estilo_obj4(figura, altura=400):
+        figura.update_layout(
+            template="plotly_dark",
+            height=altura,
+            paper_bgcolor="#021559",
+            plot_bgcolor="#021559",
+            font=dict(family="Arial, sans-serif", size=14, color="#FFFFFF"),
+            margin=dict(l=45, r=35, t=30, b=65),
+            showlegend=False,
+            separators=",.",
+            hoverlabel=dict(bgcolor="#08236B", font_color="#FFFFFF"),
+        )
+        return figura
 
     dias_vis_obj4 = {
         "Lunes": "Lunes", "Martes": "Martes", "Miercoles": "Miércoles",
-        "Jueves": "Jueves", "Viernes": "Viernes", "Sabado": "Sábado", "Domingo": "Domingo"
+        "Jueves": "Jueves", "Viernes": "Viernes", "Sabado": "Sábado",
+        "Domingo": "Domingo",
     }
-    
+    orden_duracion_obj4 = ["≤ 60 min", "61–120 min", "> 120 min"]
+    colores_duracion_obj4 = {
+        "≤ 60 min": "#F6E39A",
+        "61–120 min": "#E6C975",
+        "> 120 min": "#C9A956",
+    }
     franjas_disp_obj4 = consultar("""
-        SELECT DISTINCT franja_horaria 
-        FROM v_analisis_vuelos_limpios 
-        WHERE franja_horaria IS NOT NULL 
+        SELECT DISTINCT franja_horaria
+        FROM v_analisis_vuelos_limpios
+        WHERE franja_horaria IS NOT NULL
         ORDER BY franja_horaria
     """)["franja_horaria"].tolist()
 
-    modelos_disp_obj4 = consultar("""
-        SELECT DISTINCT modelo_aeronave 
-        FROM v_analisis_vuelos_limpios 
-        WHERE modelo_aeronave IS NOT NULL 
-        ORDER BY modelo_aeronave
-    """)["modelo_aeronave"].tolist()
-
     fecha_min_obj4 = pd.Timestamp(control.loc[0, "desde"]).date()
     fecha_max_obj4 = pd.Timestamp(control.loc[0, "hasta"]).date()
-
     col_f1, col_f2, col_f3, col_f4 = st.columns(4)
     fechas_obj4 = col_f1.date_input(
-        "Rango de Fechas", value=(fecha_min_obj4, fecha_max_obj4),
+        "Rango de fechas", value=(fecha_min_obj4, fecha_max_obj4),
         min_value=fecha_min_obj4, max_value=fecha_max_obj4,
         format="DD/MM/YYYY", key="obj4_fecha"
     )
     dia_obj4 = col_f2.selectbox(
         "Día de la semana", [None, *dias_vis_obj4],
-        format_func=lambda d: dias_vis_obj4.get(d, "Todas"), key="obj4_dia"
+        format_func=lambda dia: dias_vis_obj4.get(dia, "Todos"),
+        key="obj4_dia"
     )
     franja_obj4 = col_f3.selectbox(
-        "Franja Horaria", [None, *franjas_disp_obj4],
-        format_func=lambda f: f or "Todas", key="obj4_franja"
+        "Franja de salida", [None, *franjas_disp_obj4],
+        format_func=lambda franja: franja or "Todas", key="obj4_franja"
     )
-    modelo_obj4 = col_f4.selectbox(
-        "Modelo de Aeronave", [None, *modelos_disp_obj4],
-        format_func=lambda m: m or "Todas", key="obj4_modelo"
-    )
-    
     fechas_obj4 = fechas_obj4 or (fecha_min_obj4, fecha_max_obj4)
 
-    datos_obj4 = consultar("""
+    # La cohorte contiene TODAS las salidas puntuales evaluables;
+    # se filtran las llegadas tardías solo después de calcular la frecuencia.
+    base_obj4 = consultar("""
         SELECT
-            modelo_aeronave AS modelo,
-            COUNT(*) AS total_vuelos,
-            CAST(SUM(CASE WHEN demora_llegada_15 = 1 THEN 1 ELSE 0 END) AS DOUBLE) / COUNT(*) AS frec_llegada,
-            CAST(SUM(CASE WHEN demora_salida_15 = 1 THEN 1 ELSE 0 END) AS DOUBLE) / COUNT(*) AS frec_salida,
-            SUM(COALESCE(retraso_llegada_min, 0)) / COUNT(*) AS prom_llegada_min2,
-            SUM(COALESCE(retraso_salida_min, 0)) / COUNT(*) AS prom_salida_min2
+            vuelo_id,
+            retraso_llegada_min,
+            duracion_programada_min,
+            CASE
+                WHEN duracion_programada_min IS NULL
+                     OR duracion_programada_min <= 0
+                    THEN 'Sin duración válida'
+                WHEN duracion_programada_min <= 60 THEN '≤ 60 min'
+                WHEN duracion_programada_min <= 120 THEN '61–120 min'
+                ELSE '> 120 min'
+            END AS grupo_duracion
         FROM v_analisis_vuelos_limpios
-        WHERE modelo_aeronave IS NOT NULL
+        WHERE estado = 'Arrived'
+          AND retraso_salida_min <= 0
+          AND retraso_llegada_min IS NOT NULL
           AND CAST(salida_prog_local AS DATE) BETWEEN ? AND ?
           AND (? IS NULL OR dia_semana = ?)
           AND (? IS NULL OR franja_horaria = ?)
-          AND (? IS NULL OR modelo_aeronave = ?)
-        GROUP BY modelo_aeronave
-        ORDER BY frec_llegada DESC
     """, [
         fechas_obj4[0], fechas_obj4[-1],
-        dia_obj4, dia_obj4,
-        franja_obj4, franja_obj4,
-        modelo_obj4, modelo_obj4
+        dia_obj4, dia_obj4, franja_obj4, franja_obj4
     ])
 
-    if datos_obj4.empty:
-        st.warning("No hay datos disponibles para los filtros seleccionados en el Objetivo 4.")
-    else:
-        st.divider()
+    grupos_disponibles_obj4 = [
+        grupo for grupo in [*orden_duracion_obj4, "Sin duración válida"]
+        if grupo in base_obj4["grupo_duracion"].values
+    ]
+    duracion_obj4 = col_f4.selectbox(
+        "Duración programada", [None, *grupos_disponibles_obj4],
+        format_func=lambda grupo: grupo or "Todas", key="obj4_duracion"
+    )
+    datos_obj4 = base_obj4.copy()
+    if duracion_obj4 is not None:
+        datos_obj4 = datos_obj4.loc[
+            datos_obj4["grupo_duracion"] == duracion_obj4
+        ].copy()
 
-        # grafico
-        st.markdown("#### Promedio Minutos Retraso Llegada y Promedio Minutos Retraso Salida por modelo")
-        col_g1, col_i1 = st.columns([1.3, 0.7], gap="large")
-        
+    if datos_obj4.empty:
+        st.info(
+            "No hay vuelos que salieran puntualmente y tengan llegada "
+            "registrada para los filtros seleccionados."
+        )
+    else:
+        datos_obj4["llegada_tardia"] = datos_obj4["retraso_llegada_min"] > 0
+        total_obj4 = len(datos_obj4)
+        cantidad_tardios_obj4 = int(datos_obj4["llegada_tardia"].sum())
+        cantidad_puntuales_obj4 = total_obj4 - cantidad_tardios_obj4
+        frecuencia_obj4 = 100 * cantidad_tardios_obj4 / total_obj4
+
+        for columna, titulo, valor in zip(
+            st.columns(3),
+            ["Salidas puntuales analizadas", "Llegadas tardías", "Frecuencia"],
+            [
+                _numero_obj4(total_obj4),
+                _numero_obj4(cantidad_tardios_obj4),
+                f"{_numero_obj4(frecuencia_obj4, 2)} %",
+            ]
+        ):
+            columna.metric(titulo, valor, border=True)
+
+        st.divider()
+        st.markdown("#### De la salida puntual a la llegada")
+        col_g1, col_i1 = st.columns([2, 1], gap="large")
         with col_g1:
             with st.container(border=True):
-                fig_sup = px.bar(
-                    datos_obj4,
-                    x="modelo",
-                    y=["frec_llegada", "frec_salida"],
-                    barmode="group",
-                    labels={"value": "", "modelo": "", "variable": ""},
-                    color_discrete_map={
-                        "frec_llegada": "#C9A956",
-                        "frec_salida": "#F6E39A"
-                    }
-                )
-                fig_sup.for_each_trace(lambda t: t.update(
-                    name="Promedio Minutos Retraso Llegada" if t.name == "frec_llegada" else "Promedio Minutos Retraso Salida"
-                ))
-                fig_sup.update_layout(
-                    template="plotly_white",
-                    height=420,
-                    margin=dict(b=120),
-                    yaxis=dict(tickformat=".0%", showgrid=True, gridcolor="#eee"),
-                    xaxis=dict(showgrid=False, tickangle=-25),
-                    legend=dict(orientation="h", yanchor="top", y=-0.35, xanchor="left", x=0)
-                )
-                st.plotly_chart(fig_sup, use_container_width=True)
-
-        with col_i1:
-            st.markdown("##### Interpretación")
-            st.markdown(
-                "Se observa una tendencia consistente en los distintos modelos de aeronave donde las frecuencias de retraso "
-                "en origen y destino mantienen proporciones muy cercanas. Los modelos con mayor índice de afectación "
-                "superan ligeramente el umbral superior, evidenciando cuellos de botella operativos en determinados tipos de flota."
-            )
-
-        st.divider()
-
-       # segundo grafico
-        col_tabla_obj4, col_i_tabla = st.columns([1.1, 0.9], gap="large")
-
-        with col_tabla_obj4:
-            st.markdown("#### Detalle por Modelo de Aeronave")
-            tabla_df = datos_obj4.sort_values("prom_llegada_min2", ascending=True).copy()
-            
-            total_v = int(tabla_df["total_vuelos"].sum())
-            frec_total = (tabla_df["frec_llegada"] * tabla_df["total_vuelos"]).sum() / total_v
-            prom_total = (tabla_df["prom_llegada_min2"] * tabla_df["total_vuelos"]).sum() / total_v
-
-            tabla_mostrar = pd.DataFrame({
-                "modelo": tabla_df["modelo"],
-                "Total Vuelos": tabla_df["total_vuelos"].astype(int).astype(str),
-                "% Frecuencia Retraso Llegada": tabla_df["frec_llegada"].map(lambda x: f"{x:.2f}".replace(".", ",")),
-                "Promedio Minutos Retraso Llegada2": tabla_df["prom_llegada_min2"].round(0).astype(int).astype(str) + " min"
-            })
-
-            fila_total = pd.DataFrame([{
-                "modelo": "Total",
-                "Total Vuelos": str(total_v),
-                "% Frecuencia Retraso Llegada": f"{frec_total:.2f}".replace(".", ","),
-                "Promedio Minutos Retraso Llegada2": f"{round(prom_total):.0f} min"
-            }])
-
-            tabla_mostrar = pd.concat([tabla_mostrar, fila_total], ignore_index=True)
-
-            def aplicar_estilo_tabla(row):
-                if row.name == len(tabla_mostrar) - 1:
-                    return ['background-color: #1E293B; color: white; font-weight: bold'] * len(row)
-                elif row.name % 2 == 0:
-                    return ['background-color: #F6E39A; color: white'] * len(row)
-                else:
-                    return ['background-color: transparent; color: white'] * len(row)
-
-            st.dataframe(
-                tabla_mostrar.style.apply(aplicar_estilo_tabla, axis=1),
-                use_container_width=True,
-                hide_index=True,
-                height=360
-            )
-
-        with col_i_tabla:
-            st.markdown("##### Interpretación")
-            st.markdown(
-                "El desglose por modelo permite identificar que aeronaves con mayor volumen operativo "
-                "concentran la mayor cantidad de registros, permitiendo evaluar el impacto de los retrasos por cada tipo de flota."
-            )
-
-        st.divider()
-
-        col_graf_obj4, col_i2 = st.columns([1.1, 0.9], gap="large")
-
-        with col_graf_obj4:
-            st.markdown("#### % Frecuencia Retraso Llegada y Salida por modelo")
-            with st.container(border=True):
-                fig_freq_obj4 = px.bar(
-                    datos_obj4.sort_values("frec_llegada", ascending=True),
-                    y="modelo",
-                    x=["frec_llegada", "frec_salida"],
-                    barmode="group",
-                    orientation="h",
-                    labels={"value": "", "modelo": "", "variable": ""},
-                    color_discrete_map={
-                        "frec_llegada": "#C9A956",
-                        "frec_salida": "#F6E39A"
-                    }
-                )
-                fig_freq_obj4.for_each_trace(lambda t: t.update(
-                    name="% Frecuencia Retraso Llegada" if t.name == "frec_llegada" else "% Frecuencia Retraso Salida"
-                ))
-                fig_freq_obj4.update_layout(
-                    template="plotly_white",
-                    height=360,
-                    xaxis=dict(
-                        tickformat=".0%", 
-                        showgrid=True, 
-                        gridcolor="#C9A956", 
-                        griddash="solid",
-                        dtick=0.01
+                fig_flujo_obj4 = go.Figure(go.Sankey(
+                    arrangement="snap",
+                    valueformat=",.0f",
+                    valuesuffix=" vuelos",
+                    textfont=dict(color="#FFFFFF", size=15),
+                    node=dict(
+                        pad=30, thickness=24,
+                        line=dict(color="#FFFFFF", width=1),
+                        label=[
+                            f"Salida puntual · {_numero_obj4(total_obj4)}",
+                            "Llegada puntual · " + _numero_obj4(cantidad_puntuales_obj4),
+                            "Llegada tardía · " + _numero_obj4(cantidad_tardios_obj4),
+                        ],
+                        color=["#E6C975", "#F6E39A", "#C9A956"],
+                        hovertemplate="%{label}<extra></extra>",
                     ),
-                    yaxis=dict(showgrid=False),
-                    legend=dict(orientation="h", yanchor="top", y=-0.22, xanchor="left", x=0)
+                    link=dict(
+                        source=[0, 0], target=[1, 2],
+                        value=[cantidad_puntuales_obj4, cantidad_tardios_obj4],
+                        color=["rgba(246,227,154,0.70)", "rgba(201,169,86,0.85)"],
+                        customdata=[100 - frecuencia_obj4, frecuencia_obj4],
+                        hovertemplate=(
+                            "%{source.label}<br>%{target.label}"
+                            "<br>%{value:,.0f} vuelos (%{customdata:.2f} %)"
+                            "<extra></extra>"
+                        ),
+                    ),
+                ))
+                _estilo_obj4(fig_flujo_obj4, 340)
+                st.plotly_chart(
+                    fig_flujo_obj4, width="stretch",
+                    key="objetivo4_sankey", theme=None
                 )
-                st.plotly_chart(fig_freq_obj4, use_container_width=True)
-
-        with col_i2:
-            st.markdown("##### Interpretación")
-            st.markdown(
-                "Las frecuencias de retraso en llegada y salida muestran el comportamiento porcentual frente al total de operaciones, "
-                "evidenciando qué modelos de aeronave presentan mayor recurrencia de demoras operativas superiores a los 15 minutos."
+                st.caption(
+                    "Llegada puntual incluye anticipación y puntualidad exacta "
+                    "(diferencia menor o igual a 0 min)."
+                )
+        with col_i1:
+            st.markdown("**Interpretación**")
+            st.write(
+                f"De {_numero_obj4(total_obj4)} vuelos que salieron puntualmente, "
+                f"{_numero_obj4(cantidad_tardios_obj4)} llegaron tarde "
+                f"({_numero_obj4(frecuencia_obj4, 2)} %). "
+                f"Los otros {_numero_obj4(cantidad_puntuales_obj4)} llegaron "
+                "a tiempo o anticipadamente."
             )
+            st.write(
+                "La frecuencia se obtiene dividiendo las llegadas tardías "
+                "entre las salidas puntuales con llegada registrada, "
+                "y multiplicando por 100."
+            )
+            st.markdown(
+                f"**{_numero_obj4(cantidad_tardios_obj4)} / "
+                f"{_numero_obj4(total_obj4)} × 100 = "
+                f"{_numero_obj4(frecuencia_obj4, 2)} %**"
+            )
+
+        st.divider()
+        st.markdown("#### Retraso de llegada según duración programada")
+        tardios_obj4 = datos_obj4.loc[datos_obj4["llegada_tardia"]].copy()
+        cajas_obj4 = tardios_obj4.loc[
+            tardios_obj4["grupo_duracion"].isin(orden_duracion_obj4)
+        ].copy()
+        col_g2, col_i2 = st.columns([2, 1], gap="large")
+        with col_g2:
+            with st.container(border=True):
+                if cajas_obj4.empty:
+                    if cantidad_tardios_obj4 == 0:
+                        st.info(
+                            "Todos los vuelos de esta selección llegaron "
+                            "puntualmente. No hay retrasos para representar."
+                        )
+                    else:
+                        st.info(
+                            "Las llegadas tardías de esta selección no tienen "
+                            "una duración programada válida para las cajas."
+                        )
+                else:
+                    fig_cajas_obj4 = px.box(
+                        cajas_obj4,
+                        x="grupo_duracion", y="retraso_llegada_min",
+                        color="grupo_duracion",
+                        color_discrete_map=colores_duracion_obj4,
+                        category_orders={"grupo_duracion": orden_duracion_obj4},
+                        points="outliers",
+                        labels={
+                            "grupo_duracion": "Duración programada",
+                            "retraso_llegada_min": "Retraso de llegada (min)",
+                        },
+                    )
+                    fig_cajas_obj4.update_traces(
+                        quartilemethod="linear",
+                        line=dict(color="#FFFFFF", width=1.5),
+                        marker=dict(size=5, opacity=0.8),
+                    )
+                    _estilo_obj4(fig_cajas_obj4, 430)
+                    fig_cajas_obj4.update_xaxes(showgrid=False, zeroline=False)
+                    fig_cajas_obj4.update_yaxes(
+                        gridcolor="#35477E", zeroline=False, rangemode="tozero"
+                    )
+                    st.plotly_chart(
+                        fig_cajas_obj4, width="stretch",
+                        key="objetivo4_cajas", theme=None
+                    )
+                st.caption(
+                    "Solo vuelos que salieron puntualmente y llegaron tarde. "
+                    "La línea interior es la mediana; la caja abarca el 50 % "
+                    "central. Los bigotes se extienden hasta los valores "
+                    "dentro de 1,5 veces el rango intercuartílico; "
+                    "los puntos separados son valores atípicos."
+                )
+        with col_i2:
+            st.markdown("**Interpretación**")
+            if not cajas_obj4.empty:
+                medianas_obj4 = cajas_obj4.groupby("grupo_duracion")[
+                    "retraso_llegada_min"
+                ].median()
+                for grupo in orden_duracion_obj4:
+                    valores_grupo_obj4 = cajas_obj4.loc[
+                        cajas_obj4["grupo_duracion"] == grupo, "retraso_llegada_min"
+                    ]
+                    if not valores_grupo_obj4.empty:
+                        st.write(
+                            f"{grupo}: mediana de "
+                            f"{_numero_obj4(medianas_obj4[grupo], 2)} min "
+                            f"entre {_numero_obj4(len(valores_grupo_obj4))} "
+                            "vuelos con llegada tardía."
+                        )
+                st.write(
+                    "La altura de las cajas y los bigotes permite comparar "
+                    "la dispersión de los retrasos. Estas diferencias "
+                    "describen los vuelos observados y no demuestran "
+                    "que la duración programada cause el retraso."
+                )
+            else:
+                st.write(
+                    "La comparación necesita llegadas tardías con duración "
+                    "programada válida. Prueba otro rango de fechas o "
+                    "amplía los filtros."
+                )
+
+        sin_duracion_obj4 = int(
+            (datos_obj4["grupo_duracion"] == "Sin duración válida").sum()
+        )
+        if sin_duracion_obj4:
+            st.caption(
+                f"Hay {_numero_obj4(sin_duracion_obj4)} salidas puntuales "
+                "sin duración programada válida. Se incluyen en los "
+                "indicadores, el Sankey y la tabla, en un grupo separado; "
+                "se excluyen de las cajas por duración."
+            )
+
+        st.divider()
+        st.markdown("#### Detalle por duración programada")
+        resumen_obj4 = datos_obj4.groupby("grupo_duracion").agg(
+            salidas_puntuales=("vuelo_id", "size"),
+            llegadas_tardias=("llegada_tardia", "sum"),
+        ).reindex(grupos_disponibles_obj4).dropna(subset=["salidas_puntuales"])
+        resumen_obj4["frecuencia"] = (
+            100 * resumen_obj4["llegadas_tardias"] / resumen_obj4["salidas_puntuales"]
+        )
+        tabla_obj4 = resumen_obj4.reset_index().rename(columns={
+            "grupo_duracion": "Duración programada",
+            "salidas_puntuales": "Salidas puntuales",
+            "llegadas_tardias": "Llegadas tardías",
+            "frecuencia": "Frecuencia (%)",
+        })
+        tabla_obj4 = pd.concat([
+            tabla_obj4,
+            pd.DataFrame([{
+                "Duración programada": "Total",
+                "Salidas puntuales": total_obj4,
+                "Llegadas tardías": cantidad_tardios_obj4,
+                "Frecuencia (%)": frecuencia_obj4,
+            }]),
+        ], ignore_index=True)
+        tabla_obj4[["Salidas puntuales", "Llegadas tardías"]] = tabla_obj4[
+            ["Salidas puntuales", "Llegadas tardías"]
+        ].astype(int)
+
+        def _estilo_tabla_obj4(fila):
+            if fila["Duración programada"] == "Total":
+                estilo = "background-color: #F6E39A; color: #021559; font-weight: bold"
+            else:
+                fondo = "#08236B" if fila.name % 2 == 0 else "#102E76"
+                estilo = f"background-color: {fondo}; color: #FFFFFF"
+            return [estilo] * len(fila)
+
+        col_tabla_obj4, col_i_tabla_obj4 = st.columns([2, 1], gap="large")
+        with col_tabla_obj4:
+            st.dataframe(
+                tabla_obj4.style.apply(_estilo_tabla_obj4, axis=1).format(
+                    {
+                        "Salidas puntuales": "{:,.0f}",
+                        "Llegadas tardías": "{:,.0f}",
+                        "Frecuencia (%)": "{:,.2f} %",
+                    },
+                    decimal=",", thousands=".",
+                ),
+                width="stretch", hide_index=True,
+                height=38 + 36 * len(tabla_obj4),
+            )
+            st.caption(
+                "Cada frecuencia utiliza las salidas puntuales de su propio "
+                "grupo como denominador. El total se calcula con las sumas "
+                "de vuelos, sin promediar los porcentajes de los grupos. "
+                "Los grupos de duración corresponden a intervalos "
+                "programados y no al tiempo real de vuelo."
+            )
+        with col_i_tabla_obj4:
+            st.markdown("**Interpretación**")
+            resumen_valido_obj4 = resumen_obj4.loc[
+                resumen_obj4.index.isin(orden_duracion_obj4)
+            ]
+            if not resumen_valido_obj4.empty:
+                mayor_frecuencia_obj4 = resumen_valido_obj4["frecuencia"].max()
+                grupos_mayores_obj4 = resumen_valido_obj4.index[
+                    resumen_valido_obj4["frecuencia"].eq(mayor_frecuencia_obj4)
+                ].tolist()
+                if len(resumen_valido_obj4) == 1:
+                    st.write(
+                        f"El grupo {grupos_mayores_obj4[0]} registra una "
+                        f"frecuencia de {_numero_obj4(mayor_frecuencia_obj4, 2)} %."
+                    )
+                else:
+                    st.write(
+                        "La mayor frecuencia observada es "
+                        f"{_numero_obj4(mayor_frecuencia_obj4, 2)} %, "
+                        f"correspondiente a: {', '.join(grupos_mayores_obj4)}."
+                    )
+                st.write(
+                    "Las cantidades permiten revisar cuántos vuelos "
+                    "respaldan cada porcentaje. Esta tabla compara "
+                    "la frecuencia; las cajas comparan la magnitud "
+                    "y la dispersión entre las llegadas tardías."
+                )
+            else:
+                st.write(
+                    "La selección solo contiene vuelos sin duración válida. "
+                    "La frecuencia global se conserva, pero no permite "
+                    "comparar intervalos de duración programada."
+                )
+
 
 with pestanas[4]:
     presentar_objetivo(
@@ -1371,3 +1541,305 @@ with pestanas[4]:
         "¿Cómo cambian la frecuencia y la magnitud de los retrasos "
         "según el día de salida programada?"
     )
+    st.caption(
+        "Filtros de control para la variación semanal y rangos de retraso."
+    )
+
+    dias_vis_obj5 = {
+        "Lunes": "Lunes", "Martes": "Martes", "Miercoles": "Miércoles",
+        "Jueves": "Jueves", "Viernes": "Viernes", "Sabado": "Sábado", "Domingo": "Domingo"
+    }
+    
+    franjas_disp_obj5 = consultar("""
+        SELECT DISTINCT franja_horaria 
+        FROM v_analisis_vuelos_limpios 
+        WHERE franja_horaria IS NOT NULL 
+        ORDER BY franja_horaria
+    """)["franja_horaria"].tolist()
+
+    fecha_min_obj5 = pd.Timestamp(control.loc[0, "desde"]).date()
+    fecha_max_obj5 = pd.Timestamp(control.loc[0, "hasta"]).date()
+
+    col_f1, col_f2, col_f3 = st.columns(3)
+    fechas_obj5 = col_f1.date_input(
+        "Rango de Fechas", value=(fecha_min_obj5, fecha_max_obj5),
+        min_value=fecha_min_obj5, max_value=fecha_max_obj5,
+        format="DD/MM/YYYY", key="obj5_fecha"
+    )
+    dia_obj5 = col_f2.selectbox(
+        "Día de la semana", [None, *dias_vis_obj5],
+        format_func=lambda d: dias_vis_obj5.get(d, "Todas"), key="obj5_dia"
+    )
+    franja_obj5 = col_f3.selectbox(
+        "Franja Horaria", [None, *franjas_disp_obj5],
+        format_func=lambda f: f or "Todas", key="obj5_franja"
+    )
+    
+    fechas_obj5 = fechas_obj5 or (fecha_min_obj5, fecha_max_obj5)
+
+    # Objetivo 5
+    datos_dias = consultar("""
+        SELECT
+            CASE TRIM(dia_semana)
+                WHEN 'Miércoles' THEN 'Miércoles'
+                WHEN 'Miercoles' THEN 'Miércoles'
+                WHEN 'Sábado' THEN 'Sábado'
+                WHEN 'Sabado' THEN 'Sábado'
+                ELSE TRIM(dia_semana)
+            END AS dia_semana,
+            ROUND(AVG(CASE WHEN retraso_salida_min > 0 THEN retraso_salida_min ELSE NULL END), 2) AS prom_salida_min,
+            SUM(CASE WHEN retraso_salida_min > 0 AND retraso_salida_min < 60 THEN 1 ELSE 0 END) AS r_menor,
+            SUM(CASE WHEN retraso_salida_min >= 60 THEN 1 ELSE 0 END) AS r_severo,
+            COUNT(*) AS total_vuelos
+        FROM v_analisis_vuelos_limpios
+        WHERE dia_semana IS NOT NULL
+          AND fecha_salida_local >= ? AND fecha_salida_local <= ?
+          AND (? IS NULL OR TRIM(dia_semana) = ?)
+          AND (? IS NULL OR franja_horaria = ?)
+        GROUP BY 1
+        ORDER BY 
+            CASE 
+                WHEN CASE TRIM(dia_semana)
+                    WHEN 'Miércoles' THEN 'Miércoles'
+                    WHEN 'Miercoles' THEN 'Miércoles'
+                    WHEN 'Sábado' THEN 'Sábado'
+                    WHEN 'Sabado' THEN 'Sábado'
+                    ELSE TRIM(dia_semana)
+                END = 'Lunes' THEN 1 
+                WHEN CASE TRIM(dia_semana)
+                    WHEN 'Miércoles' THEN 'Miércoles'
+                    WHEN 'Miercoles' THEN 'Miércoles'
+                    WHEN 'Sábado' THEN 'Sábado'
+                    WHEN 'Sabado' THEN 'Sábado'
+                    ELSE TRIM(dia_semana)
+                END = 'Martes' THEN 2 
+                WHEN CASE TRIM(dia_semana)
+                    WHEN 'Miércoles' THEN 'Miércoles'
+                    WHEN 'Miercoles' THEN 'Miércoles'
+                    WHEN 'Sábado' THEN 'Sábado'
+                    WHEN 'Sabado' THEN 'Sábado'
+                    ELSE TRIM(dia_semana)
+                END = 'Miércoles' THEN 3 
+                WHEN CASE TRIM(dia_semana)
+                    WHEN 'Miércoles' THEN 'Miércoles'
+                    WHEN 'Miercoles' THEN 'Miércoles'
+                    WHEN 'Sábado' THEN 'Sábado'
+                    WHEN 'Sabado' THEN 'Sábado'
+                    ELSE TRIM(dia_semana)
+                END = 'Jueves' THEN 4 
+                WHEN CASE TRIM(dia_semana)
+                    WHEN 'Miércoles' THEN 'Miércoles'
+                    WHEN 'Miercoles' THEN 'Miércoles'
+                    WHEN 'Sábado' THEN 'Sábado'
+                    WHEN 'Sabado' THEN 'Sábado'
+                    ELSE TRIM(dia_semana)
+                END = 'Viernes' THEN 5 
+                WHEN CASE TRIM(dia_semana)
+                    WHEN 'Miércoles' THEN 'Miércoles'
+                    WHEN 'Miercoles' THEN 'Miércoles'
+                    WHEN 'Sábado' THEN 'Sábado'
+                    WHEN 'Sabado' THEN 'Sábado'
+                    ELSE TRIM(dia_semana)
+                END = 'Sábado' THEN 6 
+                WHEN CASE TRIM(dia_semana)
+                    WHEN 'Miércoles' THEN 'Miércoles'
+                    WHEN 'Miercoles' THEN 'Miércoles'
+                    WHEN 'Sábado' THEN 'Sábado'
+                    WHEN 'Sabado' THEN 'Sábado'
+                    ELSE TRIM(dia_semana)
+                END = 'Domingo' THEN 7 
+                ELSE 8 
+            END
+    """, [
+        str(fechas_obj5[0]), str(fechas_obj5[-1]),
+        dia_obj5, dia_obj5,
+        franja_obj5, franja_obj5
+    ])
+
+    if datos_dias.empty:
+        st.warning("No hay datos disponibles para los filtros seleccionados en el Objetivo 5.")
+    else:
+        st.divider()
+        
+        mejor_fila = datos_dias.loc[datos_dias["prom_salida_min"].idxmin()] if not datos_dias.empty else None
+        peor_fila = datos_dias.loc[datos_dias["prom_salida_min"].idxmax()] if not datos_dias.empty else None
+        
+        mejor_dia_val = mejor_fila["dia_semana"] if mejor_fila is not None else "N/A"
+        peor_dia_val = peor_fila["dia_semana"] if peor_fila is not None else "N/A"
+        
+        fds_df = consultar("""
+            SELECT ROUND(AVG(retraso_salida_min), 2) as prom FROM v_analisis_vuelos_limpios 
+            WHERE retraso_salida_min > 0 AND TRIM(dia_semana) IN ('Sábado', 'Sabado', 'Domingo')
+        """)
+        sem_df = consultar("""
+            SELECT ROUND(AVG(retraso_salida_min), 2) as prom FROM v_analisis_vuelos_limpios 
+            WHERE retraso_salida_min > 0 AND TRIM(dia_semana) NOT IN ('Sábado', 'Sabado', 'Domingo')
+        """)
+        
+        val_fds = fds_df.loc[0, "prom"] if not fds_df.empty and pd.notna(fds_df.loc[0, "prom"]) else 0
+        val_sem = sem_df.loc[0, "prom"] if not sem_df.empty and pd.notna(sem_df.loc[0, "prom"]) else 0
+        dif_fds_val = round(abs(val_fds - val_sem), 2)
+
+        kpi1, kpi2, kpi3 = st.columns(3)
+        with kpi1:
+            with st.container(border=True):
+                st.metric("Mejor Día Semana", str(mejor_dia_val))
+        with kpi2:
+            with st.container(border=True):
+                st.metric("Peor Día Semana", str(peor_dia_val))
+        with kpi3:
+            with st.container(border=True):
+                st.metric("Diferencia Fines de Semana", f"{dif_fds_val:.2f}".replace(".", ","))
+
+        st.divider()
+
+        st.markdown("#### Promedio Retraso Salida (Min) por nombre_dia")
+        col_g1, col_i1 = st.columns([1.3, 0.7], gap="large")
+        
+        with col_g1:
+            with st.container(border=True):
+                fig_obj5_sup = px.bar(
+                    datos_dias,
+                    x="dia_semana",
+                    y="prom_salida_min",
+                    text="prom_salida_min",
+                    labels={"dia_semana": "", "prom_salida_min": ""},
+                    color_discrete_sequence=["#C9A956"]
+                )
+                fig_obj5_sup.update_traces(texttemplate='%{text:.0f} min', textposition='outside')
+                fig_obj5_sup.update_layout(
+                    template="plotly_white",
+                    height=350,
+                    margin=dict(b=40, t=30),
+                    yaxis=dict(showgrid=True, gridcolor="#eee", range=[0, datos_dias["prom_salida_min"].max() * 1.2]),
+                    xaxis=dict(showgrid=False, categoryorder="array", categoryarray=["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"])
+                )
+                st.plotly_chart(fig_obj5_sup, use_container_width=True)
+
+        with col_i1:
+            st.markdown("##### Interpretación")
+            st.markdown(
+                f"El día **{mejor_dia_val}** registra el mejor comportamiento operativo con el menor promedio de minutos en salida, "
+                f"mientras que **{peor_dia_val}** concentra las mayores demoras promedio, reflejando puntos de congestión a evaluar."
+            )
+
+        st.divider()
+
+        col_g2, col_i2 = st.columns([1.3, 0.7], gap="large")
+
+        with col_g2:
+            st.markdown("#### Vuelos con salida registrada por nombre_dia y Rangos de Retraso")
+            with st.container(border=True):
+                df_pct = datos_dias.copy()
+                suma_rangos = df_pct["r_menor"] + df_pct["r_severo"]
+                suma_rangos = suma_rangos.replace(0, 1)
+                
+                df_pct["r_menor"] = (df_pct["r_menor"] / suma_rangos) * 100
+                df_pct["r_severo"] = (df_pct["r_severo"] / suma_rangos) * 100
+
+                df_melted = pd.melt(
+                    df_pct,
+                    id_vars=["dia_semana"],
+                    value_vars=["r_menor", "r_severo"],
+                    var_name="rango",
+                    value_name="porcentaje"
+                )
+                
+                mapa_rangos = {
+                    "r_menor": "Retraso menor (>0 y <15 min)",
+                    "r_severo": "Retraso severo (>=60 min)"
+                }
+                df_melted["rango"] = df_melted["rango"].map(mapa_rangos)
+
+                fig_obj5_mid = px.bar(
+                    df_melted,
+                    x="dia_semana",
+                    y="porcentaje",
+                    color="rango",
+                    barmode="stack",
+                    labels={"porcentaje": "", "dia_semana": "", "rango": ""},
+                    color_discrete_map={
+                        "Retraso menor (>0 y <15 min)": "#F6E39A",
+                        "Retraso severo (>=60 min)": "#C9A956"
+                    }
+                )
+                fig_obj5_mid.update_layout(
+                    template="plotly_white",
+                    height=350,
+                    xaxis=dict(showgrid=False, categoryorder="array", categoryarray=["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]),
+                    yaxis=dict(showgrid=True, gridcolor="#eee", range=[0, 100], ticksuffix="%"),
+                    legend=dict(orientation="h", yanchor="top", y=-0.25, xanchor="left", x=0)
+                )
+                st.plotly_chart(fig_obj5_mid, use_container_width=True)
+
+        with col_i2:
+            st.markdown("##### Interpretación")
+            st.markdown(
+                "La distribución porcentual al 100% muestra la proporción exacta entre los retrasos menores y severos (>=60 min) a lo largo de los días de la semana."
+            )
+
+        st.divider()
+
+        col_g3, col_i3 = st.columns([1.3, 0.7], gap="large")
+
+        with col_g3:
+            st.markdown("#### Promedio Retraso Salida (Min) por Fecha y Día de la Semana")
+            with st.container(border=True):
+                datos_lineas = consultar("""
+                    SELECT
+                        CAST(fecha_salida_local AS DATE) as fecha_vuelo,
+                        CASE TRIM(dia_semana)
+                            WHEN 'Miércoles' THEN 'Miércoles'
+                            WHEN 'Miercoles' THEN 'Miércoles'
+                            WHEN 'Sábado' THEN 'Sábado'
+                            WHEN 'Sabado' THEN 'Sábado'
+                            ELSE TRIM(dia_semana)
+                        END AS dia_semana,
+                        ROUND(AVG(CASE WHEN retraso_salida_min > 0 THEN retraso_salida_min ELSE NULL END), 2) AS prom_min
+                    FROM v_analisis_vuelos_limpios
+                    WHERE fecha_salida_local IS NOT NULL
+                      AND fecha_salida_local >= ? AND fecha_salida_local <= ?
+                      AND (? IS NULL OR TRIM(dia_semana) = ?)
+                      AND (? IS NULL OR franja_horaria = ?)
+                    GROUP BY 1, 2
+                    ORDER BY fecha_vuelo
+                """, [
+                    str(fechas_obj5[0]), str(fechas_obj5[-1]),
+                    dia_obj5, dia_obj5,
+                    franja_obj5, franja_obj5
+                ])
+
+                if datos_lineas.empty:
+                    st.info("No hay suficientes datos temporales para las líneas.")
+                else:
+                    fig_obj5_line = px.line(
+                        datos_lineas,
+                        x="fecha_vuelo",
+                        y="prom_min",
+                        color="dia_semana",
+                        labels={"fecha_vuelo": "", "prom_min": "", "dia_semana": "Día"},
+                        color_discrete_map={
+                            "Lunes": "#FF69B4",      # Rosado
+                            "Martes": "#A0522D",     # Marrón
+                            "Miércoles": "#00BFFF",  # Azul vibrante
+                            "Jueves": "#FFD700",     # Amarillo
+                            "Viernes": "#D2691E",    # Naranja / Café claro
+                            "Sábado": "#FFF8DC",     # Crema
+                            "Domingo": "#800020"     # Vinotinto
+                        }
+                    )
+                    fig_obj5_line.update_layout(
+                        template="plotly_white",
+                        height=350,
+                        xaxis=dict(showgrid=False),
+                        yaxis=dict(showgrid=True, gridcolor="#eee"),
+                        legend=dict(orientation="h", yanchor="top", y=-0.25, xanchor="left", x=0)
+                    )
+                    st.plotly_chart(fig_obj5_line, use_container_width=True)
+
+        with col_i3:
+            st.markdown("##### Interpretación")
+            st.markdown(
+                "La evolución temporal de las líneas permite observar la tendencia continua de los retrasos por día de la semana "
+                "a lo largo del período analizado, identificando picos específicos de inestabilidad operativa."
+            )
