@@ -23,11 +23,11 @@
                       "Entity": "main vuelos_denormalizados"
                     }
                   },
-                  "Property": "ciudad_destino"
+                  "Property": "aeropuerto_destino"
                 }
               },
-              "queryRef": "main vuelos_denormalizados.ciudad_destino",
-              "nativeQueryRef": "ciudad_destino",
+              "queryRef": "main vuelos_denormalizados.aeropuerto_destino",
+              "nativeQueryRef": "aeropuerto_destino",
               "active": true
             }
           ]

@@ -23,11 +23,11 @@
                       "Entity": "main vuelos_denormalizados"
                     }
                   },
-                  "Property": "ciudad_origen"
+                  "Property": "aeropuerto_origen"
                 }
               },
-              "queryRef": "main vuelos_denormalizados.ciudad_origen",
-              "nativeQueryRef": "ciudad_origen",
+              "queryRef": "main vuelos_denormalizados.aeropuerto_origen",
+              "nativeQueryRef": "aeropuerto_origen",
               "active": true
             }
           ]
@@ -64,23 +64,6 @@
             }
           ]
         }
-      },
-      "sortDefinition": {
-        "sort": [
-          {
-            "field": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "main vuelos_denormalizados"
-                  }
-                },
-                "Property": "ciudad_origen"
-              }
-            },
-            "direction": "Ascending"
-          }
-        ]
       }
     },
     "objects": {

@@ -23,11 +23,11 @@
                       "Entity": "main vuelos_denormalizados"
                     }
                   },
-                  "Property": "ciudad_destino"
+                  "Property": "aeropuerto_destino"
                 }
               },
-              "queryRef": "main vuelos_denormalizados.ciudad_destino",
-              "nativeQueryRef": "ciudad_destino",
+              "queryRef": "main vuelos_denormalizados.aeropuerto_destino",
+              "nativeQueryRef": "aeropuerto_destino",
               "active": true
             }
           ]
@@ -105,21 +105,21 @@
             "zoom": {
               "expr": {
                 "Literal": {
-                  "Value": "1.16D"
+                  "Value": "3.15D"
                 }
               }
             },
             "centerLatitude": {
               "expr": {
                 "Literal": {
-                  "Value": "58.55547551899207D"
+                  "Value": "64.14167850316824D"
                 }
               }
             },
             "centerLongitude": {
               "expr": {
                 "Literal": {
-                  "Value": "99.0083360671997D"
+                  "Value": "71.34644466517602D"
                 }
               }
             }
