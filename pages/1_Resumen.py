@@ -93,7 +93,6 @@ Bajo estos precedentes, el presente trabajo se propone evaluar el cumplimiento d
 de los vuelos registrados en los aeropuertos rusos durante el período comprendido entre el 16 de julio y el 15 de agosto de 2017,
  mediante el análisis de los retrasos y su comportamiento según variables temporales y operacionales. El objetivo central es 
  investigar, mediante técnicas de estadística descriptiva, cómo variables específicas, tales como la franja horaria de salida 
- (scheduled_departure), el día de la semana, el aeropuerto de origen/destino y el tipo de aeronave (aircraft_code, model), 
- influyen en la frecuencia y magnitud de los retrasos, medidos a partir de la desviación entre los horarios reales y programados.
+ (scheduled_departure), el día de la semana y el aeropuerto de origen/destino  influyen en la frecuencia y magnitud de los retrasos, medidos a partir de la desviación entre los horarios reales y programados.
 
 """, unsafe_allow_html=True)
