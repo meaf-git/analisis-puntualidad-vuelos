@@ -38,7 +38,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 #############################################################################################################
 st.set_page_config(page_title="Marco Teórico", page_icon="👓", layout="wide")
-st.title("Marco Teorico")
+st.title("Marco Teórico")
 
 #### LA INFO #####
 st.markdown(""" 
